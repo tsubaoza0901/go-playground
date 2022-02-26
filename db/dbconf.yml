@@ -1,3 +1,7 @@
+test:
+  driver: mymysql
+  open: tcp:db:3306*goplayground_test/root/root
+
 development:
   driver: mymysql
   open: tcp:db:3306*goplayground/root/root
