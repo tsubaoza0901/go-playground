@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func TestCreateUser(t *testing.T) {
+func TestFetchUsers(t *testing.T) {
 	var createNum = 5
 
 	users := make([]User, createNum)

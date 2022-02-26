@@ -1,12 +1,20 @@
 package repository
 
-import "gorm.io/gorm"
+import (
+	"go-playground/m/v1/src/infra/rdb"
+
+	"gorm.io/gorm"
+)
 
 // User user info
 type User struct {
 	gorm.Model
 	Name string `gorm:""`
 	Age  uint   `gorm:""`
+}
+
+func (User) TableName() string {
+	return rdb.TableName(rdb.UsersTable)
 }
 
 func CreateUser(db *gorm.DB, user User) error {

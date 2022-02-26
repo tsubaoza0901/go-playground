@@ -2,7 +2,9 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"go-playground/m/v1/src/infra/driver"
+	"go-playground/m/v1/src/infra/rdb"
 	"log"
 	"os"
 	"testing"
@@ -39,8 +41,10 @@ func afterAll(m *testing.M) {
 }
 
 func truncateTable(conn *sql.DB) {
-	// TODO: 現状だとusersテーブルしかデータ削除できないため、他のテーブルも作成する場合はやり方の検討が必要
-	if _, err := conn.Exec("TRUNCATE TABLE users"); err != nil {
-		log.Fatal(err)
+	names := rdb.AllTableNames()
+	for _, name := range names {
+		if _, err := conn.Exec(fmt.Sprintf("TRUNCATE TABLE %s", name)); err != nil {
+			log.Fatal(err)
+		}
 	}
 }
