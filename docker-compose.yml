@@ -1,29 +1,6 @@
 version: '3.8'
 
-volumes:
-  db-init:
-  db-data:
-
 services:
-  db:
-    build:
-      context: ./
-      dockerfile: ./docker_files/mysql/Dockerfile
-    container_name: go-playground-db
-    restart: on-failure:5
-    ports:
-      - '3450:3306'
-      - '6060:6060'
-    environment:
-      # 今回は勉強用のためセキュリティ無視で直書き
-      MYSQL_ROOT_PASSWORD: 'root'
-    tty: true
-    volumes:
-      - db-init:/docker-entrypoint-initdb.d
-      - db-data:/var/lib/mysql
-    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --skip-character-set-client-handshake
-    networks:
-      - go_playground_net
   backend:
     build:
       context: ./
@@ -35,13 +12,3 @@ services:
       - '8444:8444'
     tty: true
     stdin_open: true
-    environment:
-      # AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      # AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      # BUCKET_NAME: ${BUCKET_NAME}
-      SIGNINGKEY: ${SIGNINGKEY}
-    networks:
-      - go_playground_net
-networks:
-  go_playground_net:
-    name: go_playground_net

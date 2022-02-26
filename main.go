@@ -1,110 +1,138 @@
 package main
 
 import (
+	"bytes"
+	"go/ast"
+	"go/format"
+	"go/parser"
+	"go/token"
 	"log"
-	"net/http"
-	"net/http/pprof"
-	"time"
-
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	"os"
+	"reflect"
+	"regexp"
+	"strconv"
+	"strings"
 )
 
-// --------
-// model↓
-// --------
-
-// User user info
-type User struct {
-	ID          string     `gorm:"primary_key;not null" json:"id_str"`
-	ScreenName  string     `gorm:"not null" json:"screen_name"`
-	Name        string     `gorm:"not null" json:"name"`
-	URL         string     `gorm:"not null" json:"url"`
-	Description string     `gorm:"null" json:"description"`
-	IsSignedIn  bool       `gorm:"not null" json:"is_signed_in"`
-	CreatedAt   time.Time  `gorm:"null" json:"create_at"`
-	UpdatedAt   time.Time  `gorm:"null" json:"update_at"`
-	DeletedAt   *time.Time `gorm:"null" json:"-"`
+type structTags struct {
+	tags   []reflect.StructTag // 各フィールドのタグ
+	length map[string]int      // キーのタグ名の最も長いタグの長さ
+	order  []string            // タグ名の順序
 }
 
-// --------
-// router↓
-// --------
+var reTagName = regexp.MustCompile(`(\w+):`)
 
-// InitRouting ...
-func InitRouting(e *echo.Echo) {
-	pf := e.Group("/debug/pprof/")
-	pf.Any("/", echo.WrapHandler(http.HandlerFunc(pprof.Index)))
-	pf.Any("/cmdline", echo.WrapHandler(http.HandlerFunc(pprof.Cmdline)))
-	pf.Any("/profile", echo.WrapHandler(http.HandlerFunc(pprof.Profile)))
-	pf.Any("/symbol", echo.WrapHandler(http.HandlerFunc(pprof.Symbol)))
-	pf.Any("/heap", echo.WrapHandler(http.HandlerFunc(pprof.Handler("heap").ServeHTTP)))
+func newStructTags(tags []string) *structTags {
+	st := structTags{
+		tags:   make([]reflect.StructTag, len(tags)),
+		length: map[string]int{},
+	}
+	for i, tag := range tags {
+		if tag == "" {
+			continue
+		}
 
-	e.GET("/", Top)
-	e.GET("/logout", Logout)
+		rst := reflect.StructTag(tag)
+		for _, match := range reTagName.FindAllStringSubmatch(tag, -1) {
+			tagname := match[1]
+			length, ok := st.length[tagname]
+			if !ok {
+				// 初めて出現したタグ名を登録
+				st.order = append(st.order, tagname)
+			}
+			if l := len(tagstr(tagname, rst.Get(tagname))); l > length {
+				// 最も長いタグの長さを更新
+				st.length[tagname] = l
+			}
+		}
+		st.tags[i] = rst
+	}
+	return &st
 }
 
-func Top(c echo.Context) error {
-	return c.JSON(http.StatusOK, "Hello, World!")
+func (st *structTags) aligned(index int) string {
+	b := new(bytes.Buffer)
+	for _, tagname := range st.order {
+		var t string
+		if value, ok := st.tags[index].Lookup(tagname); ok {
+			t = tagstr(tagname, value)
+		}
+		b.WriteString(t)
+
+		// 一番後ろに少なくとも1つはスペースを入れる
+		b.WriteString(strings.Repeat(" ", st.length[tagname]-len(t)+1))
+	}
+	return strings.TrimRight(b.String(), " ")
 }
 
-func Logout(c echo.Context) error {
-	return c.Redirect(http.StatusFound, "/")
+func Align(tags []string) []string {
+	result := make([]string, len(tags))
+
+	st := newStructTags(tags)
+	for i := range tags {
+		if tags[i] != "" {
+			result[i] = st.aligned(i)
+		}
+	}
+
+	return result
 }
 
-// // --------
-// // db↓
-// // --------
-
-// var db *gorm.DB
-
-// // InitDB ...
-// func InitDB() *gorm.DB {
-// 	dsn := "root:root@tcp(db:3306)/goplayground?parseTime=True&loc=Local"
-// 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	return db
-// }
-
-// --------
-// middleware↓
-// --------
-
-func InitMiddleware(e *echo.Echo) {
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
-		AllowHeaders:     []string{echo.HeaderAccessControlAllowHeaders, echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
-		AllowCredentials: true,
-	}))
+func tagstr(tagname, value string) string {
+	return tagname + `:"` + value + `"`
 }
 
-// --------
-// main↓
-// --------
+func unquote(tag string) string {
+	s, err := strconv.Unquote(string(tag))
+	if err != nil {
+		panic(err) // 不正なタグはParseFileでエラーになる
+	}
+	return s
+}
+
+func quote(tag string) string {
+	return "`" + tag + "`"
+}
 
 func main() {
-	go func() {
-		log.Println(http.ListenAndServe("localhost:6060", nil))
-	}()
+	// ソースコード情報の取得（From ファイル）
+	filename := "./src/domain/user.go"
 
-	// db = InitDB()
+	fset := token.NewFileSet()
+	file, err := parser.ParseFile(fset, filename, nil, parser.ParseComments)
+	if err != nil {
+		log.Fatal("Error: ", err)
+	}
 
-	// sqlDB, err := db.DB()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// defer sqlDB.Close()
+	// ast.Print(fset, file)
 
-	e := echo.New()
+	// 抽象構文木の探索
+	ast.Inspect(file, func(node ast.Node) bool {
+		s, ok := node.(*ast.StructType)
+		if !ok {
+			return true
+		}
+		// ast.Print(fset, s)
 
-	InitMiddleware(e)
+		tags := make([]string, len(s.Fields.List))
+		for i, f := range s.Fields.List {
+			if f.Tag == nil {
+				continue
+			}
+			tags[i] = unquote(f.Tag.Value) // ここでバッククオートを除いておかないと後続の処理がうまくいかないため注意
+		}
 
-	InitRouting(e)
+		for i, tag := range Align(tags) {
+			if s.Fields.List[i].Tag == nil {
+				continue
+			}
+			s.Fields.List[i].Tag.Value = quote(tag)
+		}
 
-	log.Println(e.Start(":8444"))
+		return true
+	})
+
+	format.Node(os.Stdout, fset, file)
+
+	// fmt.Println(tags)
 }
