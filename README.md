@@ -40,18 +40,11 @@ $ docker exec -it go-playground bash
 ② マイグレーションファイルの実行
 
 ```
-root@fe385569a625:/go/src/app/server_side# goose up
+root@fe385569a625:/go/app# goose up
 ```
 
 ## 4．アプリケーションの起動
 
 ```
 root@fe385569a625:/go/app# go run main.go
-```
-
-# その他
-使用する際にはルート直下に「.env」ファイルを作成し、以下の内容を追加する必要あり。
-
-```
-SIGNINGKEY=
 ```
