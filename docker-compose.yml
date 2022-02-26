@@ -13,7 +13,6 @@ services:
     restart: on-failure:5
     ports:
       - '3450:3306'
-      - '6060:6060'
     environment:
       # 今回は勉強用のためセキュリティ無視で直書き
       MYSQL_ROOT_PASSWORD: 'root'
@@ -35,11 +34,6 @@ services:
       - '8444:8444'
     tty: true
     stdin_open: true
-    environment:
-      # AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      # AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      # BUCKET_NAME: ${BUCKET_NAME}
-      SIGNINGKEY: ${SIGNINGKEY}
     networks:
       - go_playground_net
 networks:

@@ -1,10 +1,5 @@
-FROM  golang:1.17-alpine
+FROM  golang:1.16.13
 
 WORKDIR /go/app
 
-ENV GO111MODULE=on
-
-RUN apk update && apk add graphviz
-# RUN apk add sensible-utils
-
-# RUN go get bitbucket.org/liamstask/goose/cmd/goose
+RUN go get bitbucket.org/liamstask/goose/cmd/goose

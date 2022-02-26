@@ -46,7 +46,7 @@ root@fe385569a625:/go/src/app/server_side# goose up
 ## 4．アプリケーションの起動
 
 ```
-root@fe385569a625:/go/src/app/server_side# go run main.go
+root@fe385569a625:/go/app# go run main.go
 ```
 
 # その他
