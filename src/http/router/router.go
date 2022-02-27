@@ -8,6 +8,5 @@ import (
 
 // InitRouting ...
 func InitRouting(e *echo.Echo) {
-	e.GET("/", handler.Top)
-	e.GET("/logout", handler.Logout)
+	e.POST("/users", handler.CreateUser)
 }

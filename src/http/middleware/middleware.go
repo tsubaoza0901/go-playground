@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"go-playground/m/v1/src/http/validator"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -16,4 +17,5 @@ func InitMiddleware(e *echo.Echo) {
 		AllowHeaders:     []string{echo.HeaderAccessControlAllowHeaders, echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 		AllowCredentials: true,
 	}))
+	e.Validator = validator.NewValidator()
 }
