@@ -1,7 +1,7 @@
 package main
 
-import "fmt"
+import "go-playground/m/v1/src"
 
 func main() {
-	fmt.Println("Hello World!")
+	src.Concurrency3()
 }
