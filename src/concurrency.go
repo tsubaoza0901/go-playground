@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// --------------------------------
 // サンプル①
 func getLuckyNum() {
 	fmt.Println("...")
@@ -74,6 +75,8 @@ func Fortune3() {
 	close(c) // 使い終わったチャンネルのClose
 }
 
+// --------------------------------
+
 // go文の引数の有無による挙動
 func ConcurrencySample1() {
 	var wg sync.WaitGroup
@@ -113,6 +116,8 @@ func ConcurrencySample2() {
 0
 1
 */
+
+// --------------------------------
 
 // 以下、Benchmark対象↓
 
