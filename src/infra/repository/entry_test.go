@@ -37,7 +37,7 @@ func afterAll(m *testing.M) {
 		log.Fatal(err)
 	}
 	defer conn.Close()
-	defer truncateTable(conn)
+	defer truncateTable(conn) // テスト実行後、test用DBの全テーブルレコードを削除
 }
 
 func truncateTable(conn *sql.DB) {

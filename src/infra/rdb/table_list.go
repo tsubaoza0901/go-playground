@@ -16,8 +16,8 @@ func TableName(tableNum int) string {
 func AllTableNames() []string {
 	allTableNames := make([]string, len(tableList))
 	i := 0
-	for _, value := range tableList {
-		allTableNames[i] = value
+	for _, tableName := range tableList {
+		allTableNames[i] = tableName
 		i++
 	}
 	return allTableNames
