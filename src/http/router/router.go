@@ -7,7 +7,12 @@ import (
 )
 
 // InitRouting ...
-func InitRouting(e *echo.Echo) {
-	e.GET("/", handler.Top)
-	e.GET("/logout", handler.Logout)
+func InitRouting(e *echo.Echo, jwtConfig echo.MiddlewareFunc) {
+	e.POST("/login", handler.Login)
+
+	api := e.Group("/api")
+
+	api.Use(jwtConfig)
+	api.GET("/private", handler.Private)
+	api.GET("/logout", handler.Logout)
 }
