@@ -1,12 +1,14 @@
 package middleware
 
 import (
+	"go-playground/m/v1/src/adapters/controllers/http/validator"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
+// InitMiddleware ...
 func InitMiddleware(e *echo.Echo) {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
@@ -16,4 +18,5 @@ func InitMiddleware(e *echo.Echo) {
 		AllowHeaders:     []string{echo.HeaderAccessControlAllowHeaders, echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 		AllowCredentials: true,
 	}))
+	e.Validator = validator.NewValidator()
 }
