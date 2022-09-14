@@ -6,10 +6,11 @@ import (
 
 // UserCreate ...
 type UserCreate struct {
-	FirstName string `json:"firstName" validate:"required"`
-	LastName  string `json:"lastName" validate:"required"`
-	Age       uint   `json:"age" validate:"required"`
-	Amount    uint   `json:"amount" validate:"required"`
+	FirstName    string `json:"firstName" validate:"required"`
+	LastName     string `json:"lastName" validate:"required"`
+	Age          uint   `json:"age" validate:"required"`
+	Amount       uint   `json:"amount" validate:"required"`
+	EmailAddress string `json:"email" validate:"required"`
 }
 
 // ConvertToUserModel ...
@@ -18,7 +19,7 @@ func (u UserCreate) ConvertToUserModel() input.UserCreate {
 	user.FirstName = u.FirstName
 	user.LastName = u.LastName
 	user.Age = u.Age
-	// user.Ammount = input.Ammount(u.Amount)
+	user.EmailAddress = u.EmailAddress
 	return user
 }
 

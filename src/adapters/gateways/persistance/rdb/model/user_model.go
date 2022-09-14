@@ -9,11 +9,12 @@ import (
 // User ...
 type User struct {
 	gorm.Model
-	FirstName string
-	LastName  string
-	Age       uint
-	GradeID   uint
-	Grade     *Grade
+	FirstName    string
+	LastName     string
+	Age          uint
+	EmailAddress string
+	GradeID      uint
+	Grade        *Grade
 }
 
 // TableName ...
@@ -22,7 +23,7 @@ func (User) TableName() string {
 }
 
 func (u User) makeGeneralUser() (user.General, error) {
-	generalUser, err := user.InitGeneral(u.FirstName, u.LastName, u.Age)
+	generalUser, err := user.InitGeneral(u.FirstName, u.LastName, u.Age, u.EmailAddress)
 	if err != nil {
 		return user.General{}, err
 	}
@@ -36,10 +37,11 @@ func (u User) makeGeneralUser() (user.General, error) {
 // InitUser ...
 func InitUser(u user.General) *User {
 	user := User{
-		FirstName: string(u.FirstName()),
-		LastName:  string(u.LastName()),
-		Age:       uint(u.Age()),
-		GradeID:   uint(u.GradeID()),
+		FirstName:    string(u.FirstName()),
+		LastName:     string(u.LastName()),
+		Age:          uint(u.Age()),
+		EmailAddress: string(u.EmailAddress()),
+		GradeID:      uint(u.GradeID()),
 	}
 	return &user
 }

@@ -56,6 +56,7 @@ func (h UserHandler) SearchUser(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error()) // Record Not Foundの場合のハンドリングも追加
 	}
+
 	return c.JSON(http.StatusOK, response.NewUser(user))
 }
 

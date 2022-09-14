@@ -6,10 +6,11 @@ import (
 
 // User ...
 type User struct {
-	ID        uint   `json:"id"`
-	Name      string `json:"name"`
-	Age       uint   `json:"age"`
-	GradeName string `json:"gradeName"`
+	ID           uint   `json:"id"`
+	Name         string `json:"name"`
+	Age          uint   `json:"age"`
+	EmailAddress string `json:"email"`
+	GradeName    string `json:"gradeName"`
 }
 
 // Users ...
@@ -18,10 +19,11 @@ type Users []User
 // NewUser ...
 func NewUser(u output.User) User {
 	user := User{
-		ID:        u.ID,
-		Name:      u.MakeJPNFullName(),
-		Age:       u.Age,
-		GradeName: u.GradeName,
+		ID:           u.ID,
+		Name:         u.MakeJPNFullName(),
+		Age:          u.Age,
+		EmailAddress: u.EmailAddress,
+		GradeName:    u.GradeName,
 	}
 	return user
 }

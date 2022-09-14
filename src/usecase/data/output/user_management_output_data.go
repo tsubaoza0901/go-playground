@@ -7,21 +7,23 @@ import (
 
 // User ...
 type User struct {
-	ID        uint
-	FirstName string
-	LastName  string
-	Age       uint
-	GradeName string
+	ID           uint
+	FirstName    string
+	LastName     string
+	Age          uint
+	EmailAddress string
+	GradeName    string
 }
 
 // MakeUser ...
 func MakeUser(u user.General) User {
 	return User{
-		ID:        uint(u.ID()),
-		FirstName: string(u.FirstName()),
-		LastName:  string(u.LastName()),
-		Age:       uint(u.Age()),
-		GradeName: string(u.GradeName()),
+		ID:           uint(u.ID()),
+		FirstName:    string(u.FirstName()),
+		LastName:     string(u.LastName()),
+		Age:          uint(u.Age()),
+		EmailAddress: string(u.EmailAddress()),
+		GradeName:    string(u.GradeName()),
 	}
 }
 

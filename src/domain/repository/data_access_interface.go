@@ -31,4 +31,5 @@ type IUserManagementRepository interface {
 	RegisterUser(context.Context, user.RegistrationDTO) (*user.FetchDTO, error)
 	FetchUser(ctx context.Context, id uint) (*user.FetchDTO, error)
 	FetchAllUsers(ctx context.Context) (*user.FetchAllDTO, error)
+	CountTheNumberOfUsersByEmail(ctx context.Context, email user.EmailAddress) (count uint, err error)
 }

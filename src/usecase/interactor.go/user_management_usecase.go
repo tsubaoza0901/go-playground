@@ -2,6 +2,7 @@ package interactor
 
 import (
 	"context"
+	"errors"
 	"go-playground/m/v1/src/domain/model/balance"
 	"go-playground/m/v1/src/domain/model/deal"
 	"go-playground/m/v1/src/domain/model/user"
@@ -28,10 +29,15 @@ func NewUserManagementUsecase(
 
 // CreateUser ...
 func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate input.UserCreate, inputTopUpAmount uint) error {
-	generalUser, err := user.InitGeneral(inputUserCreate.FirstName, inputUserCreate.LastName, inputUserCreate.Age)
+	generalUser, err := user.InitGeneral(inputUserCreate.FirstName, inputUserCreate.LastName, inputUserCreate.Age, inputUserCreate.EmailAddress)
 	if err != nil {
 		return err
 	}
+
+	if err := u.verifyIfNoUserHasSameEmailAddress(ctx, generalUser); err != nil {
+		return err
+	}
+
 	userFetchDTO, err := u.RegisterUser(ctx, user.SetFieldToRegistrationDTO(*generalUser))
 	if err != nil {
 		return err
@@ -74,4 +80,15 @@ func (u UserManagementUsecase) RetrieveUsers(ctx context.Context) (output.Users,
 	}
 
 	return output.MakeUsers(userFetchAllDTO.Generals), nil
+}
+
+func (u UserManagementUsecase) verifyIfNoUserHasSameEmailAddress(ctx context.Context, generalUser *user.General) error {
+	count, err := u.CountTheNumberOfUsersByEmail(ctx, generalUser.EmailAddress())
+	if err != nil {
+		return err
+	}
+	if !user.IsSameUsersCountZero(count) {
+		return errors.New("すでに同一ユーザーが存在します。")
+	}
+	return nil
 }

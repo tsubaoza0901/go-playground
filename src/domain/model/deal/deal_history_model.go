@@ -1,7 +1,6 @@
 package deal
 
 import (
-	"log"
 	"time"
 )
 
@@ -59,7 +58,6 @@ type History struct {
 // NewHistory ...
 func NewHistory(itemName string, amount uint) *History {
 	history := new(History)
-	log.Println(itemName, amount)
 
 	if itemName == "" && amount >= 0 {
 		history.setItemName("チャージ")

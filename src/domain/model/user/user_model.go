@@ -14,6 +14,8 @@ type (
 	LastName string
 	// Age ...
 	Age uint
+	// EmailAddress ...
+	EmailAddress string
 )
 
 func (a Age) verifyAge() bool {
@@ -22,17 +24,19 @@ func (a Age) verifyAge() bool {
 
 // Entity ...
 type Entity struct {
-	id        ID
-	firstName FirstName
-	lastName  LastName
-	age       Age
-	grade     grade.Entity
+	id           ID
+	firstName    FirstName
+	lastName     LastName
+	age          Age
+	emailAddress EmailAddress
+	grade        grade.Entity
 }
 
-func newEntity(firstName string, lastName string, age uint) (*Entity, error) {
+func newEntity(firstName string, lastName string, age uint, email string) (*Entity, error) {
 	entity := new(Entity)
 	entity.firstName = FirstName(firstName)
 	entity.lastName = LastName(lastName)
+	entity.setEmailAddress(email)
 	if err := entity.setAge(age); err != nil {
 		return nil, err
 	}
@@ -73,6 +77,16 @@ func (u *Entity) setAge(age uint) error {
 	return nil
 }
 
+// EmailAddress Getter
+func (u *Entity) EmailAddress() EmailAddress {
+	return u.emailAddress
+}
+
+// setEmailAddress Setter
+func (u *Entity) setEmailAddress(email string) {
+	u.emailAddress = EmailAddress(email)
+}
+
 // GradeID Getter
 func (u *Entity) GradeID() grade.ID {
 	return u.grade.ID()
@@ -88,6 +102,14 @@ func (u *Entity) SetGrade(g grade.Entity) {
 	u.grade = g
 }
 
+// IsSameUsersCountZero ...
+func IsSameUsersCountZero(count uint) bool { // TODO:ドメインロジックとして定義すべきかどうか検討
+	if count == 0 {
+		return true
+	}
+	return false
+}
+
 // General 一般ユーザー
 type General struct {
 	Entity
@@ -97,8 +119,8 @@ type General struct {
 type Generals []General
 
 // InitGeneral ...
-func InitGeneral(firstName string, lastName string, age uint) (*General, error) {
-	entity, err := newEntity(firstName, lastName, age)
+func InitGeneral(firstName string, lastName string, age uint, email string) (*General, error) {
+	entity, err := newEntity(firstName, lastName, age, email)
 	if err != nil {
 		return nil, err
 	}

@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
     last_name varchar(128) NOT NULL COMMENT "姓",
     age int(11) NOT NULL COMMENT "年齢",
     grade_id int(11) NOT NULL COMMENT 'グレードID',
+    email_address varchar(128) NOT NULL COMMENT "メールアドレス",
     PRIMARY KEY(id)
 ) ENGINE=InnoDB;
 

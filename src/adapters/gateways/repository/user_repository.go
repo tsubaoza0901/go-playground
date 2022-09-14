@@ -64,3 +64,12 @@ func (r UserRepository) fetchAllUsers() (*user.FetchAllDTO, error) {
 	}
 	return userFetchAllDTO, nil
 }
+
+// CountTheNumberOfUsersByEmail ...
+func (r UserRepository) CountTheNumberOfUsersByEmail(ctx context.Context, email user.EmailAddress) (uint, error) {
+	var count int64
+	if err := r.dbConn.Model(&dbModel.User{}).Where("email_address = ?", email).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return uint(count), nil
+}
