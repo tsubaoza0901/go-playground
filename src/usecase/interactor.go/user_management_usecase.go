@@ -3,7 +3,7 @@ package interactor
 import (
 	"context"
 	"go-playground/m/v1/src/domain/model/balance"
-	"go-playground/m/v1/src/domain/model/transaction"
+	"go-playground/m/v1/src/domain/model/deal"
 	"go-playground/m/v1/src/domain/model/user"
 	"go-playground/m/v1/src/domain/repository"
 	"go-playground/m/v1/src/usecase/data/input"
@@ -14,14 +14,14 @@ import (
 type UserManagementUsecase struct {
 	repository.IUserManagementRepository
 	repository.IBalanceRepository
-	repository.ITransactionHistoryRepository
+	repository.IDealHistoryRepository
 }
 
 // NewUserManagementUsecase ...
 func NewUserManagementUsecase(
 	umr repository.IUserManagementRepository,
 	br repository.IBalanceRepository,
-	thr repository.ITransactionHistoryRepository,
+	thr repository.IDealHistoryRepository,
 ) UserManagementUsecase {
 	return UserManagementUsecase{umr, br, thr}
 }
@@ -50,8 +50,8 @@ func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate i
 	}
 
 	// 取引履歴登録
-	transactionHistory := transaction.NewHistory("", uint(inputTopUpAmount))
-	if err := u.RegisterTransactionHistory(ctx, transaction.NewRegisterHistoryDTO(*transactionHistory, uint(generalUser.ID()))); err != nil {
+	dealHistory := deal.NewHistory("", uint(inputTopUpAmount))
+	if err := u.RegisterDealHistory(ctx, deal.NewRegisterHistoryDTO(*dealHistory, uint(generalUser.ID()))); err != nil {
 		return err
 	}
 	return nil

@@ -8,17 +8,17 @@ import "go-playground/m/v1/src/adapters/controllers/http/handler"
 type HTTPHandler struct {
 	handler.UserHandler
 	handler.GradeHandler
-	handler.TransactionHistoryHandler
+	handler.DealHistoryHandler
 	handler.BalanceControlHandler
 }
 
 // InitHTTPHandler ...
 func (i Injection) InitHTTPHandler() HTTPHandler {
 	return HTTPHandler{
-		UserHandler:               i.InitUserHandler(),
-		GradeHandler:              i.InitGradeHandler(),
-		TransactionHistoryHandler: i.InitTransactionHistoryHandler(),
-		BalanceControlHandler:     i.InitBalanceControlHandler(),
+		UserHandler:           i.InitUserHandler(),
+		GradeHandler:          i.InitGradeHandler(),
+		DealHistoryHandler:    i.InitDealHistoryHandler(),
+		BalanceControlHandler: i.InitBalanceControlHandler(),
 	}
 }
 
@@ -36,10 +36,10 @@ func (i Injection) InitGradeHandler() handler.GradeHandler {
 	)
 }
 
-// InitTransactionHistoryHandler ...
-func (i Injection) InitTransactionHistoryHandler() handler.TransactionHistoryHandler {
-	return handler.NewTransactionHistoryHandler(
-		i.InitTransactionUsecase(),
+// InitDealHistoryHandler ...
+func (i Injection) InitDealHistoryHandler() handler.DealHistoryHandler {
+	return handler.NewDealHistoryHandler(
+		i.InitDealUsecase(),
 	)
 }
 

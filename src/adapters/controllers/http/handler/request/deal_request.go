@@ -32,7 +32,7 @@ func (p PuttingMoney) ConvertToPuttingMoneyInput() input.PuttingMoney {
 	return puttingMoney
 }
 
-// RetrieveTransactionHistories ...
-type RetrieveTransactionHistories struct {
+// RetrieveDealHistories ...
+type RetrieveDealHistories struct {
 	UserID uint `param:"userId" validate:"required"`
 }

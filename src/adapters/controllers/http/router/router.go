@@ -21,12 +21,12 @@ func InitRouting(e *echo.Echo, h dependency.HTTPHandler) {
 	}
 
 	{
-		// Transaction Handler
-		e.GET("/transactionHistories/:userId", h.TransactionHistoryHandler.RetrieveTransactionHistories)
+		// DealHistory Handler
+		e.GET("/dealHistories/:userId", h.DealHistoryHandler.RetrieveDealHistories)
 	}
 
 	{
-		// Balance Control Handler
+		// BalanceControl Handler
 		e.PUT("/pay/:userId", h.BalanceControlHandler.Pay)
 		e.PUT("/topup/:userId", h.BalanceControlHandler.TopUp)
 		e.GET("/remainingBalance/:userId", h.BalanceControlHandler.RetrieveRemainingBalance)

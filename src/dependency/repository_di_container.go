@@ -14,9 +14,9 @@ func (i Injection) InitGradeRepository() repository.GradeRepository {
 	return repository.NewGradeRepository(i.dbConn)
 }
 
-// InitTransactionRepository ...
-func (i Injection) InitTransactionRepository() repository.TransactionHistoryRepository {
-	return repository.NewTransactionHistoryRepository(i.dbConn)
+// InitDealRepository ...
+func (i Injection) InitDealRepository() repository.DealHistoryRepository {
+	return repository.NewDealHistoryRepository(i.dbConn)
 }
 
 // InitBalanceRepository ...

@@ -23,7 +23,6 @@ func (User) TableName() string {
 
 func (u User) makeGeneralUser() (user.General, error) {
 	generalUser, err := user.InitGeneral(u.FirstName, u.LastName, u.Age)
-
 	if err != nil {
 		return user.General{}, err
 	}

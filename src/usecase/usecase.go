@@ -10,12 +10,12 @@ import (
 type IBalanceControlUsecase interface {
 	RetrieveRemainingBalanceByUserID(ctx context.Context, userID uint) (output.Balance, error)
 	PutMoney(ctx context.Context, userID uint, topUpAmount input.PuttingMoney) error
-	PayMoney(ctx context.Context, userID uint, transaction input.Payment) error
+	PayMoney(ctx context.Context, userID uint, payment input.Payment) error
 }
 
-// ITransactionUsecase ...
-type ITransactionUsecase interface {
-	RetrieveTransactionHistoriesByUserID(ctx context.Context, userID uint) (output.TransactionHistories, error)
+// IDealUsecase ...
+type IDealUsecase interface {
+	RetrieveDealHistoriesByUserID(ctx context.Context, userID uint) (output.DealHistories, error)
 }
 
 // IGradeUsecase ...

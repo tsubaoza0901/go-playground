@@ -11,7 +11,7 @@ func (i Injection) InitUserManagementUsecase() interactor.UserManagementUsecase 
 	return interactor.NewUserManagementUsecase(
 		i.InitUserRepository(),
 		i.InitBalanceRepository(),
-		i.InitTransactionRepository(),
+		i.InitDealRepository(),
 	)
 }
 
@@ -22,10 +22,10 @@ func (i Injection) InitGradeUsecase() interactor.GradeUsecase {
 	)
 }
 
-// InitTransactionUsecase ...
-func (i Injection) InitTransactionUsecase() interactor.TransactionUsecase {
-	return interactor.NewTransactionUsecase(
-		i.InitTransactionRepository(),
+// InitDealUsecase ...
+func (i Injection) InitDealUsecase() interactor.DealUsecase {
+	return interactor.NewDealUsecase(
+		i.InitDealRepository(),
 	)
 }
 
@@ -33,6 +33,6 @@ func (i Injection) InitTransactionUsecase() interactor.TransactionUsecase {
 func (i Injection) InitBalanceControlUsecase() interactor.BalanceControlUsecase {
 	return interactor.NewBalanceControlUsecase(
 		i.InitBalanceRepository(),
-		i.InitTransactionRepository(),
+		i.InitDealRepository(),
 	)
 }

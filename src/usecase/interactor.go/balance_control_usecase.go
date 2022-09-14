@@ -3,7 +3,7 @@ package interactor
 import (
 	"context"
 	"go-playground/m/v1/src/domain/model/balance"
-	"go-playground/m/v1/src/domain/model/transaction"
+	"go-playground/m/v1/src/domain/model/deal"
 	"go-playground/m/v1/src/domain/repository"
 	"go-playground/m/v1/src/usecase/data/input"
 	"go-playground/m/v1/src/usecase/data/output"
@@ -12,11 +12,11 @@ import (
 // BalanceControlUsecase ...
 type BalanceControlUsecase struct {
 	repository.IBalanceRepository
-	repository.ITransactionHistoryRepository
+	repository.IDealHistoryRepository
 }
 
 // NewBalanceControlUsecase ...
-func NewBalanceControlUsecase(br repository.IBalanceRepository, th repository.ITransactionHistoryRepository) BalanceControlUsecase {
+func NewBalanceControlUsecase(br repository.IBalanceRepository, th repository.IDealHistoryRepository) BalanceControlUsecase {
 	return BalanceControlUsecase{br, th}
 }
 
@@ -41,8 +41,8 @@ func (u BalanceControlUsecase) PutMoney(ctx context.Context, userID uint, inputP
 	}
 
 	// 取引履歴登録
-	transactionHistory := transaction.NewHistory("", uint(inputPuttingMoney.Amount))
-	if err := u.RegisterTransactionHistory(ctx, transaction.NewRegisterHistoryDTO(*transactionHistory, userID)); err != nil {
+	dealHistory := deal.NewHistory("", uint(inputPuttingMoney.Amount))
+	if err := u.RegisterDealHistory(ctx, deal.NewRegisterHistoryDTO(*dealHistory, userID)); err != nil {
 		return err
 	}
 	return nil
@@ -69,8 +69,8 @@ func (u BalanceControlUsecase) PayMoney(ctx context.Context, userID uint, inputP
 	}
 
 	// 履歴登録
-	transactionHistory := transaction.NewHistory(inputPayment.ItemName, uint(inputPayment.Amount))
-	if err := u.RegisterTransactionHistory(ctx, transaction.NewRegisterHistoryDTO(*transactionHistory, userID)); err != nil {
+	dealHistory := deal.NewHistory(inputPayment.ItemName, uint(inputPayment.Amount))
+	if err := u.RegisterDealHistory(ctx, deal.NewRegisterHistoryDTO(*dealHistory, userID)); err != nil {
 		return err
 	}
 	return nil

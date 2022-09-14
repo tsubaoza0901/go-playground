@@ -1,4 +1,4 @@
-package transaction
+package deal
 
 import (
 	"log"

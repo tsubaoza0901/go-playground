@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 	"go-playground/m/v1/src/domain/model/balance"
+	"go-playground/m/v1/src/domain/model/deal"
 	"go-playground/m/v1/src/domain/model/grade"
-	"go-playground/m/v1/src/domain/model/transaction"
 	"go-playground/m/v1/src/domain/model/user"
 )
 
@@ -20,10 +20,10 @@ type IGradeRepository interface {
 	FetchAllGrades(context.Context) (*grade.FetchAllDTO, error)
 }
 
-// ITransactionHistoryRepository ...
-type ITransactionHistoryRepository interface {
-	RegisterTransactionHistory(context.Context, transaction.RegisterHistoryDTO) error
-	FetchTransactionHistoriesByUserID(ctx context.Context, userID uint) (*transaction.FetchHistoriesDTO, error)
+// IDealHistoryRepository ...
+type IDealHistoryRepository interface {
+	RegisterDealHistory(context.Context, deal.RegisterHistoryDTO) error
+	FetchDealHistoriesByUserID(ctx context.Context, userID uint) (*deal.FetchHistoriesDTO, error)
 }
 
 // IUserManagementRepository ...
