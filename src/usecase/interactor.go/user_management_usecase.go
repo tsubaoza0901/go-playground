@@ -34,7 +34,8 @@ func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate i
 		return err
 	}
 
-	if err := u.verifyIfNoUserHasSameEmailAddress(ctx, generalUser); err != nil {
+	// 登録済みユーザーではないか確認
+	if err := u.verifyThatThereAreNoSameUsers(ctx, generalUser); err != nil {
 		return err
 	}
 
@@ -82,7 +83,7 @@ func (u UserManagementUsecase) RetrieveUsers(ctx context.Context) (output.Users,
 	return output.MakeUsers(userFetchAllDTO.Generals), nil
 }
 
-func (u UserManagementUsecase) verifyIfNoUserHasSameEmailAddress(ctx context.Context, generalUser *user.General) error {
+func (u UserManagementUsecase) verifyThatThereAreNoSameUsers(ctx context.Context, generalUser *user.General) error {
 	count, err := u.CountTheNumberOfUsersByEmail(ctx, generalUser.EmailAddress())
 	if err != nil {
 		return err
