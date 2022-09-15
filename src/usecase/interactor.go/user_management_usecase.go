@@ -16,6 +16,7 @@ type UserManagementUsecase struct {
 	repository.IUserManagementRepository
 	repository.IBalanceRepository
 	repository.IDealHistoryRepository
+	repository.ITransactionManagementRepository
 }
 
 // NewUserManagementUsecase ...
@@ -23,8 +24,9 @@ func NewUserManagementUsecase(
 	umr repository.IUserManagementRepository,
 	br repository.IBalanceRepository,
 	thr repository.IDealHistoryRepository,
+	tmr repository.ITransactionManagementRepository,
 ) UserManagementUsecase {
-	return UserManagementUsecase{umr, br, thr}
+	return UserManagementUsecase{umr, br, thr, tmr}
 }
 
 // CreateUser ...
@@ -39,28 +41,39 @@ func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate i
 		return err
 	}
 
-	userFetchDTO, err := u.RegisterUser(ctx, user.SetFieldToRegistrationDTO(*generalUser))
+	// ユーザー登録
+	tx := u.BeginConnection()
+
+	userFetchDTO, err := u.RegisterUserWithTx(ctx, tx, user.SetFieldToRegistrationDTO(*generalUser))
 	if err != nil {
+		u.Rollback(tx)
 		return err
 	}
 
 	generalUser = &userFetchDTO.General
 
-	// 残高登録
+	// チャージ結果計算
 	remainingAmount := balance.RemainingAmount(0)
 	calculatedBalance, err := remainingAmount.AddUp(balance.TopUpAmount(inputTopUpAmount))
 	if err != nil {
 		return err
 	}
-	if err := u.CreateBalance(ctx, uint(generalUser.ID()), balance.NewCreateBalanceDTO(*calculatedBalance)); err != nil {
+
+	// 残高登録
+	if err := u.CreateBalanceWithTx(ctx, tx, uint(generalUser.ID()), balance.NewCreateBalanceDTO(*calculatedBalance)); err != nil {
+		u.Rollback(tx)
 		return err
 	}
 
 	// 取引履歴登録
 	dealHistory := deal.NewHistory("", uint(inputTopUpAmount))
-	if err := u.RegisterDealHistory(ctx, deal.NewRegisterHistoryDTO(*dealHistory, uint(generalUser.ID()))); err != nil {
+	if err := u.RegisterDealHistoryWithTx(ctx, tx, deal.NewRegisterHistoryDTO(*dealHistory, uint(generalUser.ID()))); err != nil {
+		u.Rollback(tx)
 		return err
 	}
+
+	u.Commit(tx)
+
 	return nil
 }
 
