@@ -31,6 +31,8 @@ func NewUserManagementUsecase(
 
 // CreateUser ...
 func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate input.UserCreate, inputTopUpAmount uint) error {
+	var err error
+
 	generalUser, err := user.InitGeneral(inputUserCreate.FirstName, inputUserCreate.LastName, inputUserCreate.Age, inputUserCreate.EmailAddress)
 	if err != nil {
 		return err
@@ -41,38 +43,38 @@ func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate i
 		return err
 	}
 
-	// ユーザー登録
-	tx := u.BeginConnection()
+	// 同一トランザクション内処理開始
+	if err := u.Transaction(ctx, func(ctx context.Context) (err error) {
 
-	userFetchDTO, err := u.RegisterUserWithTx(ctx, tx, user.SetFieldToRegistrationDTO(*generalUser))
-	if err != nil {
-		u.Rollback(tx)
+		// ユーザー登録
+		userFetchDTO, err := u.RegisterUser(ctx, user.SetFieldToRegistrationDTO(*generalUser))
+		if err != nil {
+			return err
+		}
+
+		generalUser = &userFetchDTO.General
+
+		// チャージ結果計算
+		remainingAmount := balance.RemainingAmount(0)
+		calculatedBalance, err := remainingAmount.AddUp(balance.TopUpAmount(inputTopUpAmount))
+		if err != nil {
+			return err
+		}
+
+		// 残高登録
+		if err = u.CreateBalance(ctx, uint(generalUser.ID()), balance.NewCreateBalanceDTO(*calculatedBalance)); err != nil {
+			return err
+		}
+
+		// 取引履歴登録
+		dealHistory := deal.NewHistory("", uint(inputTopUpAmount))
+		if err = u.RegisterDealHistory(ctx, deal.NewRegisterHistoryDTO(*dealHistory, uint(generalUser.ID()))); err != nil {
+			return err
+		}
+		return
+	}); err != nil {
 		return err
 	}
-
-	generalUser = &userFetchDTO.General
-
-	// チャージ結果計算
-	remainingAmount := balance.RemainingAmount(0)
-	calculatedBalance, err := remainingAmount.AddUp(balance.TopUpAmount(inputTopUpAmount))
-	if err != nil {
-		return err
-	}
-
-	// 残高登録
-	if err := u.CreateBalanceWithTx(ctx, tx, uint(generalUser.ID()), balance.NewCreateBalanceDTO(*calculatedBalance)); err != nil {
-		u.Rollback(tx)
-		return err
-	}
-
-	// 取引履歴登録
-	dealHistory := deal.NewHistory("", uint(inputTopUpAmount))
-	if err := u.RegisterDealHistoryWithTx(ctx, tx, deal.NewRegisterHistoryDTO(*dealHistory, uint(generalUser.ID()))); err != nil {
-		u.Rollback(tx)
-		return err
-	}
-
-	u.Commit(tx)
 
 	return nil
 }

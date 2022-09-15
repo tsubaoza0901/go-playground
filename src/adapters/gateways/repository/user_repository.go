@@ -20,18 +20,12 @@ func NewUserRepository(dbConn *gorm.DB) UserRepository {
 
 // RegisterUser ...
 func (r UserRepository) RegisterUser(ctx context.Context, dto user.RegistrationDTO) (*user.FetchDTO, error) {
-	db := r.dbConn
-	return r.registerUser(ctx, db, dto.General)
-}
-
-// RegisterUserWithTx ...
-func (r UserRepository) RegisterUserWithTx(ctx context.Context, tx *gorm.DB, dto user.RegistrationDTO) (*user.FetchDTO, error) {
-	return r.registerUser(ctx, tx, dto.General)
-}
-
-func (r UserRepository) registerUser(ctx context.Context, db *gorm.DB, generalUser user.General) (*user.FetchDTO, error) {
-	userDBModel := dbModel.InitUser(generalUser)
-	if err := db.Create(&userDBModel).Error; err != nil {
+	tx, ok := getTxFromContext(ctx)
+	if !ok {
+		tx = r.dbConn
+	}
+	userDBModel := dbModel.InitUser(dto.General)
+	if err := tx.Create(&userDBModel).Error; err != nil {
 		return nil, err
 	}
 	userFetchDTO, err := dbModel.MakeUserFetchDTO(*userDBModel)
