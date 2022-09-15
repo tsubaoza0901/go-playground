@@ -12,6 +12,7 @@ func (i Injection) InitUserManagementUsecase() interactor.UserManagementUsecase 
 		i.InitUserRepository(),
 		i.InitBalanceRepository(),
 		i.InitDealRepository(),
+		i.InitTransactionManagementRepository(),
 	)
 }
 
@@ -34,5 +35,6 @@ func (i Injection) InitBalanceControlUsecase() interactor.BalanceControlUsecase 
 	return interactor.NewBalanceControlUsecase(
 		i.InitBalanceRepository(),
 		i.InitDealRepository(),
+		i.InitTransactionManagementRepository(),
 	)
 }

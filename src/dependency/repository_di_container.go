@@ -4,6 +4,11 @@ import "go-playground/m/v1/src/adapters/gateways/repository"
 
 // 簡易DIコンテナ（Repository用）
 
+// InitTransactionManagementRepository ...
+func (i Injection) InitTransactionManagementRepository() repository.TransactionManagementRepository {
+	return repository.NewTransactionManagementRepository(i.dbConn)
+}
+
 // InitUserRepository ...
 func (i Injection) InitUserRepository() repository.UserRepository {
 	return repository.NewUserRepository(i.dbConn)

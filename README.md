@@ -123,3 +123,14 @@ func (a Amount) ToJPYString() string {
 
 バリデーションチェックも行うがあくまで、Usecaseに渡すための必要な情報が揃っているか（requiredレベル）の確認のみに徹する
 ビジネスロジックとしてのバリデーションチェックはUsecase層で行う
+
+## Repository
+
+トランザクションはやはり完全な隠蔽が難しそう、、
+そのため、完全な隠蔽を目指すRepositoryパターンだと、少々違和感がある
+
+そして、DataAccessの領域にエンティティが出てくるので少々扱いにくい。。
+
+なので、Repositoryパターンではなく、Table Data Gateway（PoEAA）パターンを採用し、データベースの情報はUsecase層でエンティティに変換して使用するほうが良さそう？
+https://engineering.mercari.com/blog/entry/2019-12-19-100000/
+https://matope.hatenablog.com/entry/2014/05/13/193709
