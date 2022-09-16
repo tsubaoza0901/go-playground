@@ -2,8 +2,8 @@ package interactor
 
 import (
 	"context"
-	"go-playground/m/v1/src/domain/repository"
 	"go-playground/m/v1/src/usecase/data/output"
+	"go-playground/m/v1/src/usecase/repository"
 )
 
 // GradeUsecase ...
