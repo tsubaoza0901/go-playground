@@ -57,6 +57,11 @@ root@fe385569a625:/go/app# go run main.go
  ## Domain
 
 DTOがEntityを渡すほうが良いのか、必要な情報をプリミティブな形で渡すほうが良いのかは要検討
+→ DTOにEntityの情報を渡した場合は、Usecase層での変換処理がなくて済むのでUsecase層としては扱いやすい。
+ただし、いろんなところでEntityをNewしたりするので、Entityの操作が多くなる点は問題
+
+一方、DTOをプリミティブな型のフィールドで渡す場合、Usecase層でのDTO変換およびEntity変換がめんどくさそう
+
 
 DTOに必要な情報があるかのバリデーションメソッドはやすのもあり？
 
