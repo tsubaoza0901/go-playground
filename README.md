@@ -105,6 +105,8 @@ func (a TopUpAmount) IsMinimumAmountOrMore() bool {
 
 ただし、そのメソッドを使用して値を変換して表示するかどうかの判断は、Presenter層やController層の責務であるためUsecase層ではそのメソッドを使用しないこと
 
+usecase層で表示に関するロジックを持つのはやや違和感あるが、presentor層を持たない場合はしょうがない気がする
+
 例）
 
 ```go
