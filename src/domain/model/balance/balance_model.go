@@ -35,7 +35,7 @@ func (a RemainingAmount) AddUp(topUpAmount TopUpAmount) (*RemainingAmount, error
 
 // Subtract 残高引き算
 func (a RemainingAmount) Subtract(paymentAmount PaymentAmount) (*RemainingAmount, error) {
-	if !a.hasEnoughAmount(paymentAmount) {
+	if !a.hasEnoughRemainingAmount(paymentAmount) {
 		return nil, errors.New("残高不足です。")
 	}
 	calcuratedResult := uint(a) - uint(paymentAmount)
@@ -43,7 +43,7 @@ func (a RemainingAmount) Subtract(paymentAmount PaymentAmount) (*RemainingAmount
 	return &a, nil
 }
 
-func (a RemainingAmount) hasEnoughAmount(amount PaymentAmount) bool {
+func (a RemainingAmount) hasEnoughRemainingAmount(amount PaymentAmount) bool {
 	return uint(a) >= uint(amount)
 }
 

@@ -5,8 +5,8 @@ type RegistrationDTO struct {
 	General
 }
 
-// SetFieldToRegistrationDTO ...
-func SetFieldToRegistrationDTO(user General) RegistrationDTO {
+// NewRegistrationDTO ...
+func NewRegistrationDTO(user General) RegistrationDTO {
 	return RegistrationDTO{
 		General: user,
 	}

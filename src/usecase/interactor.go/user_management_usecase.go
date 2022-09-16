@@ -47,7 +47,7 @@ func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate i
 	if err := u.Transaction(ctx, func(ctx context.Context) (err error) {
 
 		// ユーザー登録
-		userFetchDTO, err := u.RegisterUser(ctx, user.SetFieldToRegistrationDTO(*generalUser))
+		userFetchDTO, err := u.RegisterUser(ctx, user.NewRegistrationDTO(*generalUser))
 		if err != nil {
 			return err
 		}

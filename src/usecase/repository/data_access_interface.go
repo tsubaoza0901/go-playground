@@ -11,8 +11,8 @@ import (
 // IBalanceRepository ...
 type IBalanceRepository interface {
 	FetchBalanceByUserID(ctx context.Context, userID uint) (*balance.FetchAmountDTO, error)
-	CreateBalance(ctx context.Context, userID uint, bl balance.CreateBalanceDTO) error
-	UpdateBalance(ctx context.Context, userID uint, bl balance.UpdateBalanceDTO) error
+	CreateBalance(ctx context.Context, userID uint, dto balance.CreateBalanceDTO) error
+	UpdateBalance(ctx context.Context, userID uint, dto balance.UpdateBalanceDTO) error
 }
 
 // IGradeRepository ...
