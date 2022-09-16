@@ -41,13 +41,8 @@ func NewTransactionManagementRepository(conn *gorm.DB) TransactionManagementRepo
 // 	return tx.Rollback().Error
 // }
 
-func getTxFromContext(ctx context.Context) (*gorm.DB, bool) {
-	tx, ok := ctx.Value(transaction.Key).(*gorm.DB)
-	return tx, ok
-}
-
 // Transaction ...
-func (r TransactionManagementRepository) Transaction(ctx context.Context, fc func(ctx context.Context) error) (err error) {
+func (r TransactionManagementRepository) Transaction(ctx context.Context, fc func(context.Context) error) (err error) {
 	tx := r.dbConn.Begin()
 	if tx.Error != nil {
 		return tx.Error
@@ -66,6 +61,11 @@ func (r TransactionManagementRepository) Transaction(ctx context.Context, fc fun
 		return err
 	}
 	return nil
+}
+
+func getTxFromContext(ctx context.Context) (*gorm.DB, bool) {
+	tx, ok := ctx.Value(transaction.Key).(*gorm.DB)
+	return tx, ok
 }
 
 // // TransactionFinisher defer内で呼び出されるトランザクション終了処理メソッド
