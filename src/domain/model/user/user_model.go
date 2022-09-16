@@ -132,6 +132,7 @@ func NewGeneral(firstName string, lastName string, age uint, email string) (*Gen
 	const defaultGradeID = grade.NonGrade // 新規登録時は等級なし（6）からスタート
 	gradeEntity := grade.NewEntity(defaultGradeID)
 	entity.setGrade(*gradeEntity)
+
 	return &General{*entity}, nil
 }
 
