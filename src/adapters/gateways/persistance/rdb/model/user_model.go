@@ -1,7 +1,6 @@
 package model
 
 import (
-	"go-playground/m/v1/src/domain/model/user"
 	"go-playground/m/v1/src/usecase/repository/dto"
 
 	"gorm.io/gorm"
@@ -38,11 +37,11 @@ func ConvertToUser(u dto.RegisterUser) User {
 func MakeFetchUserResultDTO(u User) *dto.FetchUserResult {
 	gradeResultDTO := MakeFetchGradeResultDTO(u.Grade)
 	fetchUserResult := dto.NewFetchUserResult(
-		user.ID(u.ID),
-		user.FirstName(u.FirstName),
-		user.LastName(u.LastName),
-		user.Age(u.Age),
-		user.EmailAddress(u.EmailAddress),
+		u.ID,
+		u.FirstName,
+		u.LastName,
+		u.Age,
+		u.EmailAddress,
 		*gradeResultDTO,
 	)
 	return fetchUserResult

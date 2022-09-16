@@ -1,7 +1,6 @@
 package model
 
 import (
-	"go-playground/m/v1/src/domain/model/deal"
 	"go-playground/m/v1/src/usecase/repository/dto"
 
 	"gorm.io/gorm"
@@ -32,9 +31,9 @@ func ConvertToDealHistory(userID uint, itemName string, amount uint) DealHistory
 // MakeFetchHistoryResultDTO ...
 func MakeFetchHistoryResultDTO(dh DealHistory) *dto.FetchDealHistoryResult {
 	return dto.NewFetchDealHistoryResult(
-		deal.CreatedAt(dh.CreatedAt),
-		deal.ItemName(dh.ItemName),
-		deal.Amount(dh.Amount),
+		dh.CreatedAt,
+		dh.ItemName,
+		dh.Amount,
 	)
 }
 

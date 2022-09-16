@@ -9,10 +9,10 @@ type FetchGradeResult struct {
 }
 
 // NewFetchGradeResult ...
-func NewFetchGradeResult(id grade.ID, name grade.Name) *FetchGradeResult {
+func NewFetchGradeResult(id uint, name string) *FetchGradeResult {
 	return &FetchGradeResult{
-		ID:   uint(id),
-		Name: string(name),
+		ID:   id,
+		Name: name,
 	}
 }
 

@@ -31,11 +31,11 @@ type FetchDealHistoryResult struct {
 }
 
 // NewFetchDealHistoryResult ...
-func NewFetchDealHistoryResult(createdAt deal.CreatedAt, itemName deal.ItemName, amount deal.Amount) *FetchDealHistoryResult {
+func NewFetchDealHistoryResult(createdAt time.Time, itemName string, amount uint) *FetchDealHistoryResult {
 	return &FetchDealHistoryResult{
-		CreatedAt: time.Time(createdAt),
-		ItemName:  string(itemName),
-		Amount:    uint(amount),
+		CreatedAt: createdAt,
+		ItemName:  itemName,
+		Amount:    amount,
 	}
 }
 

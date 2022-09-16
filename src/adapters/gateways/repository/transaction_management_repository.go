@@ -17,30 +17,6 @@ func NewTransactionManagementRepository(conn *gorm.DB) TransactionManagementRepo
 	return TransactionManagementRepository{conn}
 }
 
-// // NewContextWithTx ...
-// func (r TransactionManagementRepository) NewContextWithTx(ctx context.Context) context.Context {
-// 	tx := r.dbConn.Begin()
-// 	return context.WithValue(ctx, transaction.Key, tx)
-// }
-
-// // CommitByContext ...
-// func (r TransactionManagementRepository) CommitByContext(ctx context.Context) error {
-// 	tx, ok := getTxFromContext(ctx)
-// 	if !ok {
-// 		return errors.New("アサーション失敗によりトランザクション取得不可")
-// 	}
-// 	return tx.Commit().Error
-// }
-
-// // RollbackByContext ...
-// func (r TransactionManagementRepository) RollbackByContext(ctx context.Context) error {
-// 	tx, ok := getTxFromContext(ctx)
-// 	if !ok {
-// 		return errors.New("アサーション失敗によりトランザクション取得不可")
-// 	}
-// 	return tx.Rollback().Error
-// }
-
 // Transaction ...
 func (r TransactionManagementRepository) Transaction(ctx context.Context, fc func(context.Context) error) (err error) {
 	tx := r.dbConn.Begin()
@@ -67,6 +43,30 @@ func getTxFromContext(ctx context.Context) (*gorm.DB, bool) {
 	tx, ok := ctx.Value(repository.TransactionKey).(*gorm.DB)
 	return tx, ok
 }
+
+// // NewContextWithTx ...
+// func (r TransactionManagementRepository) NewContextWithTx(ctx context.Context) context.Context {
+// 	tx := r.dbConn.Begin()
+// 	return context.WithValue(ctx, transaction.Key, tx)
+// }
+
+// // CommitByContext ...
+// func (r TransactionManagementRepository) CommitByContext(ctx context.Context) error {
+// 	tx, ok := getTxFromContext(ctx)
+// 	if !ok {
+// 		return errors.New("アサーション失敗によりトランザクション取得不可")
+// 	}
+// 	return tx.Commit().Error
+// }
+
+// // RollbackByContext ...
+// func (r TransactionManagementRepository) RollbackByContext(ctx context.Context) error {
+// 	tx, ok := getTxFromContext(ctx)
+// 	if !ok {
+// 		return errors.New("アサーション失敗によりトランザクション取得不可")
+// 	}
+// 	return tx.Rollback().Error
+// }
 
 // // TransactionFinisher defer内で呼び出されるトランザクション終了処理メソッド
 // // 注）使用する際は必ず以下について確認すること

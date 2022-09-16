@@ -1,7 +1,6 @@
 package model
 
 import (
-	"go-playground/m/v1/src/domain/model/grade"
 	"go-playground/m/v1/src/usecase/repository/dto"
 )
 
@@ -19,8 +18,8 @@ func (Grade) TableName() string {
 // MakeFetchGradeResultDTO ...
 func MakeFetchGradeResultDTO(g Grade) *dto.FetchGradeResult {
 	fetchGradeResult := dto.NewFetchGradeResult(
-		grade.ID(g.ID),
-		grade.Name(g.Name),
+		g.ID,
+		g.Name,
 	)
 	return fetchGradeResult
 }

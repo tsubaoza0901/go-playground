@@ -95,7 +95,7 @@ func (u UserManagementUsecase) RetrieveUsers(ctx context.Context) (output.Users,
 }
 
 func (u UserManagementUsecase) verifyThatNoUserHasSameEmail(ctx context.Context, email user.EmailAddress) error {
-	count, err := u.CountTheNumberOfUsersByEmail(ctx, email)
+	count, err := u.CountTheNumberOfUsersByEmail(ctx, string(email))
 	if err != nil {
 		return err
 	}

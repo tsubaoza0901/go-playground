@@ -36,13 +36,13 @@ type FetchUserResult struct {
 }
 
 // NewFetchUserResult ...
-func NewFetchUserResult(id user.ID, firstName user.FirstName, lastName user.LastName, age user.Age, email user.EmailAddress, grade FetchGradeResult) *FetchUserResult {
+func NewFetchUserResult(id uint, firstName string, lastName string, age uint, email string, grade FetchGradeResult) *FetchUserResult {
 	return &FetchUserResult{
-		ID:           uint(id),
-		FirstName:    string(firstName),
-		LastName:     string(lastName),
-		Age:          uint(age),
-		EmailAddress: string(email),
+		ID:           id,
+		FirstName:    firstName,
+		LastName:     lastName,
+		Age:          age,
+		EmailAddress: email,
 		Grade: FetchGradeResult{
 			ID:   grade.ID,
 			Name: grade.Name,

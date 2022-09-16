@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"go-playground/m/v1/src/domain/model/user"
 	"go-playground/m/v1/src/usecase/repository/dto"
 )
 
@@ -34,7 +33,7 @@ type IUserManagementRepository interface {
 	RegisterUser(context.Context, dto.RegisterUser) (*dto.FetchUserResult, error)
 	FetchUserByID(ctx context.Context, id uint) (*dto.FetchUserResult, error)
 	FetchUserList(ctx context.Context) (*dto.FetchUserListResult, error)
-	CountTheNumberOfUsersByEmail(ctx context.Context, email user.EmailAddress) (count uint, err error)
+	CountTheNumberOfUsersByEmail(ctx context.Context, email string) (count uint, err error)
 }
 
 // ITransactionManagementRepository ...

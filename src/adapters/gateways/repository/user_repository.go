@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	dbModel "go-playground/m/v1/src/adapters/gateways/persistance/rdb/model"
-	"go-playground/m/v1/src/domain/model/user"
 	"go-playground/m/v1/src/usecase/repository/dto"
 
 	"gorm.io/gorm"
@@ -59,7 +58,7 @@ func (r UserRepository) fetchUserList() (*dto.FetchUserListResult, error) {
 }
 
 // CountTheNumberOfUsersByEmail ...
-func (r UserRepository) CountTheNumberOfUsersByEmail(ctx context.Context, email user.EmailAddress) (uint, error) {
+func (r UserRepository) CountTheNumberOfUsersByEmail(ctx context.Context, email string) (uint, error) {
 	var count int64
 	if err := r.dbConn.Model(&dbModel.User{}).Where("email_address = ?", email).Count(&count).Error; err != nil {
 		return 0, err
