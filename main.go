@@ -6,8 +6,8 @@ import (
 
 	"go-playground/m/v1/src/adapters/controllers/http/middleware"
 	"go-playground/m/v1/src/adapters/controllers/http/router"
-	"go-playground/m/v1/src/adapters/gateways/persistance/rdb/driver"
 	"go-playground/m/v1/src/dependency"
+	"go-playground/m/v1/src/infrastructure/driver"
 
 	"github.com/labstack/echo/v4"
 )
