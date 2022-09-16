@@ -6,9 +6,9 @@ import (
 	"go-playground/m/v1/src/domain/model/balance"
 	"go-playground/m/v1/src/domain/model/deal"
 	"go-playground/m/v1/src/domain/model/user"
-	"go-playground/m/v1/src/domain/repository"
 	"go-playground/m/v1/src/usecase/data/input"
 	"go-playground/m/v1/src/usecase/data/output"
+	"go-playground/m/v1/src/usecase/repository"
 )
 
 // UserManagementUsecase ...
