@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 	dbModel "go-playground/m/v1/src/adapters/gateways/persistance/rdb/model"
-	"go-playground/m/v1/src/domain/model/deal"
+	"go-playground/m/v1/src/usecase/repository/dto"
 
 	"gorm.io/gorm"
 )
@@ -21,12 +21,12 @@ func NewDealHistoryRepository(conn *gorm.DB) DealHistoryRepository {
 }
 
 // RegisterDealHistory ...
-func (r DealHistoryRepository) RegisterDealHistory(ctx context.Context, dto deal.RegisterHistoryDTO) error {
+func (r DealHistoryRepository) RegisterDealHistory(ctx context.Context, dto dto.RegisterDealHistory) error {
 	tx, ok := getTxFromContext(ctx)
 	if !ok {
 		tx = r.dbConn
 	}
-	dealHistory := dbModel.NewCreateDealHistory(dto.History, dto.UserID)
+	dealHistory := dbModel.ConvertToDealHistory(dto.UserID, dto.ItemName, dto.Amount)
 	if err := tx.Create(&dealHistory).Error; err != nil {
 		return err
 	}
@@ -34,10 +34,10 @@ func (r DealHistoryRepository) RegisterDealHistory(ctx context.Context, dto deal
 }
 
 // FetchDealHistoriesByUserID ...
-func (r DealHistoryRepository) FetchDealHistoriesByUserID(ctx context.Context, userID uint) (*deal.FetchHistoriesDTO, error) {
+func (r DealHistoryRepository) FetchDealHistoriesByUserID(ctx context.Context, userID uint) (*dto.FetchDealHistoryListResult, error) {
 	dealHistories := new(dbModel.DealHistories)
 	if err := r.dbConn.Where("user_id = ?", userID).Find(&dealHistories).Error; err != nil {
 		return nil, err
 	}
-	return dbModel.MakeFetchHistoriesDTO(*dealHistories), nil
+	return dbModel.MakeFetchHistoryListResultDTO(*dealHistories), nil
 }

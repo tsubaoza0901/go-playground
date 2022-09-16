@@ -4,6 +4,7 @@ import (
 	"context"
 	dbModel "go-playground/m/v1/src/adapters/gateways/persistance/rdb/model"
 	"go-playground/m/v1/src/domain/model/user"
+	"go-playground/m/v1/src/usecase/repository/dto"
 
 	"gorm.io/gorm"
 )
@@ -19,54 +20,42 @@ func NewUserRepository(dbConn *gorm.DB) UserRepository {
 }
 
 // RegisterUser ...
-func (r UserRepository) RegisterUser(ctx context.Context, dto user.RegistrationDTO) (*user.FetchDTO, error) {
+func (r UserRepository) RegisterUser(ctx context.Context, dto dto.RegisterUser) (*dto.FetchUserResult, error) {
 	tx, ok := getTxFromContext(ctx)
 	if !ok {
 		tx = r.dbConn
 	}
-	userDBModel := dbModel.InitUser(dto.General)
+	userDBModel := dbModel.ConvertToUser(dto)
 	if err := tx.Create(&userDBModel).Error; err != nil {
 		return nil, err
 	}
-	userFetchDTO, err := dbModel.MakeUserFetchDTO(*userDBModel)
-	if err != nil {
-		return nil, err
-	}
-	return userFetchDTO, nil
+	return dbModel.MakeFetchUserResultDTO(userDBModel), nil
 }
 
-// FetchUser ...
-func (r UserRepository) FetchUser(ctx context.Context, id uint) (*user.FetchDTO, error) {
+// FetchUserByID ...
+func (r UserRepository) FetchUserByID(ctx context.Context, id uint) (*dto.FetchUserResult, error) {
 	return r.fetchByID(id)
 }
 
-func (r UserRepository) fetchByID(id uint) (*user.FetchDTO, error) {
+func (r UserRepository) fetchByID(id uint) (*dto.FetchUserResult, error) {
 	userDBModel := new(dbModel.User)
 	if err := r.dbConn.Preload("Grade").Where("id = ?", id).First(&userDBModel).Error; err != nil {
 		return nil, err
 	}
-	userFetchDTO, err := dbModel.MakeUserFetchDTO(*userDBModel)
-	if err != nil {
-		return nil, err
-	}
-	return userFetchDTO, nil
+	return dbModel.MakeFetchUserResultDTO(*userDBModel), nil
 }
 
-// FetchAllUsers ...
-func (r UserRepository) FetchAllUsers(ctx context.Context) (*user.FetchAllDTO, error) {
-	return r.fetchAllUsers()
+// FetchUserList ...
+func (r UserRepository) FetchUserList(ctx context.Context) (*dto.FetchUserListResult, error) {
+	return r.fetchUserList()
 }
 
-func (r UserRepository) fetchAllUsers() (*user.FetchAllDTO, error) {
+func (r UserRepository) fetchUserList() (*dto.FetchUserListResult, error) {
 	usersDBModel := new(dbModel.Users)
 	if err := r.dbConn.Preload("Grade").Find(&usersDBModel).Error; err != nil {
 		return nil, err
 	}
-	userFetchAllDTO, err := dbModel.MakeUserFetchAllDTO(*usersDBModel)
-	if err != nil {
-		return nil, err
-	}
-	return userFetchAllDTO, nil
+	return dbModel.MakeFetchUserListResultDTO(*usersDBModel), nil
 }
 
 // CountTheNumberOfUsersByEmail ...

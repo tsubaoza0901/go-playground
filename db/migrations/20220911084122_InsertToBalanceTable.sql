@@ -2,7 +2,8 @@
 -- +goose Up
 -- SQL in section 'Up' is executed when this migration is applied
 INSERT INTO balance (user_id, amount)
-VALUES  (1, 1000);
+VALUES  (1, 1000),
+        (2, 4000);
 
 
 -- +goose Down

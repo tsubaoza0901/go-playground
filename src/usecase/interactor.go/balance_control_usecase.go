@@ -4,9 +4,11 @@ import (
 	"context"
 	"go-playground/m/v1/src/domain/model/balance"
 	"go-playground/m/v1/src/domain/model/deal"
+	"go-playground/m/v1/src/domain/model/user"
 	"go-playground/m/v1/src/usecase/data/input"
 	"go-playground/m/v1/src/usecase/data/output"
 	"go-playground/m/v1/src/usecase/repository"
+	"go-playground/m/v1/src/usecase/repository/dto"
 )
 
 // BalanceControlUsecase ...
@@ -24,12 +26,10 @@ func NewBalanceControlUsecase(br repository.IBalanceRepository, th repository.ID
 // PutMoney 電子マネーのチャージ
 func (u BalanceControlUsecase) PutMoney(ctx context.Context, userID uint, inputPuttingMoney input.PuttingMoney) error {
 	// 残高取得
-	balanceFetchAmountDTO, err := u.FetchBalanceByUserID(ctx, userID)
+	remainingAmount, err := u.fetchBalanceByUserID(ctx, userID)
 	if err != nil {
 		return err
 	}
-	remainingAmount := balanceFetchAmountDTO.RemainingAmount
-
 	// チャージ結果計算
 	calculatedRemainingAmount, err := remainingAmount.AddUp(balance.TopUpAmount(inputPuttingMoney.Amount))
 	if err != nil {
@@ -40,13 +40,13 @@ func (u BalanceControlUsecase) PutMoney(ctx context.Context, userID uint, inputP
 	if err := u.Transaction(ctx, func(ctx context.Context) (err error) {
 
 		// 残高更新
-		if err = u.UpdateBalance(ctx, userID, balance.NewUpdateBalanceDTO(*calculatedRemainingAmount)); err != nil {
+		if err = u.UpdateBalance(ctx, userID, dto.NewUpdateBalance(uint(*calculatedRemainingAmount))); err != nil {
 			return err
 		}
 
 		// 取引履歴登録
-		dealHistory := deal.NewHistory("", uint(inputPuttingMoney.Amount))
-		if err = u.RegisterDealHistory(ctx, deal.NewRegisterHistoryDTO(*dealHistory, userID)); err != nil {
+		dealHistory := deal.NewTopUpHistory(uint(inputPuttingMoney.Amount))
+		if err = u.RegisterDealHistory(ctx, dto.NewRegisterDealHistory(user.ID(userID), dealHistory.ItemName(), dealHistory.Amount())); err != nil {
 			return err
 		}
 		return
@@ -59,14 +59,11 @@ func (u BalanceControlUsecase) PutMoney(ctx context.Context, userID uint, inputP
 
 // PayMoney ...
 func (u BalanceControlUsecase) PayMoney(ctx context.Context, userID uint, inputPayment input.Payment) error {
-	var err error
-
 	// 残高取得
-	balanceFetchAmountDTO, err := u.FetchBalanceByUserID(ctx, userID)
+	remainingAmount, err := u.fetchBalanceByUserID(ctx, userID)
 	if err != nil {
 		return err
 	}
-	remainingAmount := balanceFetchAmountDTO.RemainingAmount
 
 	// 支払結果計算
 	calculatedRemainingAmount, err := remainingAmount.Subtract(balance.PaymentAmount(inputPayment.Amount))
@@ -78,13 +75,13 @@ func (u BalanceControlUsecase) PayMoney(ctx context.Context, userID uint, inputP
 	if err := u.Transaction(ctx, func(ctx context.Context) (err error) {
 
 		// 残高更新
-		if err = u.UpdateBalance(ctx, userID, balance.NewUpdateBalanceDTO(*calculatedRemainingAmount)); err != nil {
+		if err = u.UpdateBalance(ctx, userID, dto.NewUpdateBalance(uint(*calculatedRemainingAmount))); err != nil {
 			return err
 		}
 
 		// 取引履歴登録
-		dealHistory := deal.NewHistory(inputPayment.ItemName, uint(inputPayment.Amount))
-		if err = u.RegisterDealHistory(ctx, deal.NewRegisterHistoryDTO(*dealHistory, userID)); err != nil {
+		dealHistory := deal.NewPaymentHistory(inputPayment.ItemName, uint(inputPayment.Amount))
+		if err = u.RegisterDealHistory(ctx, dto.NewRegisterDealHistory(user.ID(userID), dealHistory.ItemName(), dealHistory.Amount())); err != nil {
 			return err
 		}
 		return
@@ -97,10 +94,17 @@ func (u BalanceControlUsecase) PayMoney(ctx context.Context, userID uint, inputP
 
 // RetrieveRemainingBalanceByUserID 電子マネーの残高確認
 func (u BalanceControlUsecase) RetrieveRemainingBalanceByUserID(ctx context.Context, userID uint) (output.Balance, error) {
-	balanceFetchAmountDTO, err := u.FetchBalanceByUserID(ctx, userID)
+	remainingAmount, err := u.fetchBalanceByUserID(ctx, userID)
 	if err != nil {
 		return output.Balance{}, err
 	}
-	remainingAmount := balanceFetchAmountDTO.RemainingAmount
 	return output.MakeBalance(remainingAmount), nil
+}
+
+func (u BalanceControlUsecase) fetchBalanceByUserID(ctx context.Context, userID uint) (balance.RemainingAmount, error) {
+	fetchResult, err := u.FetchBalanceByUserID(ctx, userID)
+	if err != nil {
+		return 0, err
+	}
+	return balance.RemainingAmount(fetchResult.RemainingAmount), nil
 }

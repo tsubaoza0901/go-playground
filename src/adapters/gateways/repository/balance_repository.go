@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 	dbModel "go-playground/m/v1/src/adapters/gateways/persistance/rdb/model"
-	"go-playground/m/v1/src/domain/model/balance"
+	"go-playground/m/v1/src/usecase/repository/dto"
 
 	"gorm.io/gorm"
 )
@@ -20,13 +20,13 @@ func NewBalanceRepository(conn *gorm.DB) BalanceRepository {
 	}
 }
 
-// CreateBalance ...
-func (r BalanceRepository) CreateBalance(ctx context.Context, userID uint, dto balance.CreateBalanceDTO) error {
+// RegisterBalance ...
+func (r BalanceRepository) RegisterBalance(ctx context.Context, userID uint, dto dto.RegisterBalance) error {
 	tx, ok := getTxFromContext(ctx)
 	if !ok {
 		tx = r.dbConn
 	}
-	balanceDBModel := dbModel.InitBalance(userID, dto.RemainingAmount)
+	balanceDBModel := dbModel.ConvertToBalance(userID, dto.RemainingAmount)
 	if err := tx.Create(&balanceDBModel).Error; err != nil {
 		return err
 	}
@@ -34,7 +34,7 @@ func (r BalanceRepository) CreateBalance(ctx context.Context, userID uint, dto b
 }
 
 // UpdateBalance ...
-func (r BalanceRepository) UpdateBalance(ctx context.Context, userID uint, dto balance.UpdateBalanceDTO) error {
+func (r BalanceRepository) UpdateBalance(ctx context.Context, userID uint, dto dto.UpdateBalance) error {
 	tx, ok := getTxFromContext(ctx)
 	if !ok {
 		tx = r.dbConn
@@ -46,14 +46,14 @@ func (r BalanceRepository) UpdateBalance(ctx context.Context, userID uint, dto b
 }
 
 // FetchBalanceByUserID ...
-func (r BalanceRepository) FetchBalanceByUserID(ctx context.Context, userID uint) (*balance.FetchAmountDTO, error) {
+func (r BalanceRepository) FetchBalanceByUserID(ctx context.Context, userID uint) (*dto.FetchBlanceResult, error) {
 	return r.fetchBy(ctx, userID)
 }
 
-func (r BalanceRepository) fetchBy(ctx context.Context, userID uint) (*balance.FetchAmountDTO, error) {
+func (r BalanceRepository) fetchBy(ctx context.Context, userID uint) (*dto.FetchBlanceResult, error) {
 	balanceDBModel := new(dbModel.Balance)
 	if err := r.dbConn.Where("user_id = ?", userID).First(&balanceDBModel).Error; err != nil {
 		return nil, err
 	}
-	return dbModel.MakeBalanceFetchAmountDTO(*balanceDBModel), nil
+	return dbModel.MakeFetchBlanceResultDTO(*balanceDBModel), nil
 }

@@ -19,8 +19,8 @@ type Balance struct {
 }
 
 // MakeBalance ...
-func MakeBalance(balance balance.RemainingAmount) Balance {
+func MakeBalance(remainingAmount balance.RemainingAmount) Balance {
 	return Balance{
-		Amount: Amount(balance),
+		Amount: Amount(remainingAmount),
 	}
 }

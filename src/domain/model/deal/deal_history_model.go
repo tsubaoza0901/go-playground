@@ -22,14 +22,22 @@ type Entity struct {
 	amount    Amount
 }
 
+func newHistory(itemName ItemName, amount Amount) *History {
+	history := new(History)
+
+	history.setItemName(itemName)
+	history.setAmount(amount)
+
+	return history
+}
+
 // CreatedAt Getter
 func (p *Entity) CreatedAt() CreatedAt {
 	return p.createdAt
 }
 
-// SetCreatedAt Setter
-func (p *Entity) SetCreatedAt(createdAt time.Time) {
-	p.createdAt = CreatedAt(createdAt)
+func (p *Entity) setCreatedAt(createdAt CreatedAt) {
+	p.createdAt = createdAt
 }
 
 // ItemName Getter
@@ -37,8 +45,8 @@ func (p *Entity) ItemName() ItemName {
 	return p.itemName
 }
 
-func (p *Entity) setItemName(itemName string) {
-	p.itemName = ItemName(itemName)
+func (p *Entity) setItemName(itemName ItemName) {
+	p.itemName = itemName
 }
 
 // Amount Getter
@@ -46,8 +54,8 @@ func (p *Entity) Amount() Amount {
 	return p.amount
 }
 
-func (p *Entity) setAmount(amount uint) {
-	p.amount = Amount(amount)
+func (p *Entity) setAmount(amount Amount) {
+	p.amount = amount
 }
 
 // History ...
@@ -55,16 +63,20 @@ type History struct {
 	Entity
 }
 
-// NewHistory ...
-func NewHistory(itemName string, amount uint) *History {
-	history := new(History)
+// NewPaymentHistory ...
+func NewPaymentHistory(itemName string, amount uint) *History {
+	return newHistory(ItemName(itemName), Amount(amount))
+}
 
-	if itemName == "" && amount >= 0 {
-		history.setItemName("チャージ")
-	} else {
-		history.setItemName(itemName)
-	}
-	history.setAmount(amount)
+// NewTopUpHistory ...
+func NewTopUpHistory(amount uint) *History {
+	return newHistory("チャージ", Amount(amount))
+}
+
+// MakeHistory ...
+func MakeHistory(createdAt CreatedAt, itemName ItemName, amount Amount) *History {
+	history := newHistory(itemName, amount)
+	history.setCreatedAt(createdAt)
 	return history
 }
 

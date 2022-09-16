@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 	dbModel "go-playground/m/v1/src/adapters/gateways/persistance/rdb/model"
-	"go-playground/m/v1/src/domain/model/grade"
+	"go-playground/m/v1/src/usecase/repository/dto"
 
 	"gorm.io/gorm"
 )
@@ -20,11 +20,11 @@ func NewGradeRepository(conn *gorm.DB) GradeRepository {
 	}
 }
 
-// FetchAllGrades ...
-func (r GradeRepository) FetchAllGrades(ctx context.Context) (*grade.FetchAllDTO, error) {
+// FetchGradeList ...
+func (r GradeRepository) FetchGradeList(ctx context.Context) (*dto.FetchGradeListResult, error) {
 	grades := new(dbModel.Grades)
 	if err := r.dbConn.Find(&grades).Error; err != nil {
 		return nil, err
 	}
-	return dbModel.MakeFetchAllDTO(*grades), nil
+	return dbModel.MakeFetchGradeListResultDTO(*grades), nil
 }

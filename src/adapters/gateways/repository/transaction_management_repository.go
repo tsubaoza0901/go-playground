@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"go-playground/m/v1/src/usecase"
+	"go-playground/m/v1/src/usecase/repository"
 
 	"gorm.io/gorm"
 )
@@ -53,7 +53,7 @@ func (r TransactionManagementRepository) Transaction(ctx context.Context, fc fun
 			tx.Rollback()
 		}
 	}()
-	ctx = context.WithValue(ctx, usecase.TransactionKey, tx)
+	ctx = context.WithValue(ctx, repository.TransactionKey, tx)
 	if err = fc(ctx); err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ func (r TransactionManagementRepository) Transaction(ctx context.Context, fc fun
 }
 
 func getTxFromContext(ctx context.Context) (*gorm.DB, bool) {
-	tx, ok := ctx.Value(usecase.TransactionKey).(*gorm.DB)
+	tx, ok := ctx.Value(repository.TransactionKey).(*gorm.DB)
 	return tx, ok
 }
 

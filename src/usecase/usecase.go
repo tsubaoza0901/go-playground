@@ -6,11 +6,6 @@ import (
 	"go-playground/m/v1/src/usecase/data/output"
 )
 
-type contextKey string
-
-// TransactionKey ...
-const TransactionKey contextKey = "transaction"
-
 // IBalanceControlUsecase ...
 type IBalanceControlUsecase interface {
 	RetrieveRemainingBalanceByUserID(ctx context.Context, userID uint) (output.Balance, error)

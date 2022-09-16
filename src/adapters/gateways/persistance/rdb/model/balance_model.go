@@ -2,7 +2,7 @@ package model
 
 import (
 	"database/sql"
-	"go-playground/m/v1/src/domain/model/balance"
+	"go-playground/m/v1/src/usecase/repository/dto"
 	"time"
 )
 
@@ -20,17 +20,15 @@ func (Balance) TableName() string {
 	return "balance"
 }
 
-// InitBalance ...
-func InitBalance(userID uint, remainingAmount balance.RemainingAmount) *Balance {
-	return &Balance{
+// ConvertToBalance ...
+func ConvertToBalance(userID uint, remainingAmount uint) Balance {
+	return Balance{
 		UserID: userID,
 		Amount: uint(remainingAmount),
 	}
 }
 
-// MakeBalanceFetchAmountDTO ...
-func MakeBalanceFetchAmountDTO(b Balance) *balance.FetchAmountDTO {
-	remainingAmount := balance.RemainingAmount(b.Amount)
-	fetchAmountDTO := balance.NewFetchAmountDTO(remainingAmount)
-	return &fetchAmountDTO
+// MakeFetchBlanceResultDTO ...
+func MakeFetchBlanceResultDTO(b Balance) *dto.FetchBlanceResult {
+	return dto.NewFetchBlanceResult(b.Amount)
 }

@@ -141,3 +141,10 @@ func (a Amount) ToJPYString() string {
 なので、Repositoryパターンではなく、Table Data Gateway（PoEAA）パターンを採用し、データベースの情報はUsecase層でエンティティに変換して使用するほうが良さそう？
 https://engineering.mercari.com/blog/entry/2019-12-19-100000/
 https://matope.hatenablog.com/entry/2014/05/13/193709
+
+## Presenter
+
+クリーンアーキテクチャにある以下のような記述を見ると、モノリシックなアプリケーションを想定しているように感じる
+昨今ではフロントエンド側でのロジックもあるので、ここで言うPresenter と Viewについては、バックエンドとしてはあまり気にしなくてよさそう
+
+> GUI のユニットテストは難しい。なぜなら、画面に適切な要素が表示されている かを確認するテストを書くのが非常に難しいからだ。しかし、GUI の振る舞いの大部分は、簡 単にテストできる。Humble Object パターンを使えば、2 種類の振る舞いを Presenter と View の 2 つのクラスに分けられる。

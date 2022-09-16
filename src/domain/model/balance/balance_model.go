@@ -23,6 +23,9 @@ func (a TopUpAmount) isMinimumAmountOrMore() bool {
 // RemainingAmount 残高（エンティティ）
 type RemainingAmount uint
 
+// InitialAmount ...
+const InitialAmount RemainingAmount = 0
+
 // AddUp 残高足し算
 func (a RemainingAmount) AddUp(topUpAmount TopUpAmount) (*RemainingAmount, error) {
 	if !topUpAmount.isMinimumAmountOrMore() {

@@ -2,6 +2,7 @@ package model
 
 import (
 	"go-playground/m/v1/src/domain/model/grade"
+	"go-playground/m/v1/src/usecase/repository/dto"
 )
 
 // Grade ...
@@ -15,22 +16,23 @@ func (Grade) TableName() string {
 	return "grades"
 }
 
-func (g Grade) makeGradeEntity() grade.Entity {
-	gradeEntity := grade.NewEntity(g.Name)
-	gradeEntity.SetID(g.ID)
-	return *gradeEntity
+// MakeFetchGradeResultDTO ...
+func MakeFetchGradeResultDTO(g Grade) *dto.FetchGradeResult {
+	fetchGradeResult := dto.NewFetchGradeResult(
+		grade.ID(g.ID),
+		grade.Name(g.Name),
+	)
+	return fetchGradeResult
 }
 
 // Grades ...
 type Grades []Grade
 
-// MakeFetchAllDTO ...
-func MakeFetchAllDTO(gs Grades) *grade.FetchAllDTO {
-	gradeEntities := make(grade.Entities, len(gs))
+// MakeFetchGradeListResultDTO ...
+func MakeFetchGradeListResultDTO(gs Grades) *dto.FetchGradeListResult {
+	fetchGradeListResult := make(dto.FetchGradeListResult, len(gs))
 	for i, g := range gs {
-		gradeEntities[i] = g.makeGradeEntity()
+		fetchGradeListResult[i] = MakeFetchGradeResultDTO(g)
 	}
-	gradeFetchAllDTO := grade.NewFetchAllDTO(gradeEntities)
-
-	return &gradeFetchAllDTO
+	return &fetchGradeListResult
 }

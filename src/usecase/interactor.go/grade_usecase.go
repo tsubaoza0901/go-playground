@@ -2,6 +2,7 @@ package interactor
 
 import (
 	"context"
+	"go-playground/m/v1/src/domain/model/grade"
 	"go-playground/m/v1/src/usecase/data/output"
 	"go-playground/m/v1/src/usecase/repository"
 )
@@ -18,9 +19,17 @@ func NewGradeUsecase(r repository.IGradeRepository) GradeUsecase {
 
 // RetrieveGrades ...
 func (u GradeUsecase) RetrieveGrades(ctx context.Context) (*output.Grades, error) {
-	grades, err := u.FetchAllGrades(ctx)
+	gradeList, err := u.fetchGradeList(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return output.MakeGrades(grades.Entities), nil
+	return output.MakeGrades(gradeList), nil
+}
+
+func (u GradeUsecase) fetchGradeList(ctx context.Context) (grade.Entities, error) {
+	fetchResult, err := u.FetchGradeList(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return fetchResult.ToGradesModel(), nil
 }
