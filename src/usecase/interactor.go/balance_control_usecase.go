@@ -7,7 +7,6 @@ import (
 	"go-playground/m/v1/src/domain/repository"
 	"go-playground/m/v1/src/usecase/data/input"
 	"go-playground/m/v1/src/usecase/data/output"
-	"log"
 )
 
 // BalanceControlUsecase ...
@@ -37,28 +36,31 @@ func (u BalanceControlUsecase) PutMoney(ctx context.Context, userID uint, inputP
 		return err
 	}
 
-	// 残高更新
-	tx := u.BeginConnection()
+	// 同一トランザクション内処理開始
+	if err := u.Transaction(ctx, func(ctx context.Context) (err error) {
 
-	if err := u.UpdateBalanceWithTx(ctx, tx, userID, balance.NewUpdateBalanceDTO(*calculatedRemainingAmount)); err != nil {
-		u.Rollback(tx)
+		// 残高更新
+		if err = u.UpdateBalance(ctx, userID, balance.NewUpdateBalanceDTO(*calculatedRemainingAmount)); err != nil {
+			return err
+		}
+
+		// 取引履歴登録
+		dealHistory := deal.NewHistory("", uint(inputPuttingMoney.Amount))
+		if err = u.RegisterDealHistory(ctx, deal.NewRegisterHistoryDTO(*dealHistory, userID)); err != nil {
+			return err
+		}
+		return
+	}); err != nil {
 		return err
 	}
 
-	// 取引履歴登録
-	dealHistory := deal.NewHistory("", uint(inputPuttingMoney.Amount))
-	if err := u.RegisterDealHistoryWithTx(ctx, tx, deal.NewRegisterHistoryDTO(*dealHistory, userID)); err != nil {
-		log.Printf("%+v", tx)
-		u.Rollback(tx)
-		return err
-	}
-
-	u.Commit(tx)
 	return nil
 }
 
 // PayMoney ...
 func (u BalanceControlUsecase) PayMoney(ctx context.Context, userID uint, inputPayment input.Payment) error {
+	var err error
+
 	// 残高取得
 	balanceFetchAmountDTO, err := u.FetchBalanceByUserID(ctx, userID)
 	if err != nil {
@@ -72,22 +74,23 @@ func (u BalanceControlUsecase) PayMoney(ctx context.Context, userID uint, inputP
 		return err
 	}
 
-	// 残高更新
-	tx := u.BeginConnection()
+	// 同一トランザクション内処理開始
+	if err := u.Transaction(ctx, func(ctx context.Context) (err error) {
 
-	if err := u.UpdateBalanceWithTx(ctx, tx, userID, balance.NewUpdateBalanceDTO(*calculatedRemainingAmount)); err != nil {
-		u.Rollback(tx)
+		// 残高更新
+		if err = u.UpdateBalance(ctx, userID, balance.NewUpdateBalanceDTO(*calculatedRemainingAmount)); err != nil {
+			return err
+		}
+
+		// 取引履歴登録
+		dealHistory := deal.NewHistory(inputPayment.ItemName, uint(inputPayment.Amount))
+		if err = u.RegisterDealHistory(ctx, deal.NewRegisterHistoryDTO(*dealHistory, userID)); err != nil {
+			return err
+		}
+		return
+	}); err != nil {
 		return err
 	}
-
-	// 取引履歴登録
-	dealHistory := deal.NewHistory(inputPayment.ItemName, uint(inputPayment.Amount))
-	if err := u.RegisterDealHistoryWithTx(ctx, tx, deal.NewRegisterHistoryDTO(*dealHistory, userID)); err != nil {
-		u.Rollback(tx)
-		return err
-	}
-
-	u.Commit(tx)
 
 	return nil
 }
