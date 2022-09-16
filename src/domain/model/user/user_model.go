@@ -32,17 +32,6 @@ type Entity struct {
 	grade        grade.Entity
 }
 
-func newEntity(firstName FirstName, lastName LastName, age Age, email EmailAddress) (*Entity, error) {
-	entity := new(Entity)
-	entity.setFirstName(firstName)
-	entity.setLastName(lastName)
-	if err := entity.setAge(age); err != nil {
-		return nil, err
-	}
-	entity.setEmailAddress(email)
-	return entity, nil
-}
-
 // ID Getter
 func (u *Entity) ID() ID {
 	return u.id
@@ -75,12 +64,8 @@ func (u *Entity) Age() Age {
 	return u.age
 }
 
-func (u *Entity) setAge(age Age) error {
-	if !Age(age).verifyAge() {
-		return errors.New("10歳以下の登録不可")
-	}
+func (u *Entity) setAge(age Age) {
 	u.age = age
-	return nil
 }
 
 // EmailAddress Getter
@@ -106,28 +91,21 @@ func (u *Entity) setGrade(g grade.Entity) {
 	u.grade = g
 }
 
-// IsSameUsersCountZero ...
-func IsSameUsersCountZero(count uint) bool { // TODO:ドメインロジックとして定義すべきかどうか検討
-	if count == 0 {
-		return true
-	}
-	return false
-}
-
 // General 一般ユーザー
 type General struct {
 	Entity
 }
 
-// Generals ...
-type Generals []General
-
 // NewGeneral ...
 func NewGeneral(firstName string, lastName string, age uint, email string) (*General, error) {
-	entity, err := newEntity(FirstName(firstName), LastName(lastName), Age(age), EmailAddress(email))
-	if err != nil {
-		return nil, err
+	entity := new(Entity)
+	entity.setFirstName(FirstName(firstName))
+	entity.setLastName(LastName(lastName))
+	if !Age(age).verifyAge() {
+		return nil, errors.New("10歳以下の登録不可")
 	}
+	entity.setAge(Age(age))
+	entity.setEmailAddress(EmailAddress(email))
 
 	const defaultGradeID = grade.NonGrade // 新規登録時は等級なし（6）からスタート
 	gradeEntity := grade.NewEntity(defaultGradeID)
@@ -138,12 +116,29 @@ func NewGeneral(firstName string, lastName string, age uint, email string) (*Gen
 
 // MakeGeneral ...
 func MakeGeneral(id ID, firstName FirstName, lastName LastName, age Age, email EmailAddress, grade grade.Entity) (*General, error) {
-	entity, err := newEntity(firstName, lastName, age, email)
-	if err != nil {
-		return nil, err
-	}
+	entity := new(Entity)
 	entity.setID(id)
+	entity.setFirstName(firstName)
+	entity.setLastName(lastName)
+	entity.setAge(age)
+	entity.setEmailAddress(email)
 	entity.setGrade(grade)
 
 	return &General{*entity}, nil
 }
+
+// Exist 真偽値に応じて期待される状態に対するエラーを返す
+// expect が true：対象ユーザーが登録されていることを期待
+// expect が false：対象ユーザーが登録されていないことを期待
+func (u *General) Exist(expect bool) error {
+	if expect && (u.Entity == Entity{}) {
+		return errors.New("ユーザーが存在しません。")
+	}
+	if !expect && (u.Entity != Entity{}) {
+		return errors.New("登録済みのユーザーです。")
+	}
+	return nil
+}
+
+// Generals ...
+type Generals []General

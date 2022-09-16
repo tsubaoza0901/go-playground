@@ -52,7 +52,7 @@ func (r BalanceRepository) FetchBalanceByUserID(ctx context.Context, userID uint
 
 func (r BalanceRepository) fetchBy(ctx context.Context, userID uint) (*dto.FetchBlanceResult, error) {
 	balanceDBModel := new(dbModel.Balance)
-	if err := r.dbConn.Where("user_id = ?", userID).First(&balanceDBModel).Error; err != nil {
+	if err := r.dbConn.Where("user_id = ?", userID).Limit(1).Find(&balanceDBModel).Error; err != nil {
 		return nil, err
 	}
 	return dbModel.MakeFetchBlanceResultDTO(*balanceDBModel), nil

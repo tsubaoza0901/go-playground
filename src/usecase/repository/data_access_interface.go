@@ -32,8 +32,8 @@ type IDealHistoryRepository interface {
 type IUserManagementRepository interface {
 	RegisterUser(context.Context, dto.RegisterUser) (*dto.FetchUserResult, error)
 	FetchUserByID(ctx context.Context, id uint) (*dto.FetchUserResult, error)
+	FetchUserByEmail(ctx context.Context, email string) (*dto.FetchUserResult, error)
 	FetchUserList(ctx context.Context) (*dto.FetchUserListResult, error)
-	CountTheNumberOfUsersByEmail(ctx context.Context, email string) (count uint, err error)
 }
 
 // ITransactionManagementRepository ...

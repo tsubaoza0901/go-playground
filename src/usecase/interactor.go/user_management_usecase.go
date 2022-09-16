@@ -2,7 +2,6 @@ package interactor
 
 import (
 	"context"
-	"errors"
 	"go-playground/m/v1/src/domain/model/balance"
 	"go-playground/m/v1/src/domain/model/deal"
 	"go-playground/m/v1/src/domain/model/user"
@@ -82,6 +81,9 @@ func (u UserManagementUsecase) RetrieveUserByCondition(ctx context.Context, id u
 	if err != nil {
 		return output.User{}, err
 	}
+	if err := generalUser.Exist(true); err != nil {
+		return output.User{}, err
+	}
 	return output.MakeUser(*generalUser), nil
 }
 
@@ -95,12 +97,12 @@ func (u UserManagementUsecase) RetrieveUsers(ctx context.Context) (output.Users,
 }
 
 func (u UserManagementUsecase) verifyThatNoUserHasSameEmail(ctx context.Context, email user.EmailAddress) error {
-	count, err := u.CountTheNumberOfUsersByEmail(ctx, string(email))
+	generalUser, err := u.fetchUserbyEmail(ctx, string(email))
 	if err != nil {
 		return err
 	}
-	if !user.IsSameUsersCountZero(count) {
-		return errors.New("すでに同一ユーザーが存在します。")
+	if err := generalUser.Exist(false); err != nil {
+		return err
 	}
 	return nil
 }
@@ -120,6 +122,18 @@ func (u UserManagementUsecase) registerUser(ctx context.Context, generalUser *us
 
 func (u UserManagementUsecase) fetchUserbyID(ctx context.Context, id uint) (*user.General, error) {
 	fetchResult, err := u.FetchUserByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	generalUser, err := fetchResult.ToGeneralUserModel()
+	if err != nil {
+		return nil, err
+	}
+	return generalUser, nil
+}
+
+func (u UserManagementUsecase) fetchUserbyEmail(ctx context.Context, email string) (*user.General, error) {
+	fetchResult, err := u.FetchUserByEmail(ctx, email)
 	if err != nil {
 		return nil, err
 	}

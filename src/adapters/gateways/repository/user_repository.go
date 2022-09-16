@@ -38,7 +38,16 @@ func (r UserRepository) FetchUserByID(ctx context.Context, id uint) (*dto.FetchU
 
 func (r UserRepository) fetchByID(id uint) (*dto.FetchUserResult, error) {
 	userDBModel := new(dbModel.User)
-	if err := r.dbConn.Preload("Grade").Where("id = ?", id).First(&userDBModel).Error; err != nil {
+	if err := r.dbConn.Preload("Grade").Where("id = ?", id).Limit(1).Find(&userDBModel).Error; err != nil {
+		return nil, err
+	}
+	return dbModel.MakeFetchUserResultDTO(*userDBModel), nil
+}
+
+// FetchUserByEmail ...
+func (r UserRepository) FetchUserByEmail(ctx context.Context, email string) (*dto.FetchUserResult, error) {
+	userDBModel := new(dbModel.User)
+	if err := r.dbConn.Where("email_address = ?", email).Limit(1).Find(&userDBModel).Error; err != nil {
 		return nil, err
 	}
 	return dbModel.MakeFetchUserResultDTO(*userDBModel), nil
@@ -55,13 +64,4 @@ func (r UserRepository) fetchUserList() (*dto.FetchUserListResult, error) {
 		return nil, err
 	}
 	return dbModel.MakeFetchUserListResultDTO(*usersDBModel), nil
-}
-
-// CountTheNumberOfUsersByEmail ...
-func (r UserRepository) CountTheNumberOfUsersByEmail(ctx context.Context, email string) (uint, error) {
-	var count int64
-	if err := r.dbConn.Model(&dbModel.User{}).Where("email_address = ?", email).Count(&count).Error; err != nil {
-		return 0, err
-	}
-	return uint(count), nil
 }
