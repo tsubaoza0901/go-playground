@@ -19,8 +19,8 @@ func NewDealHistoryHandler(p usecase.IDealUsecase) DealHistoryHandler {
 	return DealHistoryHandler{p}
 }
 
-// RetrieveDealHistories ...
-func (h DealHistoryHandler) RetrieveDealHistories(c echo.Context) error {
+// GetDealHistoryList ...
+func (h DealHistoryHandler) GetDealHistoryList(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	req := new(request.RetrieveDealHistories)

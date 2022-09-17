@@ -16,25 +16,25 @@ func initRouter(e *echo.Echo, h controllers.AppController) {
 	{
 		// User Handler
 		e.POST("/user", h.IUserHandler.CreateNewUser)
-		e.GET("/users", h.IUserHandler.RetrieveAllUsers)
-		e.GET("/user/:id", h.IUserHandler.SearchUser)
+		e.GET("/user/:id", h.IUserHandler.GetUser)
+		e.GET("/users", h.IUserHandler.GetUserList)
 	}
 
 	{
 		// Grade Handler
-		e.GET("/grades", h.IGradeHandler.RetrieveAllGrades)
+		e.GET("/grades", h.IGradeHandler.GetGradeList)
 	}
 
 	{
 		// DealHistory Handler
-		e.GET("/dealHistories/:userId", h.IDealHistoryHandler.RetrieveDealHistories)
+		e.GET("/dealHistories/:userId", h.IDealHistoryHandler.GetDealHistoryList)
 	}
 
 	{
 		// BalanceControl Handler
 		e.PUT("/pay/:userId", h.IBalanceControlHandler.Pay)
 		e.PUT("/topup/:userId", h.IBalanceControlHandler.TopUp)
-		e.GET("/remainingBalance/:userId", h.IBalanceControlHandler.RetrieveRemainingBalance)
+		e.GET("/remainingBalance/:userId", h.IBalanceControlHandler.GetRemainingBalance)
 	}
 }
 

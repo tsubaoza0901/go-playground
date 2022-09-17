@@ -39,8 +39,8 @@ func (h UserHandler) CreateNewUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, "OK")
 }
 
-// SearchUser ...
-func (h UserHandler) SearchUser(c echo.Context) error {
+// GetUser ...
+func (h UserHandler) GetUser(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	req := new(request.UserGetByID)
@@ -60,8 +60,8 @@ func (h UserHandler) SearchUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, response.NewUser(user))
 }
 
-// RetrieveAllUsers ...
-func (h UserHandler) RetrieveAllUsers(c echo.Context) error {
+// GetUserList ...
+func (h UserHandler) GetUserList(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	users, err := h.RetrieveUsers(ctx)
