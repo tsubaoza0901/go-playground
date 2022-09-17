@@ -3,32 +3,25 @@ package repository
 import (
 	"context"
 	"errors"
+	"go-playground/m/v1/src/adapters/gateways/persistance/rdb"
 	dbModel "go-playground/m/v1/src/adapters/gateways/persistance/rdb/model"
 	"go-playground/m/v1/src/usecase/repository/dto"
-
-	"gorm.io/gorm"
 )
 
 // BalanceRepository ...
 type BalanceRepository struct {
-	dbConn *gorm.DB
+	rdb.IManageDBConn
 }
 
 // NewBalanceRepository ...
-func NewBalanceRepository(conn *gorm.DB) BalanceRepository {
-	return BalanceRepository{
-		dbConn: conn,
-	}
+func NewBalanceRepository(mdc rdb.IManageDBConn) BalanceRepository {
+	return BalanceRepository{mdc}
 }
 
 // RegisterBalance ...
 func (r BalanceRepository) RegisterBalance(ctx context.Context, dto dto.RegisterBalance) error {
-	tx, ok := getTxFromContext(ctx)
-	if !ok {
-		tx = r.dbConn
-	}
 	balanceDBModel := dbModel.ConvertToBalance(dto.UserID, dto.RemainingAmount)
-	if err := tx.Create(&balanceDBModel).Error; err != nil {
+	if err := r.GetConnection(ctx).Create(&balanceDBModel).Error; err != nil {
 		return err
 	}
 	return nil
@@ -36,11 +29,7 @@ func (r BalanceRepository) RegisterBalance(ctx context.Context, dto dto.Register
 
 // UpdateBalance ...
 func (r BalanceRepository) UpdateBalance(ctx context.Context, dto dto.UpdateBalance) error {
-	tx, ok := getTxFromContext(ctx)
-	if !ok {
-		tx = r.dbConn
-	}
-	result := tx.Model(&dbModel.Balance{}).Where("user_id = ?", dto.UserID).Update("amount", dto.RemainingAmount)
+	result := r.GetConnection(ctx).Model(&dbModel.Balance{}).Where("user_id = ?", dto.UserID).Update("amount", dto.RemainingAmount)
 	if result.Error != nil {
 		return result.Error
 	}
@@ -58,7 +47,7 @@ func (r BalanceRepository) FetchBalanceByUserID(ctx context.Context, userID uint
 
 func (r BalanceRepository) fetchBy(ctx context.Context, userID uint) (*dto.FetchBlanceResult, error) {
 	balanceDBModel := new(dbModel.Balance)
-	if err := r.dbConn.Where("user_id = ?", userID).Limit(1).Find(&balanceDBModel).Error; err != nil {
+	if err := r.GetConnection(ctx).Where("user_id = ?", userID).Limit(1).Find(&balanceDBModel).Error; err != nil {
 		return nil, err
 	}
 	return dbModel.MakeFetchBlanceResultDTO(*balanceDBModel), nil

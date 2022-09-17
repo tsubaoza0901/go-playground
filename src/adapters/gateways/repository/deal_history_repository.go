@@ -2,32 +2,25 @@ package repository
 
 import (
 	"context"
+	"go-playground/m/v1/src/adapters/gateways/persistance/rdb"
 	dbModel "go-playground/m/v1/src/adapters/gateways/persistance/rdb/model"
 	"go-playground/m/v1/src/usecase/repository/dto"
-
-	"gorm.io/gorm"
 )
 
 // DealHistoryRepository ...
 type DealHistoryRepository struct {
-	dbConn *gorm.DB
+	rdb.IManageDBConn
 }
 
 // NewDealHistoryRepository ...
-func NewDealHistoryRepository(conn *gorm.DB) DealHistoryRepository {
-	return DealHistoryRepository{
-		dbConn: conn,
-	}
+func NewDealHistoryRepository(mdc rdb.IManageDBConn) DealHistoryRepository {
+	return DealHistoryRepository{mdc}
 }
 
 // RegisterDealHistory ...
 func (r DealHistoryRepository) RegisterDealHistory(ctx context.Context, dto dto.RegisterDealHistory) error {
-	tx, ok := getTxFromContext(ctx)
-	if !ok {
-		tx = r.dbConn
-	}
 	dealHistory := dbModel.ConvertToDealHistory(dto.UserID, dto.ItemName, dto.Amount)
-	if err := tx.Create(&dealHistory).Error; err != nil {
+	if err := r.GetConnection(ctx).Create(&dealHistory).Error; err != nil {
 		return err
 	}
 	return nil
@@ -36,7 +29,7 @@ func (r DealHistoryRepository) RegisterDealHistory(ctx context.Context, dto dto.
 // FetchDealHistoriesByUserID ...
 func (r DealHistoryRepository) FetchDealHistoriesByUserID(ctx context.Context, userID uint) (*dto.FetchDealHistoryListResult, error) {
 	dealHistories := new(dbModel.DealHistories)
-	if err := r.dbConn.Where("user_id = ?", userID).Find(&dealHistories).Error; err != nil {
+	if err := r.GetConnection(ctx).Where("user_id = ?", userID).Find(&dealHistories).Error; err != nil {
 		return nil, err
 	}
 	return dbModel.MakeFetchHistoryListResultDTO(*dealHistories), nil
