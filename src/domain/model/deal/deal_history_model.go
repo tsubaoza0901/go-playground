@@ -25,8 +25,8 @@ type Entity struct {
 func newHistory(itemName ItemName, amount Amount) *History {
 	history := new(History)
 
-	history.setItemName(itemName)
-	history.setAmount(amount)
+	history.itemName = itemName
+	history.amount = amount
 
 	return history
 }
@@ -36,26 +36,14 @@ func (d *Entity) CreatedAt() CreatedAt {
 	return d.createdAt
 }
 
-func (d *Entity) setCreatedAt(createdAt CreatedAt) {
-	d.createdAt = createdAt
-}
-
 // ItemName Getter
 func (d *Entity) ItemName() ItemName {
 	return d.itemName
 }
 
-func (d *Entity) setItemName(itemName ItemName) {
-	d.itemName = itemName
-}
-
 // Amount Getter
 func (d *Entity) Amount() Amount {
 	return d.amount
-}
-
-func (d *Entity) setAmount(amount Amount) {
-	d.amount = amount
 }
 
 // History ...
@@ -76,7 +64,7 @@ func NewTopUpHistory(amount uint) *History {
 // MakeHistory ...
 func MakeHistory(createdAt CreatedAt, itemName ItemName, amount Amount) *History {
 	history := newHistory(itemName, amount)
-	history.setCreatedAt(createdAt)
+	history.createdAt = createdAt
 	return history
 }
 

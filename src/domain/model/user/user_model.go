@@ -37,17 +37,9 @@ func (u *Entity) ID() ID {
 	return u.id
 }
 
-func (u *Entity) setID(id uint) {
-	u.id = ID(id)
-}
-
 // FirstName Getter
 func (u *Entity) FirstName() FirstName {
 	return u.firstName
-}
-
-func (u *Entity) setFirstName(firstName string) {
-	u.firstName = FirstName(firstName)
 }
 
 // LastName Getter
@@ -55,26 +47,14 @@ func (u *Entity) LastName() LastName {
 	return u.lastName
 }
 
-func (u *Entity) setLastName(lastName string) {
-	u.lastName = LastName(lastName)
-}
-
 // Age Getter
 func (u *Entity) Age() Age {
 	return u.age
 }
 
-func (u *Entity) setAge(age uint) {
-	u.age = Age(age)
-}
-
 // EmailAddress Getter
 func (u *Entity) EmailAddress() EmailAddress {
 	return u.emailAddress
-}
-
-func (u *Entity) setEmailAddress(email string) {
-	u.emailAddress = EmailAddress(email)
 }
 
 // GradeID Getter
@@ -85,10 +65,6 @@ func (u *Entity) GradeID() grade.ID {
 // GradeName Getter
 func (u *Entity) GradeName() grade.Name {
 	return u.grade.Name()
-}
-
-func (u *Entity) setGrade(g grade.Entity) {
-	u.grade = g
 }
 
 // Exist 真偽値に応じて、期待される状態（存在有無）を確認し、期待される状態でなければエラーを返す
@@ -112,17 +88,17 @@ type General struct {
 // NewGeneral ...
 func NewGeneral(firstName string, lastName string, age uint, email string) (*General, error) {
 	entity := new(Entity)
-	entity.setFirstName(firstName)
-	entity.setLastName(lastName)
+	entity.firstName = FirstName(firstName)
+	entity.lastName = LastName(lastName)
 	if !Age(age).verifyAge() {
 		return nil, errors.New("10歳以下の登録不可")
 	}
-	entity.setAge(age)
-	entity.setEmailAddress(email)
+	entity.age = Age(age)
+	entity.emailAddress = EmailAddress(email)
 
 	const defaultGradeID = grade.NonGrade // 新規登録時は等級なし（6）からスタート
 	gradeEntity := grade.NewEntity(defaultGradeID)
-	entity.setGrade(*gradeEntity)
+	entity.grade = *gradeEntity
 
 	return &General{*entity}, nil
 }
@@ -130,12 +106,12 @@ func NewGeneral(firstName string, lastName string, age uint, email string) (*Gen
 // MakeGeneral ...
 func MakeGeneral(id ID, firstName FirstName, lastName LastName, age Age, email EmailAddress, grade grade.Entity) (*General, error) {
 	entity := new(Entity)
-	entity.setID(uint(id))
-	entity.setFirstName(string(firstName))
-	entity.setLastName(string(lastName))
-	entity.setAge(uint(age))
-	entity.setEmailAddress(string(email))
-	entity.setGrade(grade)
+	entity.id = id
+	entity.firstName = firstName
+	entity.lastName = lastName
+	entity.age = age
+	entity.emailAddress = email
+	entity.grade = grade
 
 	return &General{*entity}, nil
 }

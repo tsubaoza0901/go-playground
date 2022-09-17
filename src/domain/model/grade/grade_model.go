@@ -36,10 +36,6 @@ func (g *Entity) ID() ID {
 	return g.id
 }
 
-func (g *Entity) setID(id ID) {
-	g.id = id
-}
-
 // Name Getter
 func (g *Entity) Name() Name {
 	return g.name
