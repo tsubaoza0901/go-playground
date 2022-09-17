@@ -1,26 +1,10 @@
 package dependency
 
-import "go-playground/m/v1/src/adapters/controllers/http/handler"
+import (
+	"go-playground/m/v1/src/adapters/controllers/http/handler"
+)
 
 // 簡易DIコンテナ（Handler用）
-
-// HTTPHandler ...
-type HTTPHandler struct {
-	handler.UserHandler
-	handler.GradeHandler
-	handler.DealHistoryHandler
-	handler.BalanceControlHandler
-}
-
-// InitHTTPHandler ...
-func (i Injection) InitHTTPHandler() HTTPHandler {
-	return HTTPHandler{
-		UserHandler:           i.InitUserHandler(),
-		GradeHandler:          i.InitGradeHandler(),
-		DealHistoryHandler:    i.InitDealHistoryHandler(),
-		BalanceControlHandler: i.InitBalanceControlHandler(),
-	}
-}
 
 // InitUserHandler ...
 func (i Injection) InitUserHandler() handler.UserHandler {
