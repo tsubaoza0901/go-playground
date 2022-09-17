@@ -19,11 +19,11 @@ func NewGradeUsecase(r repository.IGradeRepository) GradeUsecase {
 
 // RetrieveGrades ...
 func (u GradeUsecase) RetrieveGrades(ctx context.Context) (*output.Grades, error) {
-	gradeList, err := u.fetchGradeList(ctx)
+	targetGradeList, err := u.fetchGradeList(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return output.MakeGrades(gradeList), nil
+	return output.MakeGrades(targetGradeList), nil
 }
 
 func (u GradeUsecase) fetchGradeList(ctx context.Context) (grade.Entities, error) {

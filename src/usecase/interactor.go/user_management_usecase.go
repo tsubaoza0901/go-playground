@@ -31,13 +31,13 @@ func NewUserManagementUsecase(
 
 // CreateUser ...
 func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate input.UserCreate, inputTopUpAmount uint) error {
-	generalUser, err := user.NewGeneral(inputUserCreate.FirstName, inputUserCreate.LastName, inputUserCreate.Age, inputUserCreate.EmailAddress)
+	initialUser, err := user.NewGeneral(inputUserCreate.FirstName, inputUserCreate.LastName, inputUserCreate.Age, inputUserCreate.EmailAddress)
 	if err != nil {
 		return err
 	}
 
 	// ユーザー重複確認
-	if err := u.verifyThatNoUserHasSameEmail(ctx, generalUser.EmailAddress()); err != nil {
+	if err := u.verifyThatNoUserHasSameEmail(ctx, initialUser.EmailAddress()); err != nil {
 		return err
 	}
 
@@ -45,20 +45,20 @@ func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate i
 	if err := u.Transaction(ctx, func(ctx context.Context) (err error) {
 
 		// ユーザー登録
-		generalUser, err := u.registerUser(ctx, generalUser)
+		generalUser, err := u.registerUser(ctx, initialUser)
 		if err != nil {
 			return err
 		}
 
 		// チャージ結果計算
-		initialAmount := balance.InitialAmount
-		calculatedBalance, err := initialAmount.AddUp(balance.TopUpAmount(inputTopUpAmount))
+		initialBalance := balance.NewEntity()
+		calculatedBalance, err := initialBalance.AddUp(balance.TopUpAmount(inputTopUpAmount))
 		if err != nil {
 			return err
 		}
 
 		// 残高登録
-		if err = u.RegisterBalance(ctx, uint(generalUser.ID()), dto.NewRegisterBalance(uint(*calculatedBalance))); err != nil {
+		if err = u.RegisterBalance(ctx, dto.NewRegisterBalance(uint(generalUser.ID()), uint(calculatedBalance.RemainingAmount()))); err != nil {
 			return err
 		}
 
@@ -77,31 +77,31 @@ func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate i
 
 // RetrieveUserByCondition ...
 func (u UserManagementUsecase) RetrieveUserByCondition(ctx context.Context, id uint) (output.User, error) {
-	generalUser, err := u.fetchUserbyID(ctx, id)
+	targetUser, err := u.fetchUserbyID(ctx, id)
 	if err != nil {
 		return output.User{}, err
 	}
-	if err := generalUser.Exist(true); err != nil {
+	if err := targetUser.Exist(true); err != nil {
 		return output.User{}, err
 	}
-	return output.MakeUser(*generalUser), nil
+	return output.MakeUser(*targetUser), nil
 }
 
 // RetrieveUsers ...
 func (u UserManagementUsecase) RetrieveUsers(ctx context.Context) (output.Users, error) {
-	generalUserList, err := u.fetchUserList(ctx)
+	targetUserList, err := u.fetchUserList(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return output.MakeUsers(generalUserList), nil
+	return output.MakeUsers(targetUserList), nil
 }
 
 func (u UserManagementUsecase) verifyThatNoUserHasSameEmail(ctx context.Context, email user.EmailAddress) error {
-	generalUser, err := u.fetchUserbyEmail(ctx, string(email))
+	targetUser, err := u.fetchUserbyEmail(ctx, string(email))
 	if err != nil {
 		return err
 	}
-	if err := generalUser.Exist(false); err != nil {
+	if err := targetUser.Exist(false); err != nil {
 		return err
 	}
 	return nil

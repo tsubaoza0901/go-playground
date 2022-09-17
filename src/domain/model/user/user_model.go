@@ -37,8 +37,8 @@ func (u *Entity) ID() ID {
 	return u.id
 }
 
-func (u *Entity) setID(id ID) {
-	u.id = id
+func (u *Entity) setID(id uint) {
+	u.id = ID(id)
 }
 
 // FirstName Getter
@@ -46,8 +46,8 @@ func (u *Entity) FirstName() FirstName {
 	return u.firstName
 }
 
-func (u *Entity) setFirstName(firstName FirstName) {
-	u.firstName = firstName
+func (u *Entity) setFirstName(firstName string) {
+	u.firstName = FirstName(firstName)
 }
 
 // LastName Getter
@@ -55,8 +55,8 @@ func (u *Entity) LastName() LastName {
 	return u.lastName
 }
 
-func (u *Entity) setLastName(lastName LastName) {
-	u.lastName = lastName
+func (u *Entity) setLastName(lastName string) {
+	u.lastName = LastName(lastName)
 }
 
 // Age Getter
@@ -64,8 +64,8 @@ func (u *Entity) Age() Age {
 	return u.age
 }
 
-func (u *Entity) setAge(age Age) {
-	u.age = age
+func (u *Entity) setAge(age uint) {
+	u.age = Age(age)
 }
 
 // EmailAddress Getter
@@ -73,8 +73,8 @@ func (u *Entity) EmailAddress() EmailAddress {
 	return u.emailAddress
 }
 
-func (u *Entity) setEmailAddress(email EmailAddress) {
-	u.emailAddress = email
+func (u *Entity) setEmailAddress(email string) {
+	u.emailAddress = EmailAddress(email)
 }
 
 // GradeID Getter
@@ -91,6 +91,19 @@ func (u *Entity) setGrade(g grade.Entity) {
 	u.grade = g
 }
 
+// Exist 真偽値に応じて、期待される状態（存在有無）を確認し、期待される状態でなければエラーを返す
+// expect が true：対象ユーザーが登録されていることを期待
+// expect が false：対象ユーザーが登録されていないことを期待
+func (u *Entity) Exist(expect bool) error {
+	if expect && u.ID() == 0 {
+		return errors.New("ユーザーが存在しません。")
+	}
+	if !expect && u.ID() != 0 {
+		return errors.New("登録済みのユーザーです。")
+	}
+	return nil
+}
+
 // General 一般ユーザー
 type General struct {
 	Entity
@@ -99,13 +112,13 @@ type General struct {
 // NewGeneral ...
 func NewGeneral(firstName string, lastName string, age uint, email string) (*General, error) {
 	entity := new(Entity)
-	entity.setFirstName(FirstName(firstName))
-	entity.setLastName(LastName(lastName))
+	entity.setFirstName(firstName)
+	entity.setLastName(lastName)
 	if !Age(age).verifyAge() {
 		return nil, errors.New("10歳以下の登録不可")
 	}
-	entity.setAge(Age(age))
-	entity.setEmailAddress(EmailAddress(email))
+	entity.setAge(age)
+	entity.setEmailAddress(email)
 
 	const defaultGradeID = grade.NonGrade // 新規登録時は等級なし（6）からスタート
 	gradeEntity := grade.NewEntity(defaultGradeID)
@@ -117,27 +130,14 @@ func NewGeneral(firstName string, lastName string, age uint, email string) (*Gen
 // MakeGeneral ...
 func MakeGeneral(id ID, firstName FirstName, lastName LastName, age Age, email EmailAddress, grade grade.Entity) (*General, error) {
 	entity := new(Entity)
-	entity.setID(id)
-	entity.setFirstName(firstName)
-	entity.setLastName(lastName)
-	entity.setAge(age)
-	entity.setEmailAddress(email)
+	entity.setID(uint(id))
+	entity.setFirstName(string(firstName))
+	entity.setLastName(string(lastName))
+	entity.setAge(uint(age))
+	entity.setEmailAddress(string(email))
 	entity.setGrade(grade)
 
 	return &General{*entity}, nil
-}
-
-// Exist 真偽値に応じて期待される状態に対するエラーを返す
-// expect が true：対象ユーザーが登録されていることを期待
-// expect が false：対象ユーザーが登録されていないことを期待
-func (u *General) Exist(expect bool) error {
-	if expect && (u.Entity == Entity{}) {
-		return errors.New("ユーザーが存在しません。")
-	}
-	if !expect && (u.Entity != Entity{}) {
-		return errors.New("登録済みのユーザーです。")
-	}
-	return nil
 }
 
 // Generals ...

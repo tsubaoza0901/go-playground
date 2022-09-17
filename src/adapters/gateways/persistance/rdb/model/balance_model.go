@@ -30,5 +30,5 @@ func ConvertToBalance(userID uint, remainingAmount uint) Balance {
 
 // MakeFetchBlanceResultDTO ...
 func MakeFetchBlanceResultDTO(b Balance) *dto.FetchBlanceResult {
-	return dto.NewFetchBlanceResult(b.Amount)
+	return dto.NewFetchBlanceResult(b.UserID, b.Amount)
 }

@@ -32,30 +32,30 @@ func newHistory(itemName ItemName, amount Amount) *History {
 }
 
 // CreatedAt Getter
-func (p *Entity) CreatedAt() CreatedAt {
-	return p.createdAt
+func (d *Entity) CreatedAt() CreatedAt {
+	return d.createdAt
 }
 
-func (p *Entity) setCreatedAt(createdAt CreatedAt) {
-	p.createdAt = createdAt
+func (d *Entity) setCreatedAt(createdAt CreatedAt) {
+	d.createdAt = createdAt
 }
 
 // ItemName Getter
-func (p *Entity) ItemName() ItemName {
-	return p.itemName
+func (d *Entity) ItemName() ItemName {
+	return d.itemName
 }
 
-func (p *Entity) setItemName(itemName ItemName) {
-	p.itemName = itemName
+func (d *Entity) setItemName(itemName ItemName) {
+	d.itemName = itemName
 }
 
 // Amount Getter
-func (p *Entity) Amount() Amount {
-	return p.amount
+func (d *Entity) Amount() Amount {
+	return d.amount
 }
 
-func (p *Entity) setAmount(amount Amount) {
-	p.amount = amount
+func (d *Entity) setAmount(amount Amount) {
+	d.amount = amount
 }
 
 // History ...

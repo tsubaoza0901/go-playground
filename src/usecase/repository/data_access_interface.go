@@ -12,8 +12,8 @@ const TransactionKey contextKey = "transaction"
 
 // IBalanceRepository ...
 type IBalanceRepository interface {
-	RegisterBalance(ctx context.Context, userID uint, createBalanceDTO dto.RegisterBalance) error
-	UpdateBalance(ctx context.Context, userID uint, updateBalanceDTO dto.UpdateBalance) error
+	RegisterBalance(ctx context.Context, createBalanceDTO dto.RegisterBalance) error
+	UpdateBalance(ctx context.Context, updateBalanceDTO dto.UpdateBalance) error
 	FetchBalanceByUserID(ctx context.Context, userID uint) (*dto.FetchBlanceResult, error)
 }
 

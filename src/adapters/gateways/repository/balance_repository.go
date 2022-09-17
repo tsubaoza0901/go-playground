@@ -21,12 +21,12 @@ func NewBalanceRepository(conn *gorm.DB) BalanceRepository {
 }
 
 // RegisterBalance ...
-func (r BalanceRepository) RegisterBalance(ctx context.Context, userID uint, dto dto.RegisterBalance) error {
+func (r BalanceRepository) RegisterBalance(ctx context.Context, dto dto.RegisterBalance) error {
 	tx, ok := getTxFromContext(ctx)
 	if !ok {
 		tx = r.dbConn
 	}
-	balanceDBModel := dbModel.ConvertToBalance(userID, dto.RemainingAmount)
+	balanceDBModel := dbModel.ConvertToBalance(dto.UserID, dto.RemainingAmount)
 	if err := tx.Create(&balanceDBModel).Error; err != nil {
 		return err
 	}
@@ -34,12 +34,12 @@ func (r BalanceRepository) RegisterBalance(ctx context.Context, userID uint, dto
 }
 
 // UpdateBalance ...
-func (r BalanceRepository) UpdateBalance(ctx context.Context, userID uint, dto dto.UpdateBalance) error {
+func (r BalanceRepository) UpdateBalance(ctx context.Context, dto dto.UpdateBalance) error {
 	tx, ok := getTxFromContext(ctx)
 	if !ok {
 		tx = r.dbConn
 	}
-	if err := tx.Model(&dbModel.Balance{}).Where("user_id = ?", userID).Update("amount", dto.RemainingAmount).Error; err != nil {
+	if err := tx.Model(&dbModel.Balance{}).Where("user_id = ?", dto.UserID).Update("amount", dto.RemainingAmount).Error; err != nil {
 		return err
 	}
 	return nil
