@@ -32,9 +32,9 @@ func (h DealHistoryHandler) GetDealHistoryList(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	payments, err := h.RetrieveDealHistoriesByUserID(ctx, req.UserID)
+	dealHistories, err := h.RetrieveDealHistoriesByUserID(ctx, req.UserID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
-	return c.JSON(http.StatusOK, response.NewDealHistories(payments))
+	return c.JSON(http.StatusOK, response.NewDealHistories(dealHistories))
 }
