@@ -30,6 +30,9 @@ func (u BalanceControlUsecase) PutMoney(ctx context.Context, userID uint, inputP
 	if err != nil {
 		return err
 	}
+	if err := currentBalance.Exist(true); err != nil {
+		return err
+	}
 
 	topUpAmount := balance.TopUpAmount(inputPuttingMoney.Amount)
 
@@ -65,6 +68,9 @@ func (u BalanceControlUsecase) PayMoney(ctx context.Context, userID uint, inputP
 	// 残高取得
 	currentBalance, err := u.fetchBalanceByUserID(ctx, userID)
 	if err != nil {
+		return err
+	}
+	if err := currentBalance.Exist(true); err != nil {
 		return err
 	}
 
