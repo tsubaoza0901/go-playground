@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	dbModel "go-playground/m/v1/src/adapters/gateways/persistance/rdb/model"
 	"go-playground/m/v1/src/usecase/repository/dto"
 
@@ -39,9 +40,14 @@ func (r BalanceRepository) UpdateBalance(ctx context.Context, dto dto.UpdateBala
 	if !ok {
 		tx = r.dbConn
 	}
-	if err := tx.Model(&dbModel.Balance{}).Where("user_id = ?", dto.UserID).Update("amount", dto.RemainingAmount).Error; err != nil {
-		return err
+	result := tx.Model(&dbModel.Balance{}).Where("user_id = ?", dto.UserID).Update("amount", dto.RemainingAmount)
+	if result.Error != nil {
+		return result.Error
 	}
+	if result.RowsAffected == 0 {
+		return errors.New("レコードが更新されませんでした。")
+	}
+
 	return nil
 }
 
