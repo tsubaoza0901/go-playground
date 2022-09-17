@@ -49,6 +49,34 @@ root@fe385569a625:/go/app# goose up
 root@fe385569a625:/go/app# go run main.go
 ```
 
+# その他
+
+## UTについて
+
+### mock作成手順
+
+1. mock化したいメソッドのインターフェースが定義されたファイルの上部に以下の記述を追加（初回のみ）
+
+```
+//go:generate mockgen -source=$GOFILE -package=mock -destination=$GOPATH/app/src/mock/$GOFILE
+
+```
+
+2. ターミナルで以下のコマンドを実行
+
+```
+$ go generate ./...
+```
+
+3. mockディレクトリにmockが作成または更新されていることを確認
+
+### UT実行
+ターミナルで以下のコマンドを実行
+
+```
+$ go test ./...
+```
+
 # ビジネスルール
 
 - ユーザーは新規登録時に必ず500円以上の電子マネーをチャージすること
