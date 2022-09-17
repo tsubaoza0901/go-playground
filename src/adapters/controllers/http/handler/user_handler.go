@@ -54,7 +54,7 @@ func (h UserHandler) GetUser(c echo.Context) error {
 
 	user, err := h.RetrieveUserByCondition(ctx, req.ID)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error()) // Record Not Foundの場合のハンドリングも追加
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, response.NewUser(user))

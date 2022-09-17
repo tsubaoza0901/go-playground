@@ -7,18 +7,18 @@ import (
 	"go-playground/m/v1/src/usecase/repository"
 )
 
-// DealUsecase ...
-type DealUsecase struct {
+// DealHistoryUsecase ...
+type DealHistoryUsecase struct {
 	repository.IDealHistoryRepository
 }
 
-// NewDealUsecase ...
-func NewDealUsecase(pr repository.IDealHistoryRepository) DealUsecase {
-	return DealUsecase{pr}
+// NewDealHistoryUsecase ...
+func NewDealHistoryUsecase(pr repository.IDealHistoryRepository) DealHistoryUsecase {
+	return DealHistoryUsecase{pr}
 }
 
 // RetrieveDealHistoriesByUserID ...
-func (u DealUsecase) RetrieveDealHistoriesByUserID(ctx context.Context, userID uint) (output.DealHistories, error) {
+func (u DealHistoryUsecase) RetrieveDealHistoriesByUserID(ctx context.Context, userID uint) (output.DealHistories, error) {
 	tragetDealHistories, err := u.fetchDealHistoriesByUserID(ctx, userID)
 	if err != nil {
 		return nil, err
@@ -26,7 +26,7 @@ func (u DealUsecase) RetrieveDealHistoriesByUserID(ctx context.Context, userID u
 	return output.MakeDealHistories(tragetDealHistories), nil
 }
 
-func (u DealUsecase) fetchDealHistoriesByUserID(ctx context.Context, userID uint) (deal.Histories, error) {
+func (u DealHistoryUsecase) fetchDealHistoriesByUserID(ctx context.Context, userID uint) (deal.Histories, error) {
 	fetchResult, err := u.FetchDealHistoriesByUserID(ctx, userID)
 	if err != nil {
 		return nil, err

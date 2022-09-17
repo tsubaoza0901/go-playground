@@ -24,8 +24,8 @@ func (i Injection) InitGradeUsecase() interactor.GradeUsecase {
 }
 
 // InitDealUsecase ...
-func (i Injection) InitDealUsecase() interactor.DealUsecase {
-	return interactor.NewDealUsecase(
+func (i Injection) InitDealUsecase() interactor.DealHistoryUsecase {
+	return interactor.NewDealHistoryUsecase(
 		i.InitDealRepository(),
 	)
 }
