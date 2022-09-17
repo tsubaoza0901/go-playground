@@ -2,10 +2,13 @@ package infrastructure
 
 import (
 	"context"
-	"go-playground/m/v1/src/usecase/repository"
 
 	"gorm.io/gorm"
 )
+
+type contextKey string
+
+const transactionKey contextKey = "transaction"
 
 // ManageDBConn ...
 type ManageDBConn struct {
@@ -29,7 +32,7 @@ func (r ManageDBConn) StartTransaction(ctx context.Context, fc func(context.Cont
 			tx.Rollback()
 		}
 	}()
-	ctx = context.WithValue(ctx, repository.TransactionKey, tx)
+	ctx = context.WithValue(ctx, transactionKey, tx)
 	if err = fc(ctx); err != nil {
 		return err
 	}
@@ -49,6 +52,6 @@ func (r ManageDBConn) GetConnection(ctx context.Context) *gorm.DB {
 }
 
 func (r ManageDBConn) getTxFromContext(ctx context.Context) (*gorm.DB, bool) {
-	tx, ok := ctx.Value(repository.TransactionKey).(*gorm.DB)
+	tx, ok := ctx.Value(transactionKey).(*gorm.DB)
 	return tx, ok
 }

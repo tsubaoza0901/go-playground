@@ -5,11 +5,6 @@ import (
 	"go-playground/m/v1/src/usecase/repository/dto"
 )
 
-type contextKey string
-
-// TransactionKey ...
-const TransactionKey contextKey = "transaction"
-
 // IBalanceRepository ...
 type IBalanceRepository interface {
 	RegisterBalance(ctx context.Context, createBalanceDTO dto.RegisterBalance) error
@@ -39,7 +34,4 @@ type IUserManagementRepository interface {
 // ITransactionManagementRepository ...
 type ITransactionManagementRepository interface {
 	Transaction(ctx context.Context, fc func(ctx context.Context) error) error
-	// NewContextWithTx(ctx context.Context) context.Context
-	// CommitByContext(ctx context.Context) error
-	// RollbackByContext(ctx context.Context) error
 }
