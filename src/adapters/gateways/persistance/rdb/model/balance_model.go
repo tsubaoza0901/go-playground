@@ -24,7 +24,7 @@ func (Balance) TableName() string {
 func ConvertToBalance(userID uint, remainingAmount uint) Balance {
 	return Balance{
 		UserID: userID,
-		Amount: uint(remainingAmount),
+		Amount: remainingAmount,
 	}
 }
 

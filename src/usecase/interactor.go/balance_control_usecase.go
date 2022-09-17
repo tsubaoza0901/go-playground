@@ -31,8 +31,10 @@ func (u BalanceControlUsecase) PutMoney(ctx context.Context, userID uint, inputP
 		return err
 	}
 
+	topUpAmount := balance.TopUpAmount(inputPuttingMoney.Amount)
+
 	// チャージ結果計算
-	calculatedBalance, err := currentBalance.AddUp(balance.TopUpAmount(inputPuttingMoney.Amount))
+	calculatedBalance, err := currentBalance.AddUp(topUpAmount)
 	if err != nil {
 		return err
 	}
@@ -41,12 +43,12 @@ func (u BalanceControlUsecase) PutMoney(ctx context.Context, userID uint, inputP
 	if err := u.Transaction(ctx, func(ctx context.Context) (err error) {
 
 		// 残高更新
-		if err = u.UpdateBalance(ctx, dto.NewUpdateBalance(uint(calculatedBalance.UserID()), uint(calculatedBalance.RemainingAmount()))); err != nil {
+		if err = u.UpdateBalance(ctx, dto.NewUpdateBalance(calculatedBalance.UserID(), calculatedBalance.RemainingAmount())); err != nil {
 			return err
 		}
 
 		// 取引履歴登録
-		dealHistory := deal.NewTopUpHistory(uint(inputPuttingMoney.Amount))
+		dealHistory := deal.NewTopUpHistory(topUpAmount)
 		if err = u.RegisterDealHistory(ctx, dto.NewRegisterDealHistory(user.ID(userID), dealHistory.ItemName(), dealHistory.Amount())); err != nil {
 			return err
 		}
@@ -66,8 +68,10 @@ func (u BalanceControlUsecase) PayMoney(ctx context.Context, userID uint, inputP
 		return err
 	}
 
+	paymentAmount := balance.PaymentAmount(inputPayment.Amount)
+
 	// 支払結果計算
-	calculatedBalance, err := currentBalance.Subtract(balance.PaymentAmount(inputPayment.Amount))
+	calculatedBalance, err := currentBalance.Subtract(paymentAmount)
 	if err != nil {
 		return err
 	}
@@ -76,12 +80,12 @@ func (u BalanceControlUsecase) PayMoney(ctx context.Context, userID uint, inputP
 	if err := u.Transaction(ctx, func(ctx context.Context) (err error) {
 
 		// 残高更新
-		if err = u.UpdateBalance(ctx, dto.NewUpdateBalance(uint(calculatedBalance.UserID()), uint(calculatedBalance.RemainingAmount()))); err != nil {
+		if err = u.UpdateBalance(ctx, dto.NewUpdateBalance(calculatedBalance.UserID(), calculatedBalance.RemainingAmount())); err != nil {
 			return err
 		}
 
 		// 取引履歴登録
-		dealHistory := deal.NewPaymentHistory(inputPayment.ItemName, uint(inputPayment.Amount))
+		dealHistory := deal.NewPaymentHistory(inputPayment.ItemName, paymentAmount)
 		if err = u.RegisterDealHistory(ctx, dto.NewRegisterDealHistory(user.ID(userID), dealHistory.ItemName(), dealHistory.Amount())); err != nil {
 			return err
 		}

@@ -12,9 +12,9 @@ type RegisterBalance struct {
 }
 
 // NewRegisterBalance ...
-func NewRegisterBalance(userID uint, remainingAmount uint) RegisterBalance {
+func NewRegisterBalance(userID user.ID, remainingAmount uint) RegisterBalance {
 	return RegisterBalance{
-		UserID:          userID,
+		UserID:          uint(userID),
 		RemainingAmount: remainingAmount,
 	}
 }
@@ -26,8 +26,9 @@ type UpdateBalance struct {
 }
 
 // NewUpdateBalance ...
-func NewUpdateBalance(userID uint, remainingAmount uint) UpdateBalance {
+func NewUpdateBalance(userID user.ID, remainingAmount uint) UpdateBalance {
 	return UpdateBalance{
+		UserID:          uint(userID),
 		RemainingAmount: remainingAmount,
 	}
 }

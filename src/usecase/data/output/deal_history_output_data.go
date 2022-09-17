@@ -25,8 +25,8 @@ type DealHistory struct {
 func MakeDealHistory(th deal.History) DealHistory {
 	return DealHistory{
 		CreatedAt: CreatedAt(th.CreatedAt()),
-		ItemName:  string(th.ItemName()),
-		Amount:    uint(th.Amount()),
+		ItemName:  th.ItemName(),
+		Amount:    th.Amount(),
 	}
 }
 

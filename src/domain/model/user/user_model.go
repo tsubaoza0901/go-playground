@@ -38,23 +38,23 @@ func (u *Entity) ID() ID {
 }
 
 // FirstName Getter
-func (u *Entity) FirstName() FirstName {
-	return u.firstName
+func (u *Entity) FirstName() string {
+	return string(u.firstName)
 }
 
 // LastName Getter
-func (u *Entity) LastName() LastName {
-	return u.lastName
+func (u *Entity) LastName() string {
+	return string(u.lastName)
 }
 
 // Age Getter
-func (u *Entity) Age() Age {
-	return u.age
+func (u *Entity) Age() uint {
+	return uint(u.age)
 }
 
 // EmailAddress Getter
-func (u *Entity) EmailAddress() EmailAddress {
-	return u.emailAddress
+func (u *Entity) EmailAddress() string {
+	return string(u.emailAddress)
 }
 
 // GradeID Getter
@@ -63,7 +63,7 @@ func (u *Entity) GradeID() grade.ID {
 }
 
 // GradeName Getter
-func (u *Entity) GradeName() grade.Name {
+func (u *Entity) GradeName() string {
 	return u.grade.Name()
 }
 

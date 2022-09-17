@@ -51,19 +51,21 @@ func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate i
 		}
 
 		// チャージ結果計算
+		topUpAmount := balance.TopUpAmount(inputTopUpAmount)
+
 		initialBalance := balance.NewEntity()
-		calculatedBalance, err := initialBalance.AddUp(balance.TopUpAmount(inputTopUpAmount))
+		calculatedBalance, err := initialBalance.AddUp(topUpAmount)
 		if err != nil {
 			return err
 		}
 
 		// 残高登録
-		if err = u.RegisterBalance(ctx, dto.NewRegisterBalance(uint(generalUser.ID()), uint(calculatedBalance.RemainingAmount()))); err != nil {
+		if err = u.RegisterBalance(ctx, dto.NewRegisterBalance(generalUser.ID(), calculatedBalance.RemainingAmount())); err != nil {
 			return err
 		}
 
 		// 取引履歴登録
-		dealHistory := deal.NewTopUpHistory(uint(inputTopUpAmount))
+		dealHistory := deal.NewTopUpHistory(topUpAmount)
 		if err = u.RegisterDealHistory(ctx, dto.NewRegisterDealHistory(generalUser.ID(), dealHistory.ItemName(), dealHistory.Amount())); err != nil {
 			return err
 		}
@@ -96,8 +98,8 @@ func (u UserManagementUsecase) RetrieveUsers(ctx context.Context) (output.Users,
 	return output.MakeUsers(targetUserList), nil
 }
 
-func (u UserManagementUsecase) verifyThatNoUserHasSameEmail(ctx context.Context, email user.EmailAddress) error {
-	targetUser, err := u.fetchUserbyEmail(ctx, string(email))
+func (u UserManagementUsecase) verifyThatNoUserHasSameEmail(ctx context.Context, email string) error {
+	targetUser, err := u.fetchUserbyEmail(ctx, email)
 	if err != nil {
 		return err
 	}

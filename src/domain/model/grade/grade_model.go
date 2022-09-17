@@ -37,8 +37,8 @@ func (g *Entity) ID() ID {
 }
 
 // Name Getter
-func (g *Entity) Name() Name {
-	return g.name
+func (g *Entity) Name() string {
+	return string(g.name)
 }
 
 // Entities ...

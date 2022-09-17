@@ -14,7 +14,7 @@ type RegisterDealHistory struct {
 }
 
 // NewRegisterDealHistory ...
-func NewRegisterDealHistory(userID user.ID, itemName deal.ItemName, amount deal.Amount) RegisterDealHistory {
+func NewRegisterDealHistory(userID user.ID, itemName string, amount uint) RegisterDealHistory {
 	return RegisterDealHistory{
 		UserID:   uint(userID),
 		ItemName: string(itemName),

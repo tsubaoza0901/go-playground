@@ -41,8 +41,8 @@ func (b *Entity) UserID() user.ID {
 }
 
 // RemainingAmount Getter
-func (b *Entity) RemainingAmount() RemainingAmount {
-	return b.remainingAmount
+func (b *Entity) RemainingAmount() uint {
+	return uint(b.remainingAmount)
 }
 
 // Exist ...

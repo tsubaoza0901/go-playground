@@ -1,6 +1,7 @@
 package deal
 
 import (
+	"go-playground/m/v1/src/domain/model/balance"
 	"time"
 )
 
@@ -32,18 +33,18 @@ func newHistory(itemName ItemName, amount Amount) *History {
 }
 
 // CreatedAt Getter
-func (d *Entity) CreatedAt() CreatedAt {
-	return d.createdAt
+func (d *Entity) CreatedAt() time.Time {
+	return time.Time(d.createdAt)
 }
 
 // ItemName Getter
-func (d *Entity) ItemName() ItemName {
-	return d.itemName
+func (d *Entity) ItemName() string {
+	return string(d.itemName)
 }
 
 // Amount Getter
-func (d *Entity) Amount() Amount {
-	return d.amount
+func (d *Entity) Amount() uint {
+	return uint(d.amount)
 }
 
 // History ...
@@ -52,12 +53,12 @@ type History struct {
 }
 
 // NewPaymentHistory ...
-func NewPaymentHistory(itemName string, amount uint) *History {
+func NewPaymentHistory(itemName string, amount balance.PaymentAmount) *History {
 	return newHistory(ItemName(itemName), Amount(amount))
 }
 
 // NewTopUpHistory ...
-func NewTopUpHistory(amount uint) *History {
+func NewTopUpHistory(amount balance.TopUpAmount) *History {
 	return newHistory("チャージ", Amount(amount))
 }
 
