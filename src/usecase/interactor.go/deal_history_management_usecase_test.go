@@ -106,7 +106,7 @@ func Test_dealHistoryManagementUsecase_RetrieveDealHistoriesByUserID(t *testing.
 				FetchDealHistoriesByUserID(gomock.Any(), gomock.Any()).
 				Return(tt.dealHistoryRepository.returnValue, tt.dealHistoryRepository.errorValue)
 
-			du := interactor.NewDealUsecase(dhr)
+			du := interactor.NewDealHistoryUsecase(dhr)
 
 			ret, err := du.RetrieveDealHistoriesByUserID(tt.data.ctx, tt.data.userID)
 			if (err != nil) != tt.errorFlag {
