@@ -2,78 +2,61 @@ package repository
 
 import (
 	"context"
+	"go-playground/m/v1/src/adapters/gateways/persistance/rdb"
 	dbModel "go-playground/m/v1/src/adapters/gateways/persistance/rdb/model"
-	"go-playground/m/v1/src/domain/model/user"
-
-	"gorm.io/gorm"
+	"go-playground/m/v1/src/usecase/repository/dto"
 )
 
 // UserRepository ...
 type UserRepository struct {
-	dbConn *gorm.DB
+	rdb.IManageDBConn
 }
 
 // NewUserRepository ...
-func NewUserRepository(dbConn *gorm.DB) UserRepository {
-	return UserRepository{dbConn}
+func NewUserRepository(mdc rdb.IManageDBConn) UserRepository {
+	return UserRepository{mdc}
 }
 
 // RegisterUser ...
-func (r UserRepository) RegisterUser(ctx context.Context, dto user.RegistrationDTO) (*user.FetchDTO, error) {
-	tx, ok := getTxFromContext(ctx)
-	if !ok {
-		tx = r.dbConn
-	}
-	userDBModel := dbModel.InitUser(dto.General)
-	if err := tx.Create(&userDBModel).Error; err != nil {
+func (r UserRepository) RegisterUser(ctx context.Context, dto dto.RegisterUser) (*dto.FetchUserResult, error) {
+	userDBModel := dbModel.ConvertToUser(dto)
+	if err := r.GetConnection(ctx).Create(&userDBModel).Error; err != nil {
 		return nil, err
 	}
-	userFetchDTO, err := dbModel.MakeUserFetchDTO(*userDBModel)
-	if err != nil {
-		return nil, err
-	}
-	return userFetchDTO, nil
+	return dbModel.MakeFetchUserResultDTO(userDBModel), nil
 }
 
-// FetchUser ...
-func (r UserRepository) FetchUser(ctx context.Context, id uint) (*user.FetchDTO, error) {
-	return r.fetchByID(id)
+// FetchUserByID ...
+func (r UserRepository) FetchUserByID(ctx context.Context, id uint) (*dto.FetchUserResult, error) {
+	return r.fetchByID(ctx, id)
 }
 
-func (r UserRepository) fetchByID(id uint) (*user.FetchDTO, error) {
+func (r UserRepository) fetchByID(ctx context.Context, id uint) (*dto.FetchUserResult, error) {
 	userDBModel := new(dbModel.User)
-	if err := r.dbConn.Preload("Grade").Where("id = ?", id).First(&userDBModel).Error; err != nil {
+	if err := r.GetConnection(ctx).Preload("Grade").Where("id = ?", id).Limit(1).Find(&userDBModel).Error; err != nil {
 		return nil, err
 	}
-	userFetchDTO, err := dbModel.MakeUserFetchDTO(*userDBModel)
-	if err != nil {
+	return dbModel.MakeFetchUserResultDTO(*userDBModel), nil
+}
+
+// FetchUserByEmail ...
+func (r UserRepository) FetchUserByEmail(ctx context.Context, email string) (*dto.FetchUserResult, error) {
+	userDBModel := new(dbModel.User)
+	if err := r.GetConnection(ctx).Where("email_address = ?", email).Limit(1).Find(&userDBModel).Error; err != nil {
 		return nil, err
 	}
-	return userFetchDTO, nil
+	return dbModel.MakeFetchUserResultDTO(*userDBModel), nil
 }
 
-// FetchAllUsers ...
-func (r UserRepository) FetchAllUsers(ctx context.Context) (*user.FetchAllDTO, error) {
-	return r.fetchAllUsers()
+// FetchUserList ...
+func (r UserRepository) FetchUserList(ctx context.Context) (*dto.FetchUserListResult, error) {
+	return r.fetchUserList(ctx)
 }
 
-func (r UserRepository) fetchAllUsers() (*user.FetchAllDTO, error) {
+func (r UserRepository) fetchUserList(ctx context.Context) (*dto.FetchUserListResult, error) {
 	usersDBModel := new(dbModel.Users)
-	if err := r.dbConn.Preload("Grade").Find(&usersDBModel).Error; err != nil {
+	if err := r.GetConnection(ctx).Preload("Grade").Find(&usersDBModel).Error; err != nil {
 		return nil, err
 	}
-	userFetchAllDTO, err := dbModel.MakeUserFetchAllDTO(*usersDBModel)
-	if err != nil {
-		return nil, err
-	}
-	return userFetchAllDTO, nil
-}
-
-// CountTheNumberOfUsersByEmail ...
-func (r UserRepository) CountTheNumberOfUsersByEmail(ctx context.Context, email user.EmailAddress) (uint, error) {
-	var count int64
-	if err := r.dbConn.Model(&dbModel.User{}).Where("email_address = ?", email).Count(&count).Error; err != nil {
-		return 0, err
-	}
-	return uint(count), nil
+	return dbModel.MakeFetchUserListResultDTO(*usersDBModel), nil
 }

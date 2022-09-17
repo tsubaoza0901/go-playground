@@ -18,8 +18,8 @@ func NewGradeHandler(u usecase.IGradeUsecase) GradeHandler {
 	return GradeHandler{u}
 }
 
-// RetrieveAllGrades ...
-func (h GradeHandler) RetrieveAllGrades(c echo.Context) error {
+// GetGradeList ...
+func (h GradeHandler) GetGradeList(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	grades, err := h.RetrieveGrades(ctx)

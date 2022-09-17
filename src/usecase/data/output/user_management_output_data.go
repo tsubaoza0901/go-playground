@@ -19,11 +19,11 @@ type User struct {
 func MakeUser(u user.General) User {
 	return User{
 		ID:           uint(u.ID()),
-		FirstName:    string(u.FirstName()),
-		LastName:     string(u.LastName()),
-		Age:          uint(u.Age()),
-		EmailAddress: string(u.EmailAddress()),
-		GradeName:    string(u.GradeName()),
+		FirstName:    u.FirstName(),
+		LastName:     u.LastName(),
+		Age:          u.Age(),
+		EmailAddress: u.EmailAddress(),
+		GradeName:    u.GradeName(),
 	}
 }
 

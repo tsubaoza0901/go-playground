@@ -2,6 +2,7 @@ package balance
 
 import (
 	"errors"
+	"go-playground/m/v1/src/domain/model/user"
 )
 
 type (
@@ -20,31 +21,78 @@ func (a TopUpAmount) isMinimumAmountOrMore() bool {
 	return uint(a) >= MinimumTopUpAmount
 }
 
-// RemainingAmount 残高（エンティティ）
-type RemainingAmount uint
+type (
+	// RemainingAmount 残金
+	RemainingAmount uint
+)
+
+// InitialAmount ...
+const initialAmount RemainingAmount = 0
+
+// Entity 残高エンティティ
+type Entity struct {
+	userID          user.ID
+	remainingAmount RemainingAmount
+}
+
+// UserID Getter
+func (b *Entity) UserID() user.ID {
+	return b.userID
+}
+
+// RemainingAmount Getter
+func (b *Entity) RemainingAmount() uint {
+	return uint(b.remainingAmount)
+}
+
+// Exist ...
+func (b *Entity) Exist(expect bool) error {
+	if expect && b.UserID() == 0 {
+		return errors.New("対象ユーザーの残高がありません。")
+	}
+	if !expect && b.UserID() != 0 {
+		return errors.New("すでに残高登録済みです。")
+	}
+	return nil
+}
 
 // AddUp 残高足し算
-func (a RemainingAmount) AddUp(topUpAmount TopUpAmount) (*RemainingAmount, error) {
+func (b *Entity) AddUp(topUpAmount TopUpAmount) (*Entity, error) {
 	if !topUpAmount.isMinimumAmountOrMore() {
 		return nil, errors.New("チャージ額は500円以上必要です。")
 	}
-	calcuratedResult := uint(a) + uint(topUpAmount)
-	a = RemainingAmount(calcuratedResult)
-	return &a, nil
+	calcuratedResult := uint(b.remainingAmount) + uint(topUpAmount)
+	b.remainingAmount = RemainingAmount(calcuratedResult)
+	return b, nil
 }
 
 // Subtract 残高引き算
-func (a RemainingAmount) Subtract(paymentAmount PaymentAmount) (*RemainingAmount, error) {
-	if !a.hasEnoughRemainingAmount(paymentAmount) {
+func (b *Entity) Subtract(paymentAmount PaymentAmount) (*Entity, error) {
+	if !b.hasEnoughRemainingAmount(paymentAmount) {
 		return nil, errors.New("残高不足です。")
 	}
-	calcuratedResult := uint(a) - uint(paymentAmount)
-	a = RemainingAmount(calcuratedResult)
-	return &a, nil
+	calcuratedResult := uint(b.remainingAmount) - uint(paymentAmount)
+	b.remainingAmount = RemainingAmount(calcuratedResult)
+	return b, nil
 }
 
-func (a RemainingAmount) hasEnoughRemainingAmount(amount PaymentAmount) bool {
-	return uint(a) >= uint(amount)
+func (b *Entity) hasEnoughRemainingAmount(amount PaymentAmount) bool {
+	return uint(b.remainingAmount) >= uint(amount)
+}
+
+// NewEntity ...
+func NewEntity() *Entity {
+	balance := new(Entity)
+	balance.remainingAmount = initialAmount
+	return balance
+}
+
+// MakeEntity ...
+func MakeEntity(userID user.ID, remainingAmount RemainingAmount) *Entity {
+	balance := new(Entity)
+	balance.userID = userID
+	balance.remainingAmount = remainingAmount
+	return balance
 }
 
 // -------------------------------

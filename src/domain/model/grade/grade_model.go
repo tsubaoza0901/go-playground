@@ -17,8 +17,16 @@ type Entity struct {
 }
 
 // NewEntity ...
-func NewEntity(name string) *Entity {
+func NewEntity(id uint) *Entity {
 	return &Entity{
+		id: ID(id),
+	}
+}
+
+// MakeEntity ...
+func MakeEntity(id ID, name Name) *Entity {
+	return &Entity{
+		id:   ID(id),
 		name: Name(name),
 	}
 }
@@ -28,14 +36,9 @@ func (g *Entity) ID() ID {
 	return g.id
 }
 
-// SetID Setter
-func (g *Entity) SetID(id uint) {
-	g.id = ID(id)
-}
-
 // Name Getter
-func (g *Entity) Name() Name {
-	return g.name
+func (g *Entity) Name() string {
+	return string(g.name)
 }
 
 // Entities ...

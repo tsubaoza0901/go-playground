@@ -1,7 +1,7 @@
 package model
 
 import (
-	"go-playground/m/v1/src/domain/model/deal"
+	"go-playground/m/v1/src/usecase/repository/dto"
 
 	"gorm.io/gorm"
 )
@@ -19,34 +19,32 @@ func (DealHistory) TableName() string {
 	return "deal_histories"
 }
 
-func (th DealHistory) makeDealHistory() deal.History {
-	dealHistory := deal.NewHistory(th.ItemName, th.Amount)
-	dealHistory.SetCreatedAt(th.CreatedAt)
-	return *dealHistory
-}
-
-// NewCreateDealHistory ...
-func NewCreateDealHistory(p deal.History, userID uint) DealHistory {
+// ConvertToDealHistory ...
+func ConvertToDealHistory(userID uint, itemName string, amount uint) DealHistory {
 	return DealHistory{
 		UserID:   userID,
-		ItemName: string(p.ItemName()),
-		Amount:   uint(p.Amount()),
+		ItemName: itemName,
+		Amount:   amount,
 	}
 }
 
-// MakeFetchHistoryDTO ...
-func MakeFetchHistoryDTO(th DealHistory) *deal.FetchHistoryDTO {
-	return deal.NewFetchHistoryDTO(th.makeDealHistory())
+// MakeFetchHistoryResultDTO ...
+func MakeFetchHistoryResultDTO(dh DealHistory) *dto.FetchDealHistoryResult {
+	return dto.NewFetchDealHistoryResult(
+		dh.CreatedAt,
+		dh.ItemName,
+		dh.Amount,
+	)
 }
 
 // DealHistories ...
 type DealHistories []DealHistory
 
-// MakeFetchHistoriesDTO ...
-func MakeFetchHistoriesDTO(ths DealHistories) *deal.FetchHistoriesDTO {
-	dealHistoryEntities := make(deal.Histories, len(ths))
-	for i, th := range ths {
-		dealHistoryEntities[i] = th.makeDealHistory()
+// MakeFetchHistoryListResultDTO ...
+func MakeFetchHistoryListResultDTO(dhs DealHistories) *dto.FetchDealHistoryListResult {
+	fetchDealHistories := make(dto.FetchDealHistoryListResult, len(dhs))
+	for i, dh := range dhs {
+		fetchDealHistories[i] = MakeFetchHistoryResultDTO(dh)
 	}
-	return deal.NewFetchHistoriesDTO(dealHistoryEntities)
+	return &fetchDealHistories
 }

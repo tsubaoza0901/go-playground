@@ -12,7 +12,7 @@ type Grade struct {
 func MakeGrade(u grade.Entity) Grade {
 	return Grade{
 		ID:   uint(u.ID()),
-		Name: string(u.Name()),
+		Name: u.Name(),
 	}
 }
 

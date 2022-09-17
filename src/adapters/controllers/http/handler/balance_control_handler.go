@@ -58,8 +58,8 @@ func (h BalanceControlHandler) TopUp(c echo.Context) error {
 	return c.JSON(http.StatusOK, "OK")
 }
 
-// RetrieveRemainingBalance ...
-func (h BalanceControlHandler) RetrieveRemainingBalance(c echo.Context) error {
+// GetRemainingBalance ...
+func (h BalanceControlHandler) GetRemainingBalance(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	req := new(request.RetrieveRemainingBalance)

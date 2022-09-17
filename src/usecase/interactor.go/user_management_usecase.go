@@ -2,13 +2,13 @@ package interactor
 
 import (
 	"context"
-	"errors"
 	"go-playground/m/v1/src/domain/model/balance"
 	"go-playground/m/v1/src/domain/model/deal"
 	"go-playground/m/v1/src/domain/model/user"
 	"go-playground/m/v1/src/usecase/data/input"
 	"go-playground/m/v1/src/usecase/data/output"
 	"go-playground/m/v1/src/usecase/repository"
+	"go-playground/m/v1/src/usecase/repository/dto"
 )
 
 // UserManagementUsecase ...
@@ -31,15 +31,13 @@ func NewUserManagementUsecase(
 
 // CreateUser ...
 func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate input.UserCreate, inputTopUpAmount uint) error {
-	var err error
-
-	generalUser, err := user.InitGeneral(inputUserCreate.FirstName, inputUserCreate.LastName, inputUserCreate.Age, inputUserCreate.EmailAddress)
+	initialUser, err := user.NewGeneral(inputUserCreate.FirstName, inputUserCreate.LastName, inputUserCreate.Age, inputUserCreate.EmailAddress)
 	if err != nil {
 		return err
 	}
 
-	// 登録済みユーザーではないか確認
-	if err := u.verifyThatThereAreNoSameUsers(ctx, generalUser); err != nil {
+	// ユーザー重複確認
+	if err := u.verifyThatNoUserHasSameEmail(ctx, initialUser.EmailAddress()); err != nil {
 		return err
 	}
 
@@ -47,28 +45,28 @@ func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate i
 	if err := u.Transaction(ctx, func(ctx context.Context) (err error) {
 
 		// ユーザー登録
-		userFetchDTO, err := u.RegisterUser(ctx, user.NewRegistrationDTO(*generalUser))
+		generalUser, err := u.registerUser(ctx, initialUser)
 		if err != nil {
 			return err
 		}
 
-		generalUser = &userFetchDTO.General
-
 		// チャージ結果計算
-		remainingAmount := balance.RemainingAmount(0)
-		calculatedBalance, err := remainingAmount.AddUp(balance.TopUpAmount(inputTopUpAmount))
+		topUpAmount := balance.TopUpAmount(inputTopUpAmount)
+
+		initialBalance := balance.NewEntity()
+		calculatedBalance, err := initialBalance.AddUp(topUpAmount)
 		if err != nil {
 			return err
 		}
 
 		// 残高登録
-		if err = u.CreateBalance(ctx, uint(generalUser.ID()), balance.NewCreateBalanceDTO(*calculatedBalance)); err != nil {
+		if err = u.RegisterBalance(ctx, dto.NewRegisterBalance(generalUser.ID(), calculatedBalance.RemainingAmount())); err != nil {
 			return err
 		}
 
 		// 取引履歴登録
-		dealHistory := deal.NewHistory("", uint(inputTopUpAmount))
-		if err = u.RegisterDealHistory(ctx, deal.NewRegisterHistoryDTO(*dealHistory, uint(generalUser.ID()))); err != nil {
+		dealHistory := deal.NewTopUpHistory(topUpAmount)
+		if err = u.RegisterDealHistory(ctx, dto.NewRegisterDealHistory(generalUser.ID(), dealHistory.ItemName(), dealHistory.Amount())); err != nil {
 			return err
 		}
 		return
@@ -81,30 +79,82 @@ func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate i
 
 // RetrieveUserByCondition ...
 func (u UserManagementUsecase) RetrieveUserByCondition(ctx context.Context, id uint) (output.User, error) {
-	userFetchDTO, err := u.FetchUser(ctx, id)
+	targetUser, err := u.fetchUserbyID(ctx, id)
 	if err != nil {
 		return output.User{}, err
 	}
-	return output.MakeUser(userFetchDTO.General), nil
+	if err := targetUser.Exist(true); err != nil {
+		return output.User{}, err
+	}
+	return output.MakeUser(*targetUser), nil
 }
 
 // RetrieveUsers ...
 func (u UserManagementUsecase) RetrieveUsers(ctx context.Context) (output.Users, error) {
-	userFetchAllDTO, err := u.FetchAllUsers(ctx)
+	targetUserList, err := u.fetchUserList(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return output.MakeUsers(targetUserList), nil
+}
+
+func (u UserManagementUsecase) verifyThatNoUserHasSameEmail(ctx context.Context, email string) error {
+	targetUser, err := u.fetchUserbyEmail(ctx, email)
+	if err != nil {
+		return err
+	}
+	if err := targetUser.Exist(false); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u UserManagementUsecase) registerUser(ctx context.Context, generalUser *user.General) (*user.General, error) {
+	fetchResult, err := u.RegisterUser(ctx, dto.NewRegisterUser(*generalUser))
 	if err != nil {
 		return nil, err
 	}
 
-	return output.MakeUsers(userFetchAllDTO.Generals), nil
+	generalUser, err = fetchResult.ToGeneralUserModel()
+	if err != nil {
+		return nil, err
+	}
+	return generalUser, nil
 }
 
-func (u UserManagementUsecase) verifyThatThereAreNoSameUsers(ctx context.Context, generalUser *user.General) error {
-	count, err := u.CountTheNumberOfUsersByEmail(ctx, generalUser.EmailAddress())
+func (u UserManagementUsecase) fetchUserbyID(ctx context.Context, id uint) (*user.General, error) {
+	fetchResult, err := u.FetchUserByID(ctx, id)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	if !user.IsSameUsersCountZero(count) {
-		return errors.New("すでに同一ユーザーが存在します。")
+	generalUser, err := fetchResult.ToGeneralUserModel()
+	if err != nil {
+		return nil, err
 	}
-	return nil
+	return generalUser, nil
+}
+
+func (u UserManagementUsecase) fetchUserbyEmail(ctx context.Context, email string) (*user.General, error) {
+	fetchResult, err := u.FetchUserByEmail(ctx, email)
+	if err != nil {
+		return nil, err
+	}
+	generalUser, err := fetchResult.ToGeneralUserModel()
+	if err != nil {
+		return nil, err
+	}
+	return generalUser, nil
+}
+
+func (u UserManagementUsecase) fetchUserList(ctx context.Context) (user.Generals, error) {
+	fetchResult, err := u.FetchUserList(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	generalUserList, err := fetchResult.ToGeneralUsersModel()
+	if err != nil {
+		return nil, err
+	}
+	return generalUserList, nil
 }

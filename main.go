@@ -4,13 +4,39 @@ import (
 	"log"
 	"time"
 
+	"go-playground/m/v1/src/adapters/controllers"
 	"go-playground/m/v1/src/adapters/controllers/http/middleware"
-	"go-playground/m/v1/src/adapters/controllers/http/router"
-	"go-playground/m/v1/src/adapters/gateways/persistance/rdb/driver"
 	"go-playground/m/v1/src/dependency"
+	"go-playground/m/v1/src/infrastructure/driver"
 
 	"github.com/labstack/echo/v4"
 )
+
+func initRouter(e *echo.Echo, h controllers.AppController) {
+	{
+		// User Handler
+		e.POST("/user", h.IUserHandler.CreateNewUser)
+		e.GET("/user/:id", h.IUserHandler.GetUser)
+		e.GET("/users", h.IUserHandler.GetUserList)
+	}
+
+	{
+		// Grade Handler
+		e.GET("/grades", h.IGradeHandler.GetGradeList)
+	}
+
+	{
+		// DealHistory Handler
+		e.GET("/dealHistories/:userId", h.IDealHistoryHandler.GetDealHistoryList)
+	}
+
+	{
+		// BalanceControl Handler
+		e.PUT("/pay/:userId", h.IBalanceControlHandler.Pay)
+		e.PUT("/topup/:userId", h.IBalanceControlHandler.TopUp)
+		e.GET("/remainingBalance/:userId", h.IBalanceControlHandler.GetRemainingBalance)
+	}
+}
 
 const location = "Asia/Tokyo"
 
@@ -38,7 +64,7 @@ func main() {
 
 	di := dependency.NewInjection(conn)
 
-	router.InitRouting(e, di.InitHTTPHandler())
+	initRouter(e, di.InitAppController())
 
 	if err := e.Start(":8444"); err != nil {
 		log.Fatal(err)

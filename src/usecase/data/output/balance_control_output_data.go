@@ -2,7 +2,6 @@ package output
 
 import (
 	"fmt"
-	"go-playground/m/v1/src/domain/model/balance"
 )
 
 // Amount ...
@@ -19,8 +18,8 @@ type Balance struct {
 }
 
 // MakeBalance ...
-func MakeBalance(balance balance.RemainingAmount) Balance {
+func MakeBalance(remainingAmount uint) Balance {
 	return Balance{
-		Amount: Amount(balance),
+		Amount: Amount(remainingAmount),
 	}
 }

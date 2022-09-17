@@ -1,7 +1,7 @@
 package model
 
 import (
-	"go-playground/m/v1/src/domain/model/user"
+	"go-playground/m/v1/src/usecase/repository/dto"
 
 	"gorm.io/gorm"
 )
@@ -14,7 +14,7 @@ type User struct {
 	Age          uint
 	EmailAddress string
 	GradeID      uint
-	Grade        *Grade
+	Grade        Grade
 }
 
 // TableName ...
@@ -22,66 +22,39 @@ func (User) TableName() string {
 	return "users"
 }
 
-func (u User) makeGeneralUser() (user.General, error) {
-	generalUser, err := user.InitGeneral(u.FirstName, u.LastName, u.Age, u.EmailAddress)
-	if err != nil {
-		return user.General{}, err
+// ConvertToUser ...
+func ConvertToUser(u dto.RegisterUser) User {
+	return User{
+		FirstName:    u.FirstName,
+		LastName:     u.LastName,
+		Age:          u.Age,
+		EmailAddress: u.EmailAddress,
+		GradeID:      u.GradeID,
 	}
-	generalUser.SetID(u.ID)
-	if u.Grade != nil {
-		generalUser.SetGrade(u.Grade.makeGradeEntity())
-	}
-	return *generalUser, err
 }
 
-// InitUser ...
-func InitUser(u user.General) *User {
-	user := User{
-		FirstName:    string(u.FirstName()),
-		LastName:     string(u.LastName()),
-		Age:          uint(u.Age()),
-		EmailAddress: string(u.EmailAddress()),
-		GradeID:      uint(u.GradeID()),
-	}
-	return &user
-}
-
-// MakeUserFetchDTO ...
-func MakeUserFetchDTO(u User) (*user.FetchDTO, error) {
-	generalUser, err := u.makeGeneralUser()
-	if err != nil {
-		return nil, err
-	}
-	userFetchDTO := user.NewFetchDTO(generalUser)
-	return &userFetchDTO, nil
+// MakeFetchUserResultDTO ...
+func MakeFetchUserResultDTO(u User) *dto.FetchUserResult {
+	gradeResultDTO := MakeFetchGradeResultDTO(u.Grade)
+	fetchUserResult := dto.NewFetchUserResult(
+		u.ID,
+		u.FirstName,
+		u.LastName,
+		u.Age,
+		u.EmailAddress,
+		*gradeResultDTO,
+	)
+	return fetchUserResult
 }
 
 // Users ...
 type Users []User
 
-func (us Users) makeGeneralUsers() (user.Generals, error) {
-	var err error
-
-	generalUsers := make(user.Generals, len(us))
+// MakeFetchUserListResultDTO ...
+func MakeFetchUserListResultDTO(us Users) *dto.FetchUserListResult {
+	fetchUsers := make(dto.FetchUserListResult, len(us))
 	for i, u := range us {
-		generalUser, err := u.makeGeneralUser()
-		if err != nil {
-			break
-		}
-		generalUsers[i] = generalUser
+		fetchUsers[i] = MakeFetchUserResultDTO(u)
 	}
-	if err != nil {
-		return nil, err
-	}
-	return generalUsers, nil
-}
-
-// MakeUserFetchAllDTO ...
-func MakeUserFetchAllDTO(us Users) (*user.FetchAllDTO, error) {
-	generalUsers, err := us.makeGeneralUsers()
-	if err != nil {
-		return nil, err
-	}
-	fetchAllDTO := user.NewFetchAllDTO(generalUsers)
-	return &fetchAllDTO, nil
+	return &fetchUsers
 }

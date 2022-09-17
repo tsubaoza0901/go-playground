@@ -1,6 +1,7 @@
 package deal
 
 import (
+	"go-playground/m/v1/src/domain/model/balance"
 	"time"
 )
 
@@ -22,32 +23,28 @@ type Entity struct {
 	amount    Amount
 }
 
-// CreatedAt Getter
-func (p *Entity) CreatedAt() CreatedAt {
-	return p.createdAt
+func newHistory(itemName ItemName, amount Amount) *History {
+	history := new(History)
+
+	history.itemName = itemName
+	history.amount = amount
+
+	return history
 }
 
-// SetCreatedAt Setter
-func (p *Entity) SetCreatedAt(createdAt time.Time) {
-	p.createdAt = CreatedAt(createdAt)
+// CreatedAt Getter
+func (d *Entity) CreatedAt() time.Time {
+	return time.Time(d.createdAt)
 }
 
 // ItemName Getter
-func (p *Entity) ItemName() ItemName {
-	return p.itemName
-}
-
-func (p *Entity) setItemName(itemName string) {
-	p.itemName = ItemName(itemName)
+func (d *Entity) ItemName() string {
+	return string(d.itemName)
 }
 
 // Amount Getter
-func (p *Entity) Amount() Amount {
-	return p.amount
-}
-
-func (p *Entity) setAmount(amount uint) {
-	p.amount = Amount(amount)
+func (d *Entity) Amount() uint {
+	return uint(d.amount)
 }
 
 // History ...
@@ -55,16 +52,20 @@ type History struct {
 	Entity
 }
 
-// NewHistory ...
-func NewHistory(itemName string, amount uint) *History {
-	history := new(History)
+// NewPaymentHistory ...
+func NewPaymentHistory(itemName string, amount balance.PaymentAmount) *History {
+	return newHistory(ItemName(itemName), Amount(amount))
+}
 
-	if itemName == "" && amount >= 0 {
-		history.setItemName("チャージ")
-	} else {
-		history.setItemName(itemName)
-	}
-	history.setAmount(amount)
+// NewTopUpHistory ...
+func NewTopUpHistory(amount balance.TopUpAmount) *History {
+	return newHistory("チャージ", Amount(amount))
+}
+
+// MakeHistory ...
+func MakeHistory(createdAt CreatedAt, itemName ItemName, amount Amount) *History {
+	history := newHistory(itemName, amount)
+	history.createdAt = createdAt
 	return history
 }
 

@@ -2,42 +2,36 @@ package repository
 
 import (
 	"context"
-	"go-playground/m/v1/src/domain/model/balance"
-	"go-playground/m/v1/src/domain/model/deal"
-	"go-playground/m/v1/src/domain/model/grade"
-	"go-playground/m/v1/src/domain/model/user"
+	"go-playground/m/v1/src/usecase/repository/dto"
 )
 
 // IBalanceRepository ...
 type IBalanceRepository interface {
-	FetchBalanceByUserID(ctx context.Context, userID uint) (*balance.FetchAmountDTO, error)
-	CreateBalance(ctx context.Context, userID uint, dto balance.CreateBalanceDTO) error
-	UpdateBalance(ctx context.Context, userID uint, dto balance.UpdateBalanceDTO) error
+	RegisterBalance(ctx context.Context, createBalanceDTO dto.RegisterBalance) error
+	UpdateBalance(ctx context.Context, updateBalanceDTO dto.UpdateBalance) error
+	FetchBalanceByUserID(ctx context.Context, userID uint) (*dto.FetchBlanceResult, error)
 }
 
 // IGradeRepository ...
 type IGradeRepository interface {
-	FetchAllGrades(context.Context) (*grade.FetchAllDTO, error)
+	FetchGradeList(context.Context) (*dto.FetchGradeListResult, error)
 }
 
 // IDealHistoryRepository ...
 type IDealHistoryRepository interface {
-	RegisterDealHistory(context.Context, deal.RegisterHistoryDTO) error
-	FetchDealHistoriesByUserID(ctx context.Context, userID uint) (*deal.FetchHistoriesDTO, error)
+	RegisterDealHistory(context.Context, dto.RegisterDealHistory) error
+	FetchDealHistoriesByUserID(ctx context.Context, userID uint) (*dto.FetchDealHistoryListResult, error)
 }
 
 // IUserManagementRepository ...
 type IUserManagementRepository interface {
-	RegisterUser(context.Context, user.RegistrationDTO) (*user.FetchDTO, error)
-	FetchUser(ctx context.Context, id uint) (*user.FetchDTO, error)
-	FetchAllUsers(ctx context.Context) (*user.FetchAllDTO, error)
-	CountTheNumberOfUsersByEmail(ctx context.Context, email user.EmailAddress) (count uint, err error)
+	RegisterUser(context.Context, dto.RegisterUser) (*dto.FetchUserResult, error)
+	FetchUserByID(ctx context.Context, id uint) (*dto.FetchUserResult, error)
+	FetchUserByEmail(ctx context.Context, email string) (*dto.FetchUserResult, error)
+	FetchUserList(ctx context.Context) (*dto.FetchUserListResult, error)
 }
 
 // ITransactionManagementRepository ...
 type ITransactionManagementRepository interface {
-	// NewContextWithTx(ctx context.Context) context.Context
-	// CommitByContext(ctx context.Context) error
-	// RollbackByContext(ctx context.Context) error
 	Transaction(ctx context.Context, fc func(ctx context.Context) error) error
 }
