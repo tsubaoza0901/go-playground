@@ -5,14 +5,19 @@ import (
 	"time"
 
 	"go-playground/m/v1/src/adapters/controllers"
+	"go-playground/m/v1/src/adapters/controllers/graphql/graph"
+	"go-playground/m/v1/src/adapters/controllers/graphql/graph/generated"
 	"go-playground/m/v1/src/adapters/controllers/http/middleware"
 	"go-playground/m/v1/src/dependency"
 	"go-playground/m/v1/src/infrastructure/driver"
 
 	"github.com/labstack/echo/v4"
+
+	gqlHandler "github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
 )
 
-func initRouter(e *echo.Echo, h controllers.AppController) {
+func initRouter(e *echo.Echo, h controllers.AppController, srv *gqlHandler.Server) {
 	{
 		// User Handler
 		e.POST("/user", h.IUserHandler.CreateNewUser)
@@ -35,6 +40,18 @@ func initRouter(e *echo.Echo, h controllers.AppController) {
 		e.PUT("/pay/:userId", h.IBalanceControlHandler.Pay)
 		e.PUT("/topup/:userId", h.IBalanceControlHandler.TopUp)
 		e.GET("/remainingBalance/:userId", h.IBalanceControlHandler.GetRemainingBalance)
+	}
+
+	{
+		// GraphQL Handler
+		e.GET("/graphql-playground", func(c echo.Context) error { // GUIからのGraphQL実行用（http://localhost:8444/graphql-playground）
+			playground.Handler("GraphQL playground", "/query").ServeHTTP(c.Response(), c.Request())
+			return nil
+		})
+		e.POST("/query", func(c echo.Context) error {
+			srv.ServeHTTP(c.Response(), c.Request())
+			return nil
+		})
 	}
 }
 
@@ -62,9 +79,11 @@ func main() {
 	e := echo.New()
 	middleware.InitMiddleware(e)
 
+	srv := gqlHandler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
+
 	di := dependency.NewInjection(conn)
 
-	initRouter(e, di.InitAppController())
+	initRouter(e, di.InitAppController(), srv)
 
 	if err := e.Start(":8444"); err != nil {
 		log.Fatal(err)
