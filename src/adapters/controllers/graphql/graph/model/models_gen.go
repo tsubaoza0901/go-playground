@@ -7,6 +7,14 @@ type Grade struct {
 	Name string `json:"name"`
 }
 
+type NewUser struct {
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Age       int    `json:"age"`
+	Amount    int    `json:"amount"`
+	Email     string `json:"email"`
+}
+
 type User struct {
 	ID           int    `json:"id"`
 	Name         string `json:"name"`

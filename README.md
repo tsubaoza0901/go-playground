@@ -83,7 +83,7 @@ root@fe385569a625:/go/app# go run main.go
 2. ターミナルで以下のコマンドを実行
 
 ```
-$ go generate ./...
+root@fe385569a625:/go/app# go generate ./...
 ```
 
 3. mockディレクトリにmockが作成または更新されていることを確認
@@ -92,7 +92,7 @@ $ go generate ./...
 ターミナルで以下のコマンドを実行
 
 ```
-$ go test ./...
+root@fe385569a625:/go/app# go test ./...
 ```
 
 ## GraphQL
@@ -104,13 +104,13 @@ $ go test ./...
 2. Schemaを用いた関連ファイル（schema.resolvers.go、models_gen.go、generated.go）の自動更新
 
 ```
-$ go generate ./...
+root@fe385569a625:/go/app# go generate ./...
 ```
 
 ※ ドキュメント上は以下のコマンドを毎回実行する必要はなさそうだが、なぜか上記実行前に以下のコマンドを叩かないとエラーになる、、
 
 ```
-go get github.com/99designs/gqlgen@v0.17.19
+root@fe385569a625:/go/app# go get github.com/99designs/gqlgen@v0.17.19
 ```
 
 3. 自動更新されない以下ファイルの修正 ※必要に応じて
@@ -125,14 +125,7 @@ query
 
 ```graphql
 mutation createUser($newUser: NewUser!) {
-  createUser(input: $newUser) {
-    name
-    age
-    emailAddress
-    grade {
-      id
-    }
-  }
+  createUser(input: $newUser)
 }
 ```
 
@@ -141,10 +134,11 @@ variables
 ```json
 {
   "newUser": {
-  	"name": "山田 太郎",
-  	"age": 30,
-  	"emailAddress": "xxx@gmail.com",
-  	"gradeId": "1"
+  	"firstName": "太郎",
+    "lastName": "山田",
+  	"age": 40,
+    "amount": 10000,
+  	"email": "xxsssx@gmail.com"
 	}
 }
 ```
@@ -157,9 +151,7 @@ query findUsers {
     name
     age
     emailAddress
-    grade {
-      name
-    }
+    gradeName
   }
 }
 ```

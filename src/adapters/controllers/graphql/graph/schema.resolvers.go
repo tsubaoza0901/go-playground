@@ -7,7 +7,22 @@ import (
 	"context"
 	"go-playground/m/v1/src/adapters/controllers/graphql/graph/generated"
 	"go-playground/m/v1/src/adapters/controllers/graphql/graph/model"
+	usecaseInput "go-playground/m/v1/src/usecase/data/input"
 )
+
+// CreateUser is the resolver for the createUser field.
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (string, error) {
+	user := usecaseInput.NewUserCreate()
+	user.FirstName = input.FirstName
+	user.LastName = input.LastName
+	user.Age = uint(input.Age)
+	user.EmailAddress = input.Email
+
+	if err := r.IUserManagementUsecase.CreateUser(ctx, user, uint(input.Amount)); err != nil {
+		return "", err
+	}
+	return "ok", nil
+}
 
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
@@ -28,7 +43,11 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	return us, nil
 }
 
+// Mutation returns generated.MutationResolver implementation.
+func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
+
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
+type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }

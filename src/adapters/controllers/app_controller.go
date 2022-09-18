@@ -1,21 +1,21 @@
 package controllers
 
 import (
-	"go-playground/m/v1/src/adapters/controllers/http"
+	"go-playground/m/v1/src/adapters/controllers/http/handler"
 
 	gqlHandler "github.com/99designs/gqlgen/graphql/handler"
 )
 
 // AppController ...
 type AppController struct {
-	http.IUserHandler
-	http.IGradeHandler
-	http.IDealHistoryHandler
-	http.IBalanceControlHandler
+	handler.UserHandler
+	handler.GradeHandler
+	handler.DealHistoryHandler
+	handler.BalanceControlHandler
 	*gqlHandler.Server
 }
 
 // NewAppController ...
-func NewAppController(uh http.IUserHandler, gh http.IGradeHandler, dhh http.IDealHistoryHandler, bch http.IBalanceControlHandler, s *gqlHandler.Server) AppController {
+func NewAppController(uh handler.UserHandler, gh handler.GradeHandler, dhh handler.DealHistoryHandler, bch handler.BalanceControlHandler, s *gqlHandler.Server) AppController {
 	return AppController{uh, gh, dhh, bch, s}
 }

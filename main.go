@@ -14,29 +14,29 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 )
 
-func initRouter(e *echo.Echo, ctr controllers.AppController) {
+func initRouter(e *echo.Echo, appCtr controllers.AppController) {
 	{
 		// User Handler
-		e.POST("/user", ctr.IUserHandler.CreateNewUser)
-		e.GET("/user/:id", ctr.IUserHandler.GetUser)
-		e.GET("/users", ctr.IUserHandler.GetUserList)
+		e.POST("/user", appCtr.UserHandler.CreateNewUser)
+		e.GET("/user/:id", appCtr.UserHandler.GetUser)
+		e.GET("/users", appCtr.UserHandler.GetUserList)
 	}
 
 	{
 		// Grade Handler
-		e.GET("/grades", ctr.IGradeHandler.GetGradeList)
+		e.GET("/grades", appCtr.GradeHandler.GetGradeList)
 	}
 
 	{
 		// DealHistory Handler
-		e.GET("/dealHistories/:userId", ctr.IDealHistoryHandler.GetDealHistoryList)
+		e.GET("/dealHistories/:userId", appCtr.DealHistoryHandler.GetDealHistoryList)
 	}
 
 	{
 		// BalanceControl Handler
-		e.PUT("/pay/:userId", ctr.IBalanceControlHandler.Pay)
-		e.PUT("/topup/:userId", ctr.IBalanceControlHandler.TopUp)
-		e.GET("/remainingBalance/:userId", ctr.IBalanceControlHandler.GetRemainingBalance)
+		e.PUT("/pay/:userId", appCtr.BalanceControlHandler.Pay)
+		e.PUT("/topup/:userId", appCtr.BalanceControlHandler.TopUp)
+		e.GET("/remainingBalance/:userId", appCtr.BalanceControlHandler.GetRemainingBalance)
 	}
 
 	{
@@ -46,7 +46,7 @@ func initRouter(e *echo.Echo, ctr controllers.AppController) {
 			return nil
 		})
 		e.POST("/query", func(c echo.Context) error {
-			ctr.Server.ServeHTTP(c.Response(), c.Request())
+			appCtr.Server.ServeHTTP(c.Response(), c.Request())
 			return nil
 		})
 	}

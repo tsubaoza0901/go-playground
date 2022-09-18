@@ -19,13 +19,15 @@ type Query {
   users: [User!]!
 }
 
-# input NewUser {
-#   name:         String!
-#   age:          Int!
-#   emailAddress: String!
-#   gradeId:      String!
-# }
+input NewUser {
+  firstName:  String!
+  lastName:   String!
+  age:        Int!
+  amount:     Int!
+  email:      String!
+}
 
-# type Mutation {
-#   createUser(input: NewUser!): User!
-# }
+type Mutation {
+  createUser(input: NewUser!): String!
+  # createUser(input: NewUser!)
+}
