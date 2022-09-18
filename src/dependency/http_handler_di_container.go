@@ -1,7 +1,11 @@
 package dependency
 
 import (
+	"go-playground/m/v1/src/adapters/controllers/graphql/graph"
+	"go-playground/m/v1/src/adapters/controllers/graphql/graph/generated"
 	"go-playground/m/v1/src/adapters/controllers/http/handler"
+
+	gqlHandler "github.com/99designs/gqlgen/graphql/handler"
 )
 
 // 簡易DIコンテナ（Handler用）
@@ -31,5 +35,19 @@ func (i Injection) InitDealHistoryHandler() handler.DealHistoryHandler {
 func (i Injection) InitBalanceControlHandler() handler.BalanceControlHandler {
 	return handler.NewBalanceControlHandler(
 		i.InitBalanceControlUsecase(),
+	)
+}
+
+// InitGraphQLHandlerServer ...
+func (i Injection) InitGraphQLHandlerServer() *gqlHandler.Server {
+	return gqlHandler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{
+		Resolvers: i.InitResolver(),
+	}))
+}
+
+// InitResolver ...
+func (i Injection) InitResolver() *graph.Resolver {
+	return graph.NewResolver(
+		i.InitUserManagementUsecase(),
 	)
 }

@@ -3,21 +3,14 @@
 package model
 
 type Grade struct {
-	ID   string `json:"id"`
+	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
-type NewUser struct {
-	Name         string `json:"name"`
-	Age          int    `json:"age"`
-	EmailAddress string `json:"emailAddress"`
-	GradeID      string `json:"gradeId"`
-}
-
 type User struct {
-	ID           string `json:"id"`
+	ID           int    `json:"id"`
 	Name         string `json:"name"`
 	Age          int    `json:"age"`
 	EmailAddress string `json:"emailAddress"`
-	Grade        *Grade `json:"grade"`
+	GradeName    string `json:"gradeName"`
 }

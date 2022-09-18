@@ -2,13 +2,20 @@
 
 package graph
 
-import "go-playground/m/v1/src/adapters/controllers/graphql/graph/model"
+import (
+	"go-playground/m/v1/src/usecase"
+)
 
 // This file will not be regenerated automatically.
 //
 // It serves as dependency injection for your app, add any dependencies you require here.
 
-type Resolver struct{
-	// todos []*model.Todo
-	users []*model.User
+// Resolver ...
+type Resolver struct {
+	usecase.IUserManagementUsecase
+}
+
+// NewResolver ...
+func NewResolver(u usecase.IUserManagementUsecase) *Resolver {
+	return &Resolver{u}
 }

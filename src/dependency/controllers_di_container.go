@@ -9,5 +9,6 @@ func (i Injection) InitAppController() controllers.AppController {
 		i.InitGradeHandler(),
 		i.InitDealHistoryHandler(),
 		i.InitBalanceControlHandler(),
+		i.InitGraphQLHandlerServer(),
 	)
 }

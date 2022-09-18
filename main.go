@@ -5,41 +5,38 @@ import (
 	"time"
 
 	"go-playground/m/v1/src/adapters/controllers"
-	"go-playground/m/v1/src/adapters/controllers/graphql/graph"
-	"go-playground/m/v1/src/adapters/controllers/graphql/graph/generated"
 	"go-playground/m/v1/src/adapters/controllers/http/middleware"
 	"go-playground/m/v1/src/dependency"
 	"go-playground/m/v1/src/infrastructure/driver"
 
 	"github.com/labstack/echo/v4"
 
-	gqlHandler "github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 )
 
-func initRouter(e *echo.Echo, h controllers.AppController, srv *gqlHandler.Server) {
+func initRouter(e *echo.Echo, ctr controllers.AppController) {
 	{
 		// User Handler
-		e.POST("/user", h.IUserHandler.CreateNewUser)
-		e.GET("/user/:id", h.IUserHandler.GetUser)
-		e.GET("/users", h.IUserHandler.GetUserList)
+		e.POST("/user", ctr.IUserHandler.CreateNewUser)
+		e.GET("/user/:id", ctr.IUserHandler.GetUser)
+		e.GET("/users", ctr.IUserHandler.GetUserList)
 	}
 
 	{
 		// Grade Handler
-		e.GET("/grades", h.IGradeHandler.GetGradeList)
+		e.GET("/grades", ctr.IGradeHandler.GetGradeList)
 	}
 
 	{
 		// DealHistory Handler
-		e.GET("/dealHistories/:userId", h.IDealHistoryHandler.GetDealHistoryList)
+		e.GET("/dealHistories/:userId", ctr.IDealHistoryHandler.GetDealHistoryList)
 	}
 
 	{
 		// BalanceControl Handler
-		e.PUT("/pay/:userId", h.IBalanceControlHandler.Pay)
-		e.PUT("/topup/:userId", h.IBalanceControlHandler.TopUp)
-		e.GET("/remainingBalance/:userId", h.IBalanceControlHandler.GetRemainingBalance)
+		e.PUT("/pay/:userId", ctr.IBalanceControlHandler.Pay)
+		e.PUT("/topup/:userId", ctr.IBalanceControlHandler.TopUp)
+		e.GET("/remainingBalance/:userId", ctr.IBalanceControlHandler.GetRemainingBalance)
 	}
 
 	{
@@ -49,7 +46,7 @@ func initRouter(e *echo.Echo, h controllers.AppController, srv *gqlHandler.Serve
 			return nil
 		})
 		e.POST("/query", func(c echo.Context) error {
-			srv.ServeHTTP(c.Response(), c.Request())
+			ctr.Server.ServeHTTP(c.Response(), c.Request())
 			return nil
 		})
 	}
@@ -79,11 +76,9 @@ func main() {
 	e := echo.New()
 	middleware.InitMiddleware(e)
 
-	srv := gqlHandler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
-
 	di := dependency.NewInjection(conn)
 
-	initRouter(e, di.InitAppController(), srv)
+	initRouter(e, di.InitAppController())
 
 	if err := e.Start(":8444"); err != nil {
 		log.Fatal(err)
