@@ -104,9 +104,9 @@ func InitGeneral(firstName string, lastName string, age uint, email string) (*Ge
 }
 
 // UpdateGeneral ユーザー更新関数
-func UpdateGeneral(id uint, lastName string, email string, gradeID grade.ID) (*General, error) {
+func UpdateGeneral(id ID, lastName string, email string, gradeID grade.ID) (*General, error) {
 	entity := new(Entity)
-	entity.id = ID(id)
+	entity.id = id
 	entity.lastName = LastName(lastName)
 	entity.emailAddress = EmailAddress(email)
 

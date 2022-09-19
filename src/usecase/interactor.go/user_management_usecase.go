@@ -32,13 +32,13 @@ func NewUserManagementUsecase(
 
 // CreateUser ...
 func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate input.UserCreate, inputTopUpAmount uint) error {
-	initialUser, err := user.InitGeneral(inputUserCreate.FirstName, inputUserCreate.LastName, inputUserCreate.Age, inputUserCreate.EmailAddress)
-	if err != nil {
+	// ユーザー重複確認
+	if err := u.verifyThatNoUserHasSameEmail(ctx, inputUserCreate.EmailAddress); err != nil {
 		return err
 	}
 
-	// ユーザー重複確認
-	if err := u.verifyThatNoUserHasSameEmail(ctx, initialUser.EmailAddress()); err != nil {
+	initialUser, err := user.InitGeneral(inputUserCreate.FirstName, inputUserCreate.LastName, inputUserCreate.Age, inputUserCreate.EmailAddress)
+	if err != nil {
 		return err
 	}
 
@@ -80,18 +80,20 @@ func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate i
 
 // EditUser ...
 func (u UserManagementUsecase) EditUser(ctx context.Context, inputUserUpdate input.UserUpdate) error {
-	updateUser, err := user.UpdateGeneral(inputUserUpdate.ID, inputUserUpdate.LastName, inputUserUpdate.EmailAddress, grade.ID(inputUserUpdate.GradeID))
-	if err != nil {
-		return err
-	}
+	userID := user.ID(inputUserUpdate.ID)
 
 	// ユーザー存在確認
-	if err := u.verifyThatUserExist(ctx, updateUser.ID()); err != nil {
+	if err := u.verifyThatUserExist(ctx, userID); err != nil {
 		return err
 	}
 
 	// ユーザー重複確認
-	if err := u.verifyThatNoUserHasSameEmail(ctx, updateUser.EmailAddress()); err != nil {
+	if err := u.verifyThatNoUserHasSameEmail(ctx, inputUserUpdate.EmailAddress); err != nil {
+		return err
+	}
+
+	updateUser, err := user.UpdateGeneral(userID, inputUserUpdate.LastName, inputUserUpdate.EmailAddress, grade.ID(inputUserUpdate.GradeID))
+	if err != nil {
 		return err
 	}
 
