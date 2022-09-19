@@ -40,8 +40,8 @@ $ docker exec -it go-playground bash
 ② マイグレーションファイルの実行
 
 ```
-root@fe385569a625:/go/app# cd db/migrations
-root@fe385569a625:/go/app/db/migrations# goose mysql "root:root@tcp(db:3306)/goplayground?parseTime=true" up
+root@fe385569a625:/go/app# cd infrastructure/migrations/
+root@fe385569a625:/go/app/infrastructure/migrations# goose mysql "root:root@tcp(db:3306)/goplayground?parseTime=true" up
 ```
 
 【補足】   
