@@ -1,8 +1,8 @@
 package handler_test
 
 import (
-	"go-playground/m/v1/adapters/controllers/http/handler"
-	"go-playground/m/v1/adapters/controllers/http/middleware"
+	"go-playground/m/v1/adapters/controllers/rest/handler"
+	"go-playground/m/v1/adapters/controllers/rest/middleware"
 	"go-playground/m/v1/mock"
 	"go-playground/m/v1/usecase/data/output"
 	"net/http"

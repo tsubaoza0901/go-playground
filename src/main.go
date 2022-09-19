@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"go-playground/m/v1/adapters/controllers"
-	"go-playground/m/v1/adapters/controllers/http/middleware"
+	"go-playground/m/v1/adapters/controllers/rest/middleware"
 	"go-playground/m/v1/dependency"
 	"go-playground/m/v1/infrastructure/driver"
 

@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"go-playground/m/v1/adapters/controllers/http/handler/request"
-	"go-playground/m/v1/adapters/controllers/http/handler/response"
+	"go-playground/m/v1/adapters/controllers/rest/handler/request"
+	"go-playground/m/v1/adapters/controllers/rest/handler/response"
 	"go-playground/m/v1/usecase"
 	"net/http"
 
