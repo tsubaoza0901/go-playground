@@ -23,8 +23,8 @@ input NewUser {
   firstName:  String!
   lastName:   String!
   age:        Int!
-  amount:     Int!
   email:      String!
+  topUpAmount:     Int!
 }
 
 type Mutation {

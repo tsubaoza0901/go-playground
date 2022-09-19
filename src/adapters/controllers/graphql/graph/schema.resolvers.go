@@ -18,7 +18,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 	user.Age = uint(input.Age)
 	user.EmailAddress = input.Email
 
-	if err := r.IUserManagementUsecase.CreateUser(ctx, user, uint(input.Amount)); err != nil {
+	if err := r.IUserManagementUsecase.CreateUser(ctx, user, uint(input.TopUpAmount)); err != nil {
 		return "", err
 	}
 	return "ok", nil

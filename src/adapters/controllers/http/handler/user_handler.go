@@ -32,7 +32,7 @@ func (h UserHandler) CreateNewUser(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	if err := h.CreateUser(ctx, req.ConvertToUserModel(), req.Amount); err != nil {
+	if err := h.CreateUser(ctx, req.ConvertToUserModel(), req.TopUpAmount); err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 

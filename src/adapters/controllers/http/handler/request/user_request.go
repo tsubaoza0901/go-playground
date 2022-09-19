@@ -9,8 +9,8 @@ type UserCreate struct {
 	FirstName    string `json:"firstName" validate:"required"`
 	LastName     string `json:"lastName" validate:"required"`
 	Age          uint   `json:"age" validate:"required"`
-	Amount       uint   `json:"amount" validate:"required"`
 	EmailAddress string `json:"email" validate:"required"`
+	TopUpAmount  uint   `json:"topUpAmount" validate:"required"`
 }
 
 // ConvertToUserModel ...
