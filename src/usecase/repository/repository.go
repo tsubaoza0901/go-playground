@@ -28,7 +28,7 @@ type IDealHistoryRepository interface {
 // IUserManagementRepository ...
 type IUserManagementRepository interface {
 	RegisterUser(context.Context, dto.RegisterUser) (*dto.FetchUserResult, error)
-	UpdateUser(ctx context.Context, id uint, dto dto.UpdateUser) (*dto.FetchUserResult, error)
+	UpdateUser(ctx context.Context, id uint, dtoUpdateUser dto.UpdateUser) (*dto.FetchUserResult, error)
 	FetchUserByID(ctx context.Context, id uint) (*dto.FetchUserResult, error)
 	FetchUserByEmail(ctx context.Context, email string) (*dto.FetchUserResult, error)
 	FetchUserList(ctx context.Context) (*dto.FetchUserListResult, error)

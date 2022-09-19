@@ -1,7 +1,6 @@
 package dependency
 
 import (
-	"go-playground/m/v1/adapters/controllers"
 	"go-playground/m/v1/adapters/controllers/graphql/graph"
 	"go-playground/m/v1/adapters/controllers/graphql/graph/generated"
 	"go-playground/m/v1/adapters/controllers/rest/handler"
@@ -9,15 +8,24 @@ import (
 	gqlHandler "github.com/99designs/gqlgen/graphql/handler"
 )
 
+// AppController ...
+type AppController struct {
+	handler.UserHandler
+	handler.GradeHandler
+	handler.DealHistoryHandler
+	handler.BalanceControlHandler
+	*gqlHandler.Server
+}
+
 // InitAppController ...
-func (i Injection) InitAppController() controllers.AppController {
-	return controllers.NewAppController(
+func (i Injection) InitAppController() AppController {
+	return AppController{
 		i.InitUserHandler(),
 		i.InitGradeHandler(),
 		i.InitDealHistoryHandler(),
 		i.InitBalanceControlHandler(),
 		i.InitGraphQLHandlerServer(),
-	)
+	}
 }
 
 // InitUserHandler ...

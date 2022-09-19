@@ -4,7 +4,6 @@ import (
 	"log"
 	"time"
 
-	"go-playground/m/v1/adapters/controllers"
 	"go-playground/m/v1/adapters/controllers/rest/middleware"
 	"go-playground/m/v1/dependency"
 	"go-playground/m/v1/infrastructure/driver"
@@ -14,7 +13,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 )
 
-func initRouter(e *echo.Echo, appCtr controllers.AppController) {
+func initRouter(e *echo.Echo, appCtr dependency.AppController) {
 	{
 		// User Handler
 		e.POST("/user", appCtr.UserHandler.CreateNewUser)
