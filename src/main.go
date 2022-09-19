@@ -18,6 +18,7 @@ func initRouter(e *echo.Echo, appCtr controllers.AppController) {
 	{
 		// User Handler
 		e.POST("/user", appCtr.UserHandler.CreateNewUser)
+		e.PUT("/user/:id", appCtr.UserHandler.UpdateUser)
 		e.GET("/user/:id", appCtr.UserHandler.GetUser)
 		e.GET("/users", appCtr.UserHandler.GetUserList)
 	}

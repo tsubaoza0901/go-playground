@@ -4,6 +4,7 @@ import (
 	"context"
 	"go-playground/m/v1/domain/model/balance"
 	"go-playground/m/v1/domain/model/deal"
+	"go-playground/m/v1/domain/model/grade"
 	"go-playground/m/v1/domain/model/user"
 	"go-playground/m/v1/usecase/data/input"
 	"go-playground/m/v1/usecase/data/output"
@@ -77,6 +78,32 @@ func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate i
 	return nil
 }
 
+// EditUser ...
+func (u UserManagementUsecase) EditUser(ctx context.Context, inputUserUpdate input.UserUpdate) error {
+	updateUser, err := user.UpdateGeneral(inputUserUpdate.ID, inputUserUpdate.LastName, inputUserUpdate.EmailAddress, grade.ID(inputUserUpdate.GradeID))
+	if err != nil {
+		return err
+	}
+
+	// ユーザー存在確認
+	if err := u.verifyThatUserExist(ctx, updateUser.ID()); err != nil {
+		return err
+	}
+
+	// ユーザー重複確認
+	if err := u.verifyThatNoUserHasSameEmail(ctx, updateUser.EmailAddress()); err != nil {
+		return err
+	}
+
+	// ユーザー情報更新
+	_, err = u.editUser(ctx, updateUser)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // RetrieveUserByCondition ...
 func (u UserManagementUsecase) RetrieveUserByCondition(ctx context.Context, id uint) (output.User, error) {
 	targetUser, err := u.fetchUserbyID(ctx, id)
@@ -109,8 +136,32 @@ func (u UserManagementUsecase) verifyThatNoUserHasSameEmail(ctx context.Context,
 	return nil
 }
 
+func (u UserManagementUsecase) verifyThatUserExist(ctx context.Context, id user.ID) error {
+	targetUser, err := u.fetchUserbyID(ctx, uint(id))
+	if err != nil {
+		return err
+	}
+	if err := targetUser.Exist(true); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (u UserManagementUsecase) registerUser(ctx context.Context, generalUser *user.General) (*user.General, error) {
 	fetchResult, err := u.RegisterUser(ctx, dto.NewRegisterUser(*generalUser))
+	if err != nil {
+		return nil, err
+	}
+
+	generalUser, err = fetchResult.ToGeneralUserModel()
+	if err != nil {
+		return nil, err
+	}
+	return generalUser, nil
+}
+
+func (u UserManagementUsecase) editUser(ctx context.Context, generalUser *user.General) (*user.General, error) {
+	fetchResult, err := u.UpdateUser(ctx, uint(generalUser.ID()), dto.NewUpdateUser(*generalUser))
 	if err != nil {
 		return nil, err
 	}
