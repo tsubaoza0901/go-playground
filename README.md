@@ -40,8 +40,26 @@ $ docker exec -it go-playground bash
 ② マイグレーションファイルの実行
 
 ```
+root@fe385569a625:/go/app# cd db/migrations
+root@fe385569a625:/go/app/db/migrations# goose mysql "root:root@tcp(db:3306)/goplayground?parseTime=true" up
+```
+
+【補足】   
+
+`bitbucket.org/liamstask/goose/cmd/goose` を使用している場合は、コマンドの実行は root ディレクトリで良く、コマンドも以下でよかったが、
+
+```
 root@fe385569a625:/go/app# goose up
 ```
+以下の理由から `github.com/pressly/goose/v3/cmd/goose@latest` に変更し、それに伴って使用方法に少々違いが発生
+
+- GraphQL 導入にあたって gqlgen の latest を使用したいが、その場合 go version 1.18以上である必要がある
+- しかし、go version 1.18以上では `bitbucket.org/liamstask/goose/cmd/goose` が使用できず（サポートが終了している）、開発が継続されている `github.com/pressly/goose/v3/cmd/goose@latest` に変更する必要がある
+
+なお、`github.com/pressly/goose/v3/cmd/goose@latest` の使用方法については以下を参照   
+
+> ・Github | pressly/goose：https://github.com/pressly/goose   
+> ・Qiita | PostgreSQL+gooseでDBマイグレーションを試してみる：https://qiita.com/kishimoto828/items/179072276799c740a3eb   
 
 ## 4．アプリケーションの起動
 
@@ -65,7 +83,7 @@ root@fe385569a625:/go/app# go run main.go
 2. ターミナルで以下のコマンドを実行
 
 ```
-$ go generate ./...
+root@fe385569a625:/go/app# go generate ./...
 ```
 
 3. mockディレクトリにmockが作成または更新されていることを確認
@@ -74,8 +92,74 @@ $ go generate ./...
 ターミナルで以下のコマンドを実行
 
 ```
-$ go test ./...
+root@fe385569a625:/go/app# go test ./...
 ```
+
+## GraphQL
+
+### IFに変更がある場合の更新手順
+
+1. Schema（schema.graphqls）の手動修正
+
+2. Schemaを用いた関連ファイル（schema.resolvers.go、models_gen.go、generated.go）の自動更新
+
+```
+root@fe385569a625:/go/app# go generate ./...
+```
+
+※ ドキュメント上は以下のコマンドを毎回実行する必要はなさそうだが、なぜか上記実行前に以下のコマンドを叩かないとエラーになる、、
+
+```
+root@fe385569a625:/go/app# go get github.com/99designs/gqlgen@v0.17.19
+```
+
+3. 自動更新されない以下ファイルの修正 ※必要に応じて
+- resolver.go：依存管理ファイル（はじめに依存関係を定義したら、基本的に変更することはなさそう）
+- schema.resolvers.go：Schemaに対するロジックを記載するファイル。IFの変更に伴い、ロジックを変更する必要がある場合は、こちらを変更する。
+
+### 実行サンプル
+
+#### mutation
+
+query
+
+```graphql
+mutation createUser($newUser: NewUser!) {
+  createUser(input: $newUser)
+}
+```
+
+variables
+
+```json
+{
+  "newUser": {
+  	"firstName": "太郎",
+    "lastName": "山田",
+  	"age": 40,
+    "amount": 10000,
+  	"email": "xxsssx@gmail.com"
+	}
+}
+```
+
+#### query
+
+```graphql
+query findUsers {
+  users {
+    name
+    age
+    emailAddress
+    gradeName
+  }
+}
+```
+
+
+＜参考＞   
+- Fusic Tech Blog | gqlgen + EchoでgolangなGraphQLサーバを作るチュートリアル   
+https://tech.fusic.co.jp/posts/2020-04-12-gqlgen-echo-sample/   
 
 # ビジネスルール
 

@@ -10,31 +10,45 @@ import (
 	"go-playground/m/v1/src/infrastructure/driver"
 
 	"github.com/labstack/echo/v4"
+
+	"github.com/99designs/gqlgen/graphql/playground"
 )
 
-func initRouter(e *echo.Echo, h controllers.AppController) {
+func initRouter(e *echo.Echo, appCtr controllers.AppController) {
 	{
 		// User Handler
-		e.POST("/user", h.IUserHandler.CreateNewUser)
-		e.GET("/user/:id", h.IUserHandler.GetUser)
-		e.GET("/users", h.IUserHandler.GetUserList)
+		e.POST("/user", appCtr.UserHandler.CreateNewUser)
+		e.GET("/user/:id", appCtr.UserHandler.GetUser)
+		e.GET("/users", appCtr.UserHandler.GetUserList)
 	}
 
 	{
 		// Grade Handler
-		e.GET("/grades", h.IGradeHandler.GetGradeList)
+		e.GET("/grades", appCtr.GradeHandler.GetGradeList)
 	}
 
 	{
 		// DealHistory Handler
-		e.GET("/dealHistories/:userId", h.IDealHistoryHandler.GetDealHistoryList)
+		e.GET("/dealHistories/:userId", appCtr.DealHistoryHandler.GetDealHistoryList)
 	}
 
 	{
 		// BalanceControl Handler
-		e.PUT("/pay/:userId", h.IBalanceControlHandler.Pay)
-		e.PUT("/topup/:userId", h.IBalanceControlHandler.TopUp)
-		e.GET("/remainingBalance/:userId", h.IBalanceControlHandler.GetRemainingBalance)
+		e.PUT("/pay/:userId", appCtr.BalanceControlHandler.Pay)
+		e.PUT("/topup/:userId", appCtr.BalanceControlHandler.TopUp)
+		e.GET("/remainingBalance/:userId", appCtr.BalanceControlHandler.GetRemainingBalance)
+	}
+
+	{
+		// GraphQL Handler
+		e.GET("/graphql-playground", func(c echo.Context) error { // GUIからのGraphQL実行用（http://localhost:8444/graphql-playground）
+			playground.Handler("GraphQL playground", "/query").ServeHTTP(c.Response(), c.Request())
+			return nil
+		})
+		e.POST("/query", func(c echo.Context) error {
+			appCtr.Server.ServeHTTP(c.Response(), c.Request())
+			return nil
+		})
 	}
 }
 
