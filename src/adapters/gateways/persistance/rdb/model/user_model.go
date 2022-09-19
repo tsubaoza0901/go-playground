@@ -33,6 +33,15 @@ func ConvertToUser(u dto.RegisterUser) User {
 	}
 }
 
+// ConvertToUpdateUser ...
+func ConvertToUpdateUser(u dto.UpdateUser) User {
+	return User{
+		LastName:     u.LastName,
+		EmailAddress: u.EmailAddress,
+		GradeID:      u.GradeID,
+	}
+}
+
 // MakeFetchUserResultDTO ...
 func MakeFetchUserResultDTO(u User) *dto.FetchUserResult {
 	gradeResultDTO := MakeFetchGradeResultDTO(u.Grade)

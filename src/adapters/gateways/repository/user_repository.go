@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"go-playground/m/v1/adapters/gateways/persistance/rdb"
 	dbModel "go-playground/m/v1/adapters/gateways/persistance/rdb/model"
 	"go-playground/m/v1/usecase/repository/dto"
@@ -22,6 +23,19 @@ func (r UserRepository) RegisterUser(ctx context.Context, dto dto.RegisterUser) 
 	userDBModel := dbModel.ConvertToUser(dto)
 	if err := r.GetConnection(ctx).Create(&userDBModel).Error; err != nil {
 		return nil, err
+	}
+	return dbModel.MakeFetchUserResultDTO(userDBModel), nil
+}
+
+// UpdateUser ...
+func (r UserRepository) UpdateUser(ctx context.Context, id uint, dto dto.UpdateUser) (*dto.FetchUserResult, error) {
+	userDBModel := dbModel.ConvertToUpdateUser(dto)
+	result := r.GetConnection(ctx).Where("id = ?", id).Updates(&userDBModel)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if result.RowsAffected == 0 {
+		return nil, errors.New("レコードが更新されませんでした。")
 	}
 	return dbModel.MakeFetchUserResultDTO(userDBModel), nil
 }

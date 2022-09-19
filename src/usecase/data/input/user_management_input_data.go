@@ -12,3 +12,16 @@ type UserCreate struct {
 func NewUserCreate() UserCreate {
 	return UserCreate{}
 }
+
+// UserUpdate ...
+type UserUpdate struct {
+	ID           uint
+	LastName     string
+	EmailAddress string
+	GradeID      uint
+}
+
+// NewUserUpdate ...
+func NewUserUpdate() UserUpdate {
+	return UserUpdate{}
+}

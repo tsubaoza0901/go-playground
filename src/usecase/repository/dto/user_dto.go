@@ -25,6 +25,22 @@ func NewRegisterUser(general user.General) RegisterUser {
 	}
 }
 
+// UpdateUser ...
+type UpdateUser struct {
+	LastName     string
+	EmailAddress string
+	GradeID      uint
+}
+
+// NewUpdateUser ...
+func NewUpdateUser(general user.General) UpdateUser {
+	return UpdateUser{
+		LastName:     string(general.LastName()),
+		EmailAddress: string(general.EmailAddress()),
+		GradeID:      uint(general.GradeID()),
+	}
+}
+
 // FetchUserResult ...
 type FetchUserResult struct {
 	ID           uint

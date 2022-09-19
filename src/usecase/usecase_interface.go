@@ -28,6 +28,7 @@ type IGradeUsecase interface {
 // IUserManagementUsecase ...
 type IUserManagementUsecase interface {
 	CreateUser(ctx context.Context, input input.UserCreate, topUpAmount uint) error
+	EditUser(ctx context.Context, input input.UserUpdate) error
 	RetrieveUserByCondition(ctx context.Context, id uint) (output.User, error)
 	RetrieveUsers(ctx context.Context) (output.Users, error)
 }

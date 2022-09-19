@@ -39,6 +39,26 @@ func (h UserHandler) CreateNewUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, "OK")
 }
 
+// UpdateUser ...
+func (h UserHandler) UpdateUser(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	req := new(request.UserUpdate)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	if err := c.Validate(req); err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	if err := h.EditUser(ctx, req.ConvertToUserModel()); err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, "OK")
+}
+
 // GetUser ...
 func (h UserHandler) GetUser(c echo.Context) error {
 	ctx := c.Request().Context()

@@ -103,6 +103,19 @@ func InitGeneral(firstName string, lastName string, age uint, email string) (*Ge
 	return &General{*entity}, nil
 }
 
+// UpdateGeneral ユーザー更新関数
+func UpdateGeneral(id uint, lastName string, email string, gradeID grade.ID) (*General, error) {
+	entity := new(Entity)
+	entity.id = ID(id)
+	entity.lastName = LastName(lastName)
+	entity.emailAddress = EmailAddress(email)
+
+	gradeEntity := grade.InitEntity(uint(gradeID))
+	entity.grade = *gradeEntity
+
+	return &General{*entity}, nil
+}
+
 // NewGeneral 新規インスタンス生成関数（初期値の設定なし）
 func NewGeneral(id ID, firstName FirstName, lastName LastName, age Age, email EmailAddress, grade grade.Entity) (*General, error) {
 	entity := new(Entity)

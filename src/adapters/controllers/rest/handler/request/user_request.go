@@ -23,6 +23,24 @@ func (u UserCreate) ConvertToUserModel() input.UserCreate {
 	return user
 }
 
+// UserUpdate ...
+type UserUpdate struct {
+	ID           uint   `param:"id" validate:"required"`
+	LastName     string `json:"lastName"`
+	EmailAddress string `json:"email"`
+	GradeID      uint   `json:"gradeId"`
+}
+
+// ConvertToUserModel ...
+func (u UserUpdate) ConvertToUserModel() input.UserUpdate {
+	user := input.NewUserUpdate()
+	user.ID = u.ID
+	user.LastName = u.LastName
+	user.EmailAddress = u.EmailAddress
+	user.GradeID = u.GradeID
+	return user
+}
+
 // UserGetByID ...
 type UserGetByID struct {
 	ID uint `param:"id" validate:"required"`
