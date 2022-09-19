@@ -52,18 +52,18 @@ type History struct {
 	Entity
 }
 
-// NewPaymentHistory ...
-func NewPaymentHistory(itemName string, amount balance.PaymentAmount) *History {
+// InitPaymentHistory 初期化関数。原則、新規レコード登録用。
+func InitPaymentHistory(itemName string, amount balance.PaymentAmount) *History {
 	return newHistory(ItemName(itemName), Amount(amount))
 }
 
-// NewTopUpHistory ...
-func NewTopUpHistory(amount balance.TopUpAmount) *History {
+// InitTopUpHistory 初期化関数（一部、初期値の設定あり）。原則、新規レコード登録用。
+func InitTopUpHistory(amount balance.TopUpAmount) *History {
 	return newHistory("チャージ", Amount(amount))
 }
 
-// MakeHistory ...
-func MakeHistory(createdAt CreatedAt, itemName ItemName, amount Amount) *History {
+// NewHistory 新規インスタンス生成関数（初期値の設定なし）
+func NewHistory(createdAt CreatedAt, itemName ItemName, amount Amount) *History {
 	history := newHistory(itemName, amount)
 	history.createdAt = createdAt
 	return history

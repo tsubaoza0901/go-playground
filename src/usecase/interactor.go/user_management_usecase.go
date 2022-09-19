@@ -31,7 +31,7 @@ func NewUserManagementUsecase(
 
 // CreateUser ...
 func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate input.UserCreate, inputTopUpAmount uint) error {
-	initialUser, err := user.NewGeneral(inputUserCreate.FirstName, inputUserCreate.LastName, inputUserCreate.Age, inputUserCreate.EmailAddress)
+	initialUser, err := user.InitGeneral(inputUserCreate.FirstName, inputUserCreate.LastName, inputUserCreate.Age, inputUserCreate.EmailAddress)
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate i
 		// チャージ結果計算
 		topUpAmount := balance.TopUpAmount(inputTopUpAmount)
 
-		initialBalance := balance.NewEntity()
+		initialBalance := balance.InitEntity()
 		calculatedBalance, err := initialBalance.AddUp(topUpAmount)
 		if err != nil {
 			return err
@@ -65,7 +65,7 @@ func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate i
 		}
 
 		// 取引履歴登録
-		dealHistory := deal.NewTopUpHistory(topUpAmount)
+		dealHistory := deal.InitTopUpHistory(topUpAmount)
 		if err = u.RegisterDealHistory(ctx, dto.NewRegisterDealHistory(generalUser.ID(), dealHistory.ItemName(), dealHistory.Amount())); err != nil {
 			return err
 		}

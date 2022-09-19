@@ -52,12 +52,12 @@ func NewFetchUserResult(id uint, firstName string, lastName string, age uint, em
 
 // ToGeneralUserModel ...
 func (u FetchUserResult) ToGeneralUserModel() (*user.General, error) {
-	gradeEntity := grade.MakeEntity(
+	gradeEntity := grade.NewEntity(
 		grade.ID(u.Grade.ID),
 		grade.Name(u.Grade.Name),
 	)
 
-	generalUser, err := user.MakeGeneral(
+	generalUser, err := user.NewGeneral(
 		user.ID(u.ID),
 		user.FirstName(u.FirstName),
 		user.LastName(u.LastName),

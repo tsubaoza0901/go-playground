@@ -49,6 +49,6 @@ func NewFetchBlanceResult(userID uint, remainingAmount uint) *FetchBlanceResult 
 
 // ToBalanceModel ...
 func (b FetchBlanceResult) ToBalanceModel() balance.Entity {
-	balanceEntity := balance.MakeEntity(user.ID(b.UserID), balance.RemainingAmount(b.RemainingAmount))
+	balanceEntity := balance.NewEntity(user.ID(b.UserID), balance.RemainingAmount(b.RemainingAmount))
 	return *balanceEntity
 }

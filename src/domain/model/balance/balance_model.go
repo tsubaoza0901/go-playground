@@ -80,15 +80,15 @@ func (b *Entity) hasEnoughRemainingAmount(amount PaymentAmount) bool {
 	return uint(b.remainingAmount) >= uint(amount)
 }
 
-// NewEntity ...
-func NewEntity() *Entity {
+// InitEntity 初期化関数（一部、初期値の設定あり）。原則、新規レコード登録用。
+func InitEntity() *Entity {
 	balance := new(Entity)
 	balance.remainingAmount = initialAmount
 	return balance
 }
 
-// MakeEntity ...
-func MakeEntity(userID user.ID, remainingAmount RemainingAmount) *Entity {
+// NewEntity 新規インスタンス生成関数（初期値の設定なし）
+func NewEntity(userID user.ID, remainingAmount RemainingAmount) *Entity {
 	balance := new(Entity)
 	balance.userID = userID
 	balance.remainingAmount = remainingAmount

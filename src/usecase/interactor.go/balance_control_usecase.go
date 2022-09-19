@@ -51,7 +51,7 @@ func (u BalanceControlUsecase) PutMoney(ctx context.Context, userID uint, inputP
 		}
 
 		// 取引履歴登録
-		dealHistory := deal.NewTopUpHistory(topUpAmount)
+		dealHistory := deal.InitTopUpHistory(topUpAmount)
 		if err = u.RegisterDealHistory(ctx, dto.NewRegisterDealHistory(user.ID(userID), dealHistory.ItemName(), dealHistory.Amount())); err != nil {
 			return err
 		}
@@ -91,7 +91,7 @@ func (u BalanceControlUsecase) PayMoney(ctx context.Context, userID uint, inputP
 		}
 
 		// 取引履歴登録
-		dealHistory := deal.NewPaymentHistory(inputPayment.ItemName, paymentAmount)
+		dealHistory := deal.InitPaymentHistory(inputPayment.ItemName, paymentAmount)
 		if err = u.RegisterDealHistory(ctx, dto.NewRegisterDealHistory(user.ID(userID), dealHistory.ItemName(), dealHistory.Amount())); err != nil {
 			return err
 		}
