@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"go-playground/m/v1/src/adapters/controllers/http/handler/response"
-	"go-playground/m/v1/src/usecase"
+	"go-playground/m/v1/adapters/controllers/http/handler/response"
+	"go-playground/m/v1/usecase"
 	"net/http"
 
 	"github.com/labstack/echo/v4"

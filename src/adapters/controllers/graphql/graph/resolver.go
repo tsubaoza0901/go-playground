@@ -3,7 +3,7 @@
 package graph
 
 import (
-	"go-playground/m/v1/src/usecase"
+	"go-playground/m/v1/usecase"
 )
 
 // This file will not be regenerated automatically.

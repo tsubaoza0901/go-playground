@@ -3,9 +3,9 @@ package repository
 import (
 	"context"
 	"errors"
-	"go-playground/m/v1/src/adapters/gateways/persistance/rdb"
-	dbModel "go-playground/m/v1/src/adapters/gateways/persistance/rdb/model"
-	"go-playground/m/v1/src/usecase/repository/dto"
+	"go-playground/m/v1/adapters/gateways/persistance/rdb"
+	dbModel "go-playground/m/v1/adapters/gateways/persistance/rdb/model"
+	"go-playground/m/v1/usecase/repository/dto"
 )
 
 // BalanceRepository ...

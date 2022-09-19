@@ -1,6 +1,6 @@
 package output
 
-import "go-playground/m/v1/src/domain/model/grade"
+import "go-playground/m/v1/domain/model/grade"
 
 // Grade ...
 type Grade struct {

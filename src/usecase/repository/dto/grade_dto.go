@@ -1,6 +1,6 @@
 package dto
 
-import "go-playground/m/v1/src/domain/model/grade"
+import "go-playground/m/v1/domain/model/grade"
 
 // FetchGradeResult ...
 type FetchGradeResult struct {

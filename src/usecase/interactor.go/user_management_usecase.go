@@ -2,13 +2,13 @@ package interactor
 
 import (
 	"context"
-	"go-playground/m/v1/src/domain/model/balance"
-	"go-playground/m/v1/src/domain/model/deal"
-	"go-playground/m/v1/src/domain/model/user"
-	"go-playground/m/v1/src/usecase/data/input"
-	"go-playground/m/v1/src/usecase/data/output"
-	"go-playground/m/v1/src/usecase/repository"
-	"go-playground/m/v1/src/usecase/repository/dto"
+	"go-playground/m/v1/domain/model/balance"
+	"go-playground/m/v1/domain/model/deal"
+	"go-playground/m/v1/domain/model/user"
+	"go-playground/m/v1/usecase/data/input"
+	"go-playground/m/v1/usecase/data/output"
+	"go-playground/m/v1/usecase/repository"
+	"go-playground/m/v1/usecase/repository/dto"
 )
 
 // UserManagementUsecase ...

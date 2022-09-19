@@ -1,7 +1,7 @@
 package dependency
 
 import (
-	"go-playground/m/v1/src/infrastructure"
+	"go-playground/m/v1/infrastructure"
 )
 
 // InitManageDBConn ...

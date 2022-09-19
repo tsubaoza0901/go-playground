@@ -1,8 +1,8 @@
 package dto
 
 import (
-	"go-playground/m/v1/src/domain/model/balance"
-	"go-playground/m/v1/src/domain/model/user"
+	"go-playground/m/v1/domain/model/balance"
+	"go-playground/m/v1/domain/model/user"
 )
 
 // RegisterBalance DTO

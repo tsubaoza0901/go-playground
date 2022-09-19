@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"go-playground/m/v1/src/adapters/gateways/persistance/rdb"
+	"go-playground/m/v1/adapters/gateways/persistance/rdb"
 )
 
 // TransactionManagementRepository ...

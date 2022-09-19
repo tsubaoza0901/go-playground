@@ -1,7 +1,7 @@
 package response
 
 import (
-	"go-playground/m/v1/src/usecase/data/output"
+	"go-playground/m/v1/usecase/data/output"
 )
 
 // User ...

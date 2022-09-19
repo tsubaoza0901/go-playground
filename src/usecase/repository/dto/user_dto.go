@@ -1,8 +1,8 @@
 package dto
 
 import (
-	"go-playground/m/v1/src/domain/model/grade"
-	"go-playground/m/v1/src/domain/model/user"
+	"go-playground/m/v1/domain/model/grade"
+	"go-playground/m/v1/domain/model/user"
 )
 
 // RegisterUser ...

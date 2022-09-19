@@ -4,10 +4,10 @@ import (
 	"log"
 	"time"
 
-	"go-playground/m/v1/src/adapters/controllers"
-	"go-playground/m/v1/src/adapters/controllers/http/middleware"
-	"go-playground/m/v1/src/dependency"
-	"go-playground/m/v1/src/infrastructure/driver"
+	"go-playground/m/v1/adapters/controllers"
+	"go-playground/m/v1/adapters/controllers/http/middleware"
+	"go-playground/m/v1/dependency"
+	"go-playground/m/v1/infrastructure/driver"
 
 	"github.com/labstack/echo/v4"
 

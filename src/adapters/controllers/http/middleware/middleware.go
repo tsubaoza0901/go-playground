@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"go-playground/m/v1/src/adapters/controllers/http/validator"
+	"go-playground/m/v1/adapters/controllers/http/validator"
 	"net/http"
 
 	"github.com/labstack/echo/v4"

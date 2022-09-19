@@ -1,7 +1,7 @@
 package deal
 
 import (
-	"go-playground/m/v1/src/domain/model/balance"
+	"go-playground/m/v1/domain/model/balance"
 	"time"
 )
 

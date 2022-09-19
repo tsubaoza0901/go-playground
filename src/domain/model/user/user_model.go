@@ -2,7 +2,7 @@ package user
 
 import (
 	"errors"
-	"go-playground/m/v1/src/domain/model/grade"
+	"go-playground/m/v1/domain/model/grade"
 )
 
 type (

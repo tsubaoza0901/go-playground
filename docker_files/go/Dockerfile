@@ -1,6 +1,6 @@
 FROM  golang:1.18.4
 
-WORKDIR /go/app
+WORKDIR /go/app/src
 
 # RUN go get bitbucket.org/liamstask/goose/cmd/goose
 RUN go install github.com/pressly/goose/v3/cmd/goose@latest

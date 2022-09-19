@@ -1,7 +1,7 @@
 package output
 
 import (
-	"go-playground/m/v1/src/domain/model/deal"
+	"go-playground/m/v1/domain/model/deal"
 	"time"
 )
 
