@@ -7,8 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// InitDBConn ...
-func InitDBConn() *gorm.DB {
+// InitDB ...
+func InitDB() *gorm.DB {
 	dsn := "root:root@tcp(db:3306)/goplayground?parseTime=True&loc=Local"
 	conn, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		// NowFunc: setTimeZone(),

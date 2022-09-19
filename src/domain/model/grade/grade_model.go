@@ -16,21 +16,6 @@ type Entity struct {
 	name Name
 }
 
-// NewEntity ...
-func NewEntity(id uint) *Entity {
-	return &Entity{
-		id: ID(id),
-	}
-}
-
-// MakeEntity ...
-func MakeEntity(id ID, name Name) *Entity {
-	return &Entity{
-		id:   ID(id),
-		name: Name(name),
-	}
-}
-
 // ID Getter
 func (g *Entity) ID() ID {
 	return g.id
@@ -39,6 +24,21 @@ func (g *Entity) ID() ID {
 // Name Getter
 func (g *Entity) Name() string {
 	return string(g.name)
+}
+
+// InitEntity 初期化関数。原則、新規レコード登録用。
+func InitEntity(id uint) *Entity {
+	return &Entity{
+		id: ID(id),
+	}
+}
+
+// NewEntity 新規インスタンス生成関数（初期値の設定なし）
+func NewEntity(id ID, name Name) *Entity {
+	return &Entity{
+		id:   ID(id),
+		name: Name(name),
+	}
 }
 
 // Entities ...

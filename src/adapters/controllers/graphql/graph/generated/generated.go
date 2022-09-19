@@ -7,7 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"go-playground/m/v1/src/adapters/controllers/graphql/graph/model"
+	"go-playground/m/v1/adapters/controllers/graphql/graph/model"
 	"strconv"
 	"sync"
 	"sync/atomic"
@@ -250,8 +250,8 @@ input NewUser {
   firstName:  String!
   lastName:   String!
   age:        Int!
-  amount:     Int!
   email:      String!
+  topUpAmount:     Int!
 }
 
 type Mutation {
@@ -271,7 +271,7 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 	var arg0 model.NewUser
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewUser2goᚑplaygroundᚋmᚋv1ᚋsrcᚋadaptersᚋcontrollersᚋgraphqlᚋgraphᚋmodelᚐNewUser(ctx, tmp)
+		arg0, err = ec.unmarshalNNewUser2goᚑplaygroundᚋmᚋv1ᚋadaptersᚋcontrollersᚋgraphqlᚋgraphᚋmodelᚐNewUser(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -504,7 +504,7 @@ func (ec *executionContext) _Query_users(ctx context.Context, field graphql.Coll
 	}
 	res := resTmp.([]*model.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚕᚖgoᚑplaygroundᚋmᚋv1ᚋsrcᚋadaptersᚋcontrollersᚋgraphqlᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚕᚖgoᚑplaygroundᚋmᚋv1ᚋadaptersᚋcontrollersᚋgraphqlᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_users(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2661,7 +2661,7 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"firstName", "lastName", "age", "amount", "email"}
+	fieldsInOrder := [...]string{"firstName", "lastName", "age", "email", "topUpAmount"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -2692,19 +2692,19 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 			if err != nil {
 				return it, err
 			}
-		case "amount":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
-			it.Amount, err = ec.unmarshalNInt2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "email":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
 			it.Email, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "topUpAmount":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("topUpAmount"))
+			it.TopUpAmount, err = ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3265,7 +3265,7 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) unmarshalNNewUser2goᚑplaygroundᚋmᚋv1ᚋsrcᚋadaptersᚋcontrollersᚋgraphqlᚋgraphᚋmodelᚐNewUser(ctx context.Context, v interface{}) (model.NewUser, error) {
+func (ec *executionContext) unmarshalNNewUser2goᚑplaygroundᚋmᚋv1ᚋadaptersᚋcontrollersᚋgraphqlᚋgraphᚋmodelᚐNewUser(ctx context.Context, v interface{}) (model.NewUser, error) {
 	res, err := ec.unmarshalInputNewUser(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -3285,7 +3285,7 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) marshalNUser2ᚕᚖgoᚑplaygroundᚋmᚋv1ᚋsrcᚋadaptersᚋcontrollersᚋgraphqlᚋgraphᚋmodelᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚕᚖgoᚑplaygroundᚋmᚋv1ᚋadaptersᚋcontrollersᚋgraphqlᚋgraphᚋmodelᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.User) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -3309,7 +3309,7 @@ func (ec *executionContext) marshalNUser2ᚕᚖgoᚑplaygroundᚋmᚋv1ᚋsrcᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNUser2ᚖgoᚑplaygroundᚋmᚋv1ᚋsrcᚋadaptersᚋcontrollersᚋgraphqlᚋgraphᚋmodelᚐUser(ctx, sel, v[i])
+			ret[i] = ec.marshalNUser2ᚖgoᚑplaygroundᚋmᚋv1ᚋadaptersᚋcontrollersᚋgraphqlᚋgraphᚋmodelᚐUser(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -3329,7 +3329,7 @@ func (ec *executionContext) marshalNUser2ᚕᚖgoᚑplaygroundᚋmᚋv1ᚋsrcᚋ
 	return ret
 }
 
-func (ec *executionContext) marshalNUser2ᚖgoᚑplaygroundᚋmᚋv1ᚋsrcᚋadaptersᚋcontrollersᚋgraphqlᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖgoᚑplaygroundᚋmᚋv1ᚋadaptersᚋcontrollersᚋgraphqlᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")

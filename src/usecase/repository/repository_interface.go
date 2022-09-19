@@ -1,10 +1,10 @@
-//go:generate mockgen -source=$GOFILE -package=mock -destination=$GOPATH/app/src/mock/$GOFILE
+//go:generate mockgen -source=$GOFILE -package=mock -destination=$GOPATH/src/mock/$GOFILE
 
 package repository
 
 import (
 	"context"
-	"go-playground/m/v1/src/usecase/repository/dto"
+	"go-playground/m/v1/usecase/repository/dto"
 )
 
 // IBalanceRepository ...

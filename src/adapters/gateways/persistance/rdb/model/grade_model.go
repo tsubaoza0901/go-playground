@@ -1,7 +1,7 @@
 package model
 
 import (
-	"go-playground/m/v1/src/usecase/repository/dto"
+	"go-playground/m/v1/usecase/repository/dto"
 )
 
 // Grade ...

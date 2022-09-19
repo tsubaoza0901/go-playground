@@ -1,6 +1,6 @@
 package dependency
 
-import "go-playground/m/v1/src/adapters/gateways/repository"
+import "go-playground/m/v1/adapters/gateways/repository"
 
 // 簡易DIコンテナ（Repository用）
 

@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"go-playground/m/v1/src/adapters/controllers/http/handler/request"
-	"go-playground/m/v1/src/adapters/controllers/http/handler/response"
-	"go-playground/m/v1/src/usecase"
+	"go-playground/m/v1/adapters/controllers/rest/handler/request"
+	"go-playground/m/v1/adapters/controllers/rest/handler/response"
+	"go-playground/m/v1/usecase"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -32,7 +32,7 @@ func (h UserHandler) CreateNewUser(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	if err := h.CreateUser(ctx, req.ConvertToUserModel(), req.Amount); err != nil {
+	if err := h.CreateUser(ctx, req.ConvertToUserModel(), req.TopUpAmount); err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 

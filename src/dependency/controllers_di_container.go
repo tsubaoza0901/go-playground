@@ -1,10 +1,10 @@
 package dependency
 
 import (
-	"go-playground/m/v1/src/adapters/controllers"
-	"go-playground/m/v1/src/adapters/controllers/graphql/graph"
-	"go-playground/m/v1/src/adapters/controllers/graphql/graph/generated"
-	"go-playground/m/v1/src/adapters/controllers/http/handler"
+	"go-playground/m/v1/adapters/controllers"
+	"go-playground/m/v1/adapters/controllers/graphql/graph"
+	"go-playground/m/v1/adapters/controllers/graphql/graph/generated"
+	"go-playground/m/v1/adapters/controllers/rest/handler"
 
 	gqlHandler "github.com/99designs/gqlgen/graphql/handler"
 )

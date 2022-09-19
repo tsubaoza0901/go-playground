@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"go-playground/m/v1/src/adapters/controllers/http/handler"
+	"go-playground/m/v1/adapters/controllers/rest/handler"
 
 	gqlHandler "github.com/99designs/gqlgen/graphql/handler"
 )

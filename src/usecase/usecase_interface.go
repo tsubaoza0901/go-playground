@@ -1,11 +1,11 @@
-//go:generate mockgen -source=$GOFILE -package=mock -destination=$GOPATH/app/src/mock/$GOFILE
+//go:generate mockgen -source=$GOFILE -package=mock -destination=$GOPATH/src/mock/$GOFILE
 
 package usecase
 
 import (
 	"context"
-	"go-playground/m/v1/src/usecase/data/input"
-	"go-playground/m/v1/src/usecase/data/output"
+	"go-playground/m/v1/usecase/data/input"
+	"go-playground/m/v1/usecase/data/output"
 )
 
 // IBalanceControlUsecase ...

@@ -1,7 +1,7 @@
 package request
 
 import (
-	"go-playground/m/v1/src/usecase/data/input"
+	"go-playground/m/v1/usecase/data/input"
 )
 
 // Payment ...

@@ -6,10 +6,10 @@ import (
 
 // Injection ...
 type Injection struct {
-	dbConn *gorm.DB
+	db *gorm.DB
 }
 
 // NewInjection ...
-func NewInjection(dbConn *gorm.DB) Injection {
-	return Injection{dbConn}
+func NewInjection(db *gorm.DB) Injection {
+	return Injection{db}
 }

@@ -2,7 +2,7 @@ package output
 
 import (
 	"fmt"
-	"go-playground/m/v1/src/domain/model/user"
+	"go-playground/m/v1/domain/model/user"
 )
 
 // User ...

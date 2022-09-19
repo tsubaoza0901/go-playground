@@ -1,9 +1,10 @@
+//go:generate go get github.com/99designs/gqlgen@v0.17.19
 //go:generate go run github.com/99designs/gqlgen generate
 
 package graph
 
 import (
-	"go-playground/m/v1/src/usecase"
+	"go-playground/m/v1/usecase"
 )
 
 // This file will not be regenerated automatically.

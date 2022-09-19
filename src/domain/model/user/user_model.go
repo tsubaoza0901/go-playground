@@ -2,7 +2,7 @@ package user
 
 import (
 	"errors"
-	"go-playground/m/v1/src/domain/model/grade"
+	"go-playground/m/v1/domain/model/grade"
 )
 
 type (
@@ -85,8 +85,8 @@ type General struct {
 	Entity
 }
 
-// NewGeneral ...
-func NewGeneral(firstName string, lastName string, age uint, email string) (*General, error) {
+// InitGeneral 初期化関数（一部、初期値の設定あり）。原則、新規レコード登録用。
+func InitGeneral(firstName string, lastName string, age uint, email string) (*General, error) {
 	entity := new(Entity)
 	entity.firstName = FirstName(firstName)
 	entity.lastName = LastName(lastName)
@@ -97,14 +97,14 @@ func NewGeneral(firstName string, lastName string, age uint, email string) (*Gen
 	entity.emailAddress = EmailAddress(email)
 
 	const defaultGradeID = grade.NonGrade // 新規登録時は等級なし（6）からスタート
-	gradeEntity := grade.NewEntity(defaultGradeID)
+	gradeEntity := grade.InitEntity(defaultGradeID)
 	entity.grade = *gradeEntity
 
 	return &General{*entity}, nil
 }
 
-// MakeGeneral ...
-func MakeGeneral(id ID, firstName FirstName, lastName LastName, age Age, email EmailAddress, grade grade.Entity) (*General, error) {
+// NewGeneral 新規インスタンス生成関数（初期値の設定なし）
+func NewGeneral(id ID, firstName FirstName, lastName LastName, age Age, email EmailAddress, grade grade.Entity) (*General, error) {
 	entity := new(Entity)
 	entity.id = id
 	entity.firstName = firstName

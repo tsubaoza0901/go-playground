@@ -8,11 +8,11 @@ type Grade struct {
 }
 
 type NewUser struct {
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Age       int    `json:"age"`
-	Amount    int    `json:"amount"`
-	Email     string `json:"email"`
+	FirstName   string `json:"firstName"`
+	LastName    string `json:"lastName"`
+	Age         int    `json:"age"`
+	Email       string `json:"email"`
+	TopUpAmount int    `json:"topUpAmount"`
 }
 
 type User struct {

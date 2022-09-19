@@ -4,10 +4,10 @@ import (
 	"log"
 	"time"
 
-	"go-playground/m/v1/src/adapters/controllers"
-	"go-playground/m/v1/src/adapters/controllers/http/middleware"
-	"go-playground/m/v1/src/dependency"
-	"go-playground/m/v1/src/infrastructure/driver"
+	"go-playground/m/v1/adapters/controllers"
+	"go-playground/m/v1/adapters/controllers/rest/middleware"
+	"go-playground/m/v1/dependency"
+	"go-playground/m/v1/infrastructure/driver"
 
 	"github.com/labstack/echo/v4"
 
@@ -66,8 +66,8 @@ func SetTimeZone() {
 func main() {
 	SetTimeZone()
 
-	conn := driver.InitDBConn()
-	sqlDB, err := conn.DB()
+	db := driver.InitDB()
+	sqlDB, err := db.DB()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -76,7 +76,7 @@ func main() {
 	e := echo.New()
 	middleware.InitMiddleware(e)
 
-	di := dependency.NewInjection(conn)
+	di := dependency.NewInjection(db)
 
 	initRouter(e, di.InitAppController())
 

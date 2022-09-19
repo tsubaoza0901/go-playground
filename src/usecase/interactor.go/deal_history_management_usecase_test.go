@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"go-playground/m/v1/src/mock"
-	"go-playground/m/v1/src/usecase/data/output"
-	"go-playground/m/v1/src/usecase/interactor.go"
-	"go-playground/m/v1/src/usecase/repository/dto"
+	"go-playground/m/v1/mock"
+	"go-playground/m/v1/usecase/data/output"
+	"go-playground/m/v1/usecase/interactor.go"
+	"go-playground/m/v1/usecase/repository/dto"
 
 	"github.com/golang/mock/gomock"
 )

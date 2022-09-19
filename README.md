@@ -40,8 +40,8 @@ $ docker exec -it go-playground bash
 ② マイグレーションファイルの実行
 
 ```
-root@fe385569a625:/go/app# cd db/migrations
-root@fe385569a625:/go/app/db/migrations# goose mysql "root:root@tcp(db:3306)/goplayground?parseTime=true" up
+root@fe385569a625:/go/src# cd infrastructure/migrations/
+root@fe385569a625:/go/src/infrastructure/migrations# goose mysql "root:root@tcp(db:3306)/goplayground?parseTime=true" up
 ```
 
 【補足】   
@@ -49,7 +49,7 @@ root@fe385569a625:/go/app/db/migrations# goose mysql "root:root@tcp(db:3306)/gop
 `bitbucket.org/liamstask/goose/cmd/goose` を使用している場合は、コマンドの実行は root ディレクトリで良く、コマンドも以下でよかったが、
 
 ```
-root@fe385569a625:/go/app# goose up
+root@fe385569a625:/go/src# goose up
 ```
 以下の理由から `github.com/pressly/goose/v3/cmd/goose@latest` に変更し、それに伴って使用方法に少々違いが発生
 
@@ -64,7 +64,7 @@ root@fe385569a625:/go/app# goose up
 ## 4．アプリケーションの起動
 
 ```
-root@fe385569a625:/go/app# go run main.go
+root@fe385569a625:/go/src# go run main.go
 ```
 
 # その他
@@ -76,14 +76,14 @@ root@fe385569a625:/go/app# go run main.go
 1. mock化したいメソッドのインターフェースが定義されたファイルの上部に以下の記述を追加（初回のみ）
 
 ```
-//go:generate mockgen -source=$GOFILE -package=mock -destination=$GOPATH/app/src/mock/$GOFILE
+//go:generate mockgen -source=$GOFILE -package=mock -destination=$GOPATH/src/mock/$GOFILE
 
 ```
 
 2. ターミナルで以下のコマンドを実行
 
 ```
-root@fe385569a625:/go/app# go generate ./...
+root@fe385569a625:/go/src# go generate ./...
 ```
 
 3. mockディレクトリにmockが作成または更新されていることを確認
@@ -92,7 +92,7 @@ root@fe385569a625:/go/app# go generate ./...
 ターミナルで以下のコマンドを実行
 
 ```
-root@fe385569a625:/go/app# go test ./...
+root@fe385569a625:/go/src# go test ./...
 ```
 
 ## GraphQL
@@ -104,14 +104,18 @@ root@fe385569a625:/go/app# go test ./...
 2. Schemaを用いた関連ファイル（schema.resolvers.go、models_gen.go、generated.go）の自動更新
 
 ```
-root@fe385569a625:/go/app# go generate ./...
+root@fe385569a625:/go/src# go generate ./...
 ```
 
-※ ドキュメント上は以下のコマンドを毎回実行する必要はなさそうだが、なぜか上記実行前に以下のコマンドを叩かないとエラーになる、、
+【補足】   
+resolver.go に以下の記述を入れているため、go generate コマンドだけでOK
 
 ```
-root@fe385569a625:/go/app# go get github.com/99designs/gqlgen@v0.17.19
+//go:generate go get github.com/99designs/gqlgen@v0.17.19
+//go:generate go run github.com/99designs/gqlgen generate
 ```
+
+※gqlgenのドキュメント上は「go run github.com/99designs/gqlgen generate」だけで良さそうだが、なぜか「go get github.com/99designs/gqlgen@v0.17.19」を先にしないとエラーになる。。
 
 3. 自動更新されない以下ファイルの修正 ※必要に応じて
 - resolver.go：依存管理ファイル（はじめに依存関係を定義したら、基本的に変更することはなさそう）

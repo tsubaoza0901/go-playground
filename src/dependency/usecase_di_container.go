@@ -1,7 +1,7 @@
 package dependency
 
 import (
-	"go-playground/m/v1/src/usecase/interactor.go"
+	"go-playground/m/v1/usecase/interactor.go"
 )
 
 // 簡易DIコンテナ（Usecase用）

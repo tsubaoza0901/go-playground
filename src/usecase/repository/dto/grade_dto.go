@@ -1,6 +1,6 @@
 package dto
 
-import "go-playground/m/v1/src/domain/model/grade"
+import "go-playground/m/v1/domain/model/grade"
 
 // FetchGradeResult ...
 type FetchGradeResult struct {
@@ -18,7 +18,7 @@ func NewFetchGradeResult(id uint, name string) *FetchGradeResult {
 
 // ToGradeModel ...
 func (g FetchGradeResult) ToGradeModel() grade.Entity {
-	gradeEntity := grade.MakeEntity(grade.ID(g.ID), grade.Name(g.Name))
+	gradeEntity := grade.NewEntity(grade.ID(g.ID), grade.Name(g.Name))
 	return *gradeEntity
 }
 

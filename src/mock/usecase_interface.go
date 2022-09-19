@@ -6,8 +6,8 @@ package mock
 
 import (
 	context "context"
-	input "go-playground/m/v1/src/usecase/data/input"
-	output "go-playground/m/v1/src/usecase/data/output"
+	input "go-playground/m/v1/usecase/data/input"
+	output "go-playground/m/v1/usecase/data/output"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"

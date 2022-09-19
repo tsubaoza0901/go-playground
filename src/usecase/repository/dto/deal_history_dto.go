@@ -1,8 +1,8 @@
 package dto
 
 import (
-	"go-playground/m/v1/src/domain/model/deal"
-	"go-playground/m/v1/src/domain/model/user"
+	"go-playground/m/v1/domain/model/deal"
+	"go-playground/m/v1/domain/model/user"
 	"time"
 )
 
@@ -41,7 +41,7 @@ func NewFetchDealHistoryResult(createdAt time.Time, itemName string, amount uint
 
 // ToDealHistoryModel ...
 func (d FetchDealHistoryResult) ToDealHistoryModel() deal.History {
-	dealHistory := deal.MakeHistory(
+	dealHistory := deal.NewHistory(
 		deal.CreatedAt(d.CreatedAt),
 		deal.ItemName(d.ItemName),
 		deal.Amount(d.Amount),

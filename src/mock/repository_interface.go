@@ -6,7 +6,7 @@ package mock
 
 import (
 	context "context"
-	dto "go-playground/m/v1/src/usecase/repository/dto"
+	dto "go-playground/m/v1/usecase/repository/dto"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
