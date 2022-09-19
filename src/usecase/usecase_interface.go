@@ -1,4 +1,4 @@
-//go:generate mockgen -source=$GOFILE -package=mock -destination=$GOPATH/app/src/mock/$GOFILE
+//go:generate mockgen -source=$GOFILE -package=mock -destination=$GOPATH/src/mock/$GOFILE
 
 package usecase
 

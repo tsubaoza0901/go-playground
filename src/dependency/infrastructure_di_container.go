@@ -6,5 +6,5 @@ import (
 
 // InitManageDBConn ...
 func (i Injection) InitManageDBConn() infrastructure.ManageDBConn {
-	return infrastructure.NewManageDBConn(i.dbConn)
+	return infrastructure.NewManageDBConn(i.db)
 }

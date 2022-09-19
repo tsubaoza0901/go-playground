@@ -11,7 +11,7 @@ services:
       dockerfile: ./docker_files/go/Dockerfile
     container_name: go-playground
     volumes:
-      - './src:/go/app/src'
+      - './src:/go/src'
     ports:
       - '8444:8444'
     tty: true

@@ -66,8 +66,8 @@ func SetTimeZone() {
 func main() {
 	SetTimeZone()
 
-	conn := driver.InitDBConn()
-	sqlDB, err := conn.DB()
+	db := driver.InitDB()
+	sqlDB, err := db.DB()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -76,7 +76,7 @@ func main() {
 	e := echo.New()
 	middleware.InitMiddleware(e)
 
-	di := dependency.NewInjection(conn)
+	di := dependency.NewInjection(db)
 
 	initRouter(e, di.InitAppController())
 
