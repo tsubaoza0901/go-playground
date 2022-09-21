@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 	"errors"
-	"go-playground/m/v1/adapters/gateways/persistance/rdb"
 	dbModel "go-playground/m/v1/adapters/gateways/persistance/rdb/model"
+	"go-playground/m/v1/adapters/gateways/repository/rdb"
 	"go-playground/m/v1/usecase/repository/dto"
 )
 
