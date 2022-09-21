@@ -1,8 +1,11 @@
 package dependency
 
-import "go-playground/m/v1/adapters/gateways/repository"
+import (
+	"go-playground/m/v1/adapters/gateways/persistance/rdb"
+	"go-playground/m/v1/adapters/gateways/repository"
+)
 
-// 簡易DIコンテナ（Repository用）
+// 簡易DIコンテナ（gateways用）
 
 // InitTransactionManagementRepository ...
 func (i Injection) InitTransactionManagementRepository() repository.TransactionManagementRepository {
@@ -27,4 +30,9 @@ func (i Injection) InitDealRepository() repository.DealHistoryRepository {
 // InitBalanceRepository ...
 func (i Injection) InitBalanceRepository() repository.BalanceRepository {
 	return repository.NewBalanceRepository(i.InitManageDBConn())
+}
+
+// InitManageDBConn ...
+func (i Injection) InitManageDBConn() rdb.ManageDBConn {
+	return rdb.NewManageDBConn(i.db)
 }
