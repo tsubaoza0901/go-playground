@@ -8,7 +8,7 @@ import (
 
 	"go-playground/m/v1/mock"
 	"go-playground/m/v1/usecase/data/output"
-	"go-playground/m/v1/usecase/interactor.go"
+	"go-playground/m/v1/usecase/interactor"
 	"go-playground/m/v1/usecase/repository/dto"
 
 	"github.com/golang/mock/gomock"
