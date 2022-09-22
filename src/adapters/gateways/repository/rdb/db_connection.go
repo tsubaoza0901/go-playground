@@ -1,3 +1,5 @@
+//go:generate mockgen -source=$GOFILE -package=mock -destination=$GOPATH/src/mock/$GOFILE
+
 package rdb
 
 import (
