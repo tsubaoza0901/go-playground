@@ -10,6 +10,10 @@ $ docker-compose up -d --build
 
 ## 2．データベースの作成
 
+※対象のデータベースがない場合のみ
+
+### アプリケーション用
+
 ① DB コンテナ内へ移動
 
 ```
@@ -29,6 +33,27 @@ Enter password:
 mysql> CREATE DATABASE goplayground;
 ```
 
+### テスト用
+
+① DB コンテナ内へ移動
+
+```
+$ docker exec -it go-playground-test-db sh
+```
+
+② DB 接続
+
+```
+root@ec19d85976f4:/# mysql -u root -h test-db -p
+Enter password:
+```
+
+③ DB 作成
+
+```
+mysql> CREATE DATABASE goplaygroundtest;
+```
+
 ## 3．マイグレーションファイルの実行
 
 ① アプリケーションコンテナ内へ移動
@@ -44,6 +69,12 @@ root@fe385569a625:/go/src# cd infrastructure/migrations/
 root@fe385569a625:/go/src/infrastructure/migrations# goose mysql "root:root@tcp(db:3306)/goplayground?parseTime=true" up
 ```
 
+※ test用DBのマイグレーションを実行する際は本来以下だが、entry_test.goでテスト実行時にmigrationのupとdownを行う設定を入れているため、基本的に使用不要。
+
+```
+root@fe385569a625:/go/src/infrastructure/migrations# goose mysql "root:root@tcp(test-db:3306)/goplaygroundtest?parseTime=true" up 
+```
+
 【補足】   
 
 `bitbucket.org/liamstask/goose/cmd/goose` を使用している場合は、コマンドの実行は root ディレクトリで良く、コマンドも以下でよかったが、
@@ -53,8 +84,8 @@ root@fe385569a625:/go/src# goose up
 ```
 以下の理由から `github.com/pressly/goose/v3/cmd/goose@latest` に変更し、それに伴って使用方法に少々違いが発生
 
-- GraphQL 導入にあたって gqlgen の latest を使用したいが、その場合 go version 1.18以上である必要がある
-- しかし、go version 1.18以上では `bitbucket.org/liamstask/goose/cmd/goose` が使用できず（サポートが終了している）、開発が継続されている `github.com/pressly/goose/v3/cmd/goose@latest` に変更する必要がある
+- GraphQL 導入にあたって gqlgen の latest を使用したいが、その場合 go version 1.17以上である必要がある
+- しかし、go version 1.17以上では `bitbucket.org/liamstask/goose/cmd/goose` が使用できず（サポートが終了している）、開発が継続されている `github.com/pressly/goose/v3/cmd/goose@latest` に変更する必要がある
 
 なお、`github.com/pressly/goose/v3/cmd/goose@latest` の使用方法については以下を参照   
 

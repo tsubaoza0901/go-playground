@@ -3,6 +3,8 @@ version: '3.8'
 volumes:
   db-init:
   db-data:
+  db-test-init:
+  db-test-data:
 
 services:
   backend:
@@ -33,6 +35,24 @@ services:
     volumes:
       - db-init:/docker-entrypoint-initdb.d
       - db-data:/var/lib/mysql
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --skip-character-set-client-handshake
+    networks:
+      - default
+  test-db:
+    build:
+      context: ./
+      dockerfile: ./docker_files/mysql/Dockerfile
+    container_name: go-playground-test-db
+    restart: on-failure:5
+    ports:
+      - '3030:3306'
+    environment:
+      # 今回は勉強用のためセキュリティ無視で直書き
+      MYSQL_ROOT_PASSWORD: 'root'
+    tty: true
+    volumes:
+      - db-test-init:/docker-entrypoint-initdb.d
+      - db-test-data:/var/lib/mysql
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --skip-character-set-client-handshake
     networks:
       - default

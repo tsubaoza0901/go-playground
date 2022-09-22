@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"log"
 	"time"
 
@@ -9,6 +10,7 @@ import (
 	"go-playground/m/v1/infrastructure/driver"
 
 	"github.com/labstack/echo/v4"
+	"github.com/pressly/goose/v3"
 
 	"github.com/99designs/gqlgen/graphql/playground"
 )
@@ -63,6 +65,9 @@ func SetTimeZone() {
 	time.Local = loc
 }
 
+//go:embed infrastructure/migrations/*.sql
+var embedMigrations embed.FS
+
 func main() {
 	SetTimeZone()
 
@@ -77,6 +82,8 @@ func main() {
 	middleware.InitMiddleware(e)
 
 	di := dependency.NewInjection(db)
+
+	goose.SetBaseFS(embedMigrations)
 
 	initRouter(e, di.InitAppController())
 
