@@ -17,10 +17,8 @@ func main() {
 
 	dbConn := "*gorm.DB"
 	d := injector.NewAppDependency(dbConn)
-	// ctrls := d.InitAppControllers()
 
 	appControllers := controllers.NewAppControllers()
-
 	controllers.InitRouting(e, appControllers, d)
 
 	log.Println(e.Start(":8444"))
