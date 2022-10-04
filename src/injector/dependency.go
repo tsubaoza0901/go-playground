@@ -9,30 +9,28 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// InputFactory ...
-type InputFactory func(ports.UserOutputPort, ports.UserRepository) *interactors.UserInteractor
+type (
+	// UserInputPortFactory ...
+	UserInputPortFactory func(ports.UserOutputPort) *interactors.UserInteractor
 
-// OutputFactory ...
-type OutputFactory func(e echo.Context) *presenters.UserPresenter
+	// UserOutputPortFactory ...
+	UserOutputPortFactory func(e echo.Context) *presenters.UserPresenter
 
-// UserDependency ...
-type UserDependency struct {
-	InputFactory  InputFactory
-	OutputFactory OutputFactory
-	Repository    ports.UserRepository
-}
+	// UserDependency ...
+	UserDependency struct {
+		UserInputPort  UserInputPortFactory
+		UserOutputPort UserOutputPortFactory
+		UserRepository ports.UserRepository
+	}
+)
 
 // NewUserDependency ...
-func NewUserDependency(inputFactory InputFactory, outputFactory OutputFactory, repository ports.UserRepository) *UserDependency {
+func NewUserDependency(userInputPortFactory UserInputPortFactory, userOutputPortFactory UserOutputPortFactory, userRepository ports.UserRepository) *UserDependency {
 	return &UserDependency{
-		InputFactory:  inputFactory,
-		OutputFactory: outputFactory,
-		Repository:    repository,
+		UserInputPort:  userInputPortFactory,
+		UserOutputPort: userOutputPortFactory,
+		UserRepository: userRepository,
 	}
-}
-
-type webFW struct {
-	c echo.Context
 }
 
 type db struct {
@@ -41,23 +39,29 @@ type db struct {
 
 // AppDependency ...
 type AppDependency struct {
-	webFW
 	db
 }
 
 // NewAppDependency ...
 func NewAppDependency(dbConn string) *AppDependency {
 	return &AppDependency{
-		db: db{"gorm.DB"},
-		// webFW: webFW{c},
+		db: db{dbConn},
 	}
 }
 
 // InitUserDI ...
 func (d *AppDependency) InitUserDI() *UserDependency {
 	return NewUserDependency(
-		interactors.NewUserInteractor,
+		d.InitUserInteractor,
 		presenters.NewUserPresenter,
+		d.InitUserGateway(),
+	)
+}
+
+// InitUserInteractor ...
+func (d *AppDependency) InitUserInteractor(userOutputPort ports.UserOutputPort) *interactors.UserInteractor {
+	return interactors.NewUserInteractor(
+		userOutputPort,
 		d.InitUserGateway(),
 	)
 }

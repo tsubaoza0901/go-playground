@@ -7,12 +7,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// // User ...
-// type User interface {
-// 	// GetUsers(c echo.Context) error
-// 	GetUsers(injector.UserDependency) func(echo.Context) error
-// }
-
 // UserHandler ...
 type UserHandler struct {
 	userInportPort ports.UserInportPort
@@ -27,6 +21,5 @@ func (u *UserHandler) GetUsers(ud *injector.UserDependency) func(echo.Context) e
 }
 
 func (u *UserHandler) newInputPort(c echo.Context, ud *injector.UserDependency) ports.UserInportPort {
-	outputFactory := ud.OutputFactory(c)
-	return ud.InputFactory(outputFactory, ud.Repository)
+	return ud.UserInputPort(ud.UserOutputPort(c))
 }
