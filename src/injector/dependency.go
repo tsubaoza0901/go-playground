@@ -34,7 +34,7 @@ func NewUserDependency(userInputPortFactory UserInputPortFactory, userOutputPort
 }
 
 type db struct {
-	dbConn string
+	conn string
 }
 
 // AppDependency ...
@@ -43,9 +43,9 @@ type AppDependency struct {
 }
 
 // NewAppDependency ...
-func NewAppDependency(dbConn string) *AppDependency {
+func NewAppDependency(conn string) *AppDependency {
 	return &AppDependency{
-		db: db{dbConn},
+		db: db{conn},
 	}
 }
 
@@ -68,5 +68,5 @@ func (d *AppDependency) InitUserInteractor(userOutputPort ports.UserOutputPort) 
 
 // InitUserGateway ...
 func (d *db) InitUserGateway() *gateways.UserGateway {
-	return gateways.NewUserGateway(d.dbConn)
+	return gateways.NewUserGateway(d.conn)
 }
