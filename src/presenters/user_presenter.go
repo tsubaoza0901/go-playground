@@ -2,7 +2,6 @@ package presenters
 
 import (
 	"go-playground/m/v1/src/usecases/data/output"
-	"go-playground/m/v1/src/usecases/ports"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -13,9 +12,14 @@ type UserPresenter struct {
 	c echo.Context
 }
 
-// NewUserOutputPort ...
-func NewUserOutputPort(c echo.Context) ports.UserOutputPort {
+// NewUserPresenter ...
+func NewUserPresenter(c echo.Context) *UserPresenter {
 	return &UserPresenter{c}
+}
+
+// SetEchoContext ...
+func (u *UserPresenter) SetEchoContext(c echo.Context) {
+	u.c = c
 }
 
 // OutputUsers ...

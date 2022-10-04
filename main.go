@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"go-playground/m/v1/src/controllers"
-	"go-playground/m/v1/src/controllers/middleware"
+	"go-playground/m/v1/src/controllers/rest/middleware"
 	"go-playground/m/v1/src/injector"
 
 	"github.com/labstack/echo/v4"
@@ -15,10 +15,13 @@ func main() {
 
 	middleware.InitMiddleware(e)
 
-	di := injector.NewDependency()
+	dbConn := "*gorm.DB"
+	d := injector.NewAppDependency(dbConn)
+	// ctrls := d.InitAppControllers()
 
-	handlers := di.InitAppHandlers()
-	controllers.InitRouting(e, handlers)
+	appControllers := controllers.NewAppControllers()
+
+	controllers.InitRouting(e, appControllers, d)
 
 	log.Println(e.Start(":8444"))
 }

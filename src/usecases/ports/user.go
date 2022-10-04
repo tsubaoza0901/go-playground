@@ -8,7 +8,7 @@ import (
 
 // UserInportPort ...
 type UserInportPort interface {
-	GetUsers(ctx context.Context) error
+	FetchUsers(ctx context.Context) error
 }
 
 // UserOutputPort ...

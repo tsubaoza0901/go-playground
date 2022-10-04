@@ -12,21 +12,20 @@ type UserInteractor struct {
 	Repository ports.UserRepository
 }
 
-// NewUserInputPort ...
-func NewUserInputPort(outputPort ports.UserOutputPort, repository ports.UserRepository) ports.UserInportPort {
+// NewUserInteractor ...
+func NewUserInteractor(outputPort ports.UserOutputPort, repository ports.UserRepository) *UserInteractor {
 	return &UserInteractor{
 		OutputPort: outputPort,
 		Repository: repository,
 	}
 }
 
-// GetUsers ...
-func (u *UserInteractor) GetUsers(ctx context.Context) error {
+// FetchUsers ...
+func (u *UserInteractor) FetchUsers(ctx context.Context) error {
 	users, err := u.Repository.GetUsers(ctx)
 	if err != nil {
 		return u.OutputPort.OutputError(err)
 	}
-
 	outputs := make([]*output.User, len(users))
 	for i, v := range users {
 		outputs[i] = &output.User{

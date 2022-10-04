@@ -1,66 +1,68 @@
 package injector
 
 import (
-	"go-playground/m/v1/src/controllers/handler"
 	"go-playground/m/v1/src/gateways"
 	"go-playground/m/v1/src/presenters"
 	"go-playground/m/v1/src/usecases/interactors"
+	"go-playground/m/v1/src/usecases/ports"
+
+	"github.com/labstack/echo/v4"
 )
 
-// Dependency ...
-type Dependency struct {
-	// e *echo.Echo
+// InputFactory ...
+type InputFactory func(ports.UserOutputPort, ports.UserRepository) *interactors.UserInteractor
+
+// OutputFactory ...
+type OutputFactory func(e echo.Context) *presenters.UserPresenter
+
+// UserDependency ...
+type UserDependency struct {
+	InputFactory  InputFactory
+	OutputFactory OutputFactory
+	Repository    ports.UserRepository
 }
 
-// NewDependency ...
-func NewDependency() *Dependency {
-	return &Dependency{}
-}
-
-// AppControllers ...
-type AppControllers struct {
-	AppHandlers
-}
-
-// InitAppControllers ...
-func (d *Dependency) InitAppControllers() AppControllers {
-	return AppControllers{
-		AppHandlers: d.InitAppHandlers(),
+// NewUserDependency ...
+func NewUserDependency(inputFactory InputFactory, outputFactory OutputFactory, repository ports.UserRepository) *UserDependency {
+	return &UserDependency{
+		InputFactory:  inputFactory,
+		OutputFactory: outputFactory,
+		Repository:    repository,
 	}
 }
 
-// AppHandlers ...
-type AppHandlers struct {
-	handler.User
+type webFW struct {
+	c echo.Context
 }
 
-// InitAppHandlers ...
-func (d *Dependency) InitAppHandlers() AppHandlers {
-	return AppHandlers{
-		User: d.InitUserHandler(),
+type db struct {
+	dbConn string
+}
+
+// AppDependency ...
+type AppDependency struct {
+	webFW
+	db
+}
+
+// NewAppDependency ...
+func NewAppDependency(dbConn string) *AppDependency {
+	return &AppDependency{
+		db: db{"gorm.DB"},
+		// webFW: webFW{c},
 	}
 }
 
-// InitUserHandler ...
-func (d *Dependency) InitUserHandler() handler.User {
-	return handler.NewUserHandler(
-		d.InitUserOutputFactory(),
-		d.InitUserInputFactory(),
-		d.InitUserRepositoryFactory(),
+// InitUserDI ...
+func (d *AppDependency) InitUserDI() *UserDependency {
+	return NewUserDependency(
+		interactors.NewUserInteractor,
+		presenters.NewUserPresenter,
+		d.InitUserGateway(),
 	)
 }
 
-// InitUserOutputFactory ...
-func (d *Dependency) InitUserOutputFactory() handler.OutputFactory {
-	return presenters.NewUserOutputPort
-}
-
-// InitUserInputFactory ...
-func (d *Dependency) InitUserInputFactory() handler.InputFactory {
-	return interactors.NewUserInputPort
-}
-
-// InitUserRepositoryFactory ...
-func (d *Dependency) InitUserRepositoryFactory() handler.RepositoryFactory {
-	return gateways.NewUserRepository
+// InitUserGateway ...
+func (d *db) InitUserGateway() *gateways.UserGateway {
+	return gateways.NewUserGateway(d.dbConn)
 }
