@@ -40,6 +40,28 @@ func (u *UserInteractor) AddUser(ctx context.Context, in *input.User) error {
 	return u.OutputPort.OutputUser(out)
 }
 
+// FetchUserByID ...
+func (u *UserInteractor) FetchUserByID(ctx context.Context, id uint) error {
+	user, err := u.Repository.RetrieveUserWithItem(ctx, id)
+	if err != nil {
+		return err
+	}
+	outputUser := &output.UserWithItem{
+		Name: user.Name,
+		Age:  user.Age,
+	}
+	if user.Items != nil {
+		outputItems := make([]*output.Item, len(user.Items))
+		for i, v := range user.Items {
+			outputItems[i] = &output.Item{
+				Name: v.Name,
+			}
+		}
+		outputUser.Items = outputItems
+	}
+	return u.OutputPort.OutputUserWithItem(outputUser)
+}
+
 // FetchUsers ...
 func (u *UserInteractor) FetchUsers(ctx context.Context) error {
 	users, err := u.Repository.RetrieveUsers(ctx)

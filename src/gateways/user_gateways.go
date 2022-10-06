@@ -20,16 +20,61 @@ func NewUserGateway(dbConn string) *UserGateway {
 
 // RegisterUser ...
 func (g *UserGateway) RegisterUser(ctx context.Context, user *entities.User) (*entities.User, error) {
+	if g.dbConn == "" {
+		return nil, errors.New("dbConnが空")
+	}
+
+	log.Printf("g.dbConn: %s", g.dbConn)
+
 	rdbModel := model.User{
 		ID:   1,
 		Name: user.Name,
 		Age:  user.Age,
 	}
-	entities := &entities.User{
+	entity := &entities.User{
 		Name: rdbModel.Name,
 		Age:  rdbModel.Age,
 	}
-	return entities, nil
+	return entity, nil
+}
+
+// RetrieveUserWithItem ...
+func (g *UserGateway) RetrieveUserWithItem(ctx context.Context, id uint) (*entities.User, error) {
+	if g.dbConn == "" {
+		return nil, errors.New("dbConnが空")
+	}
+
+	log.Printf("g.dbConn: %s", g.dbConn)
+
+	rdbUserModel := model.User{
+		ID:   id,
+		Name: "Yamada Taro",
+		Age:  20,
+	}
+	entityUser := &entities.User{
+		Name: rdbUserModel.Name,
+		Age:  rdbUserModel.Age,
+	}
+
+	rdbItemModels := []*model.Item{
+
+		{
+			ID:   1,
+			Name: "xxxの本",
+		},
+		{
+			ID:   2,
+			Name: "古びた剣",
+		},
+	}
+	entityItems := make([]*entities.Item, len(rdbItemModels))
+	for i, v := range rdbItemModels {
+		entityItems[i] = &entities.Item{
+			Name: v.Name,
+		}
+	}
+	entityUser.Items = entityItems
+	return entityUser, nil
 }
 
 // RetrieveUsers ...

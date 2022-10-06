@@ -5,6 +5,7 @@ import "go-playground/m/v1/controllers/rest/handler"
 // AppHandlers ...
 type AppHandlers struct {
 	handler.UserHandler
+	handler.ItemHandler
 }
 
 // NewAppHandlers ...

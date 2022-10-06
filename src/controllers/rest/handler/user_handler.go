@@ -31,6 +31,18 @@ func (u *UserHandler) CreateUser(ud *injector.UserDependency) func(echo.Context)
 	}
 }
 
+// GetUserByID ...
+func (u *UserHandler) GetUserByID(ud *injector.UserDependency) func(echo.Context) error {
+	return func(c echo.Context) error {
+		ctx := c.Request().Context()
+		req := new(request.GetUserByID)
+		if err := c.Bind(req); err != nil {
+			return err
+		}
+		return u.newInputPort(c, ud).FetchUserByID(ctx, req.ID)
+	}
+}
+
 // GetUsers ...
 func (u *UserHandler) GetUsers(ud *injector.UserDependency) func(echo.Context) error {
 	return func(c echo.Context) error {

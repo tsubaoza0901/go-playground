@@ -2,6 +2,7 @@ package entities
 
 // User ...
 type User struct {
-	Name string
-	Age  uint
+	Name  string
+	Age   uint
+	Items []*Item
 }

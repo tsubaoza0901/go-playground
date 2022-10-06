@@ -27,6 +27,11 @@ func (u *UserPresenter) OutputUser(user *output.User) error {
 	return u.c.JSON(http.StatusOK, user)
 }
 
+// OutputUserWithItem ...
+func (u *UserPresenter) OutputUserWithItem(user *output.UserWithItem) error {
+	return u.c.JSON(http.StatusOK, user)
+}
+
 // OutputError ...
 func (u *UserPresenter) OutputError(err error) error {
 	return u.c.JSON(http.StatusInternalServerError, err)

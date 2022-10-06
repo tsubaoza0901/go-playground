@@ -33,6 +33,30 @@ func NewUserDependency(userInputPortFactory UserInputPortFactory, userOutputPort
 	}
 }
 
+type (
+	// ItemInputPortFactory ...
+	ItemInputPortFactory func(ports.ItemOutputPort) *interactors.ItemInteractor
+
+	// ItemOutputPortFactory ...
+	ItemOutputPortFactory func(e echo.Context) *presenters.ItemPresenter
+
+	// ItemDependency ...
+	ItemDependency struct {
+		ItemInputPortFactory  ItemInputPortFactory
+		ItemOutputPortFactory ItemOutputPortFactory
+		ItemRepository        ports.ItemRepository
+	}
+)
+
+// NewItemDependency ...
+func NewItemDependency(itemInputPortFactory ItemInputPortFactory, itemOutputPortFactory ItemOutputPortFactory, itemRepository ports.ItemRepository) *ItemDependency {
+	return &ItemDependency{
+		ItemInputPortFactory:  itemInputPortFactory,
+		ItemOutputPortFactory: itemOutputPortFactory,
+		ItemRepository:        itemRepository,
+	}
+}
+
 type db struct {
 	conn string
 }
@@ -66,7 +90,29 @@ func (d *AppDependency) InitUserInteractor(userOutputPort ports.UserOutputPort) 
 	)
 }
 
+// InitItemDI ...
+func (d *AppDependency) InitItemDI() *ItemDependency {
+	return NewItemDependency(
+		d.InitItemInteractor,
+		presenters.NewItemPresenter,
+		d.InitItemGateway(),
+	)
+}
+
+// InitItemInteractor ...
+func (d *AppDependency) InitItemInteractor(itemOutputPort ports.ItemOutputPort) *interactors.ItemInteractor {
+	return interactors.NewItemInteractor(
+		itemOutputPort,
+		d.InitItemGateway(),
+	)
+}
+
 // InitUserGateway ...
 func (d *db) InitUserGateway() *gateways.UserGateway {
 	return gateways.NewUserGateway(d.conn)
+}
+
+// InitItemGateway ...
+func (d *db) InitItemGateway() *gateways.ItemGateway {
+	return gateways.NewItemGateway(d.conn)
 }
