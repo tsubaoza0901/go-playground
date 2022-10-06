@@ -18,18 +18,18 @@ type (
 
 	// UserDependency ...
 	UserDependency struct {
-		UserInputPort  UserInputPortFactory
-		UserOutputPort UserOutputPortFactory
-		UserRepository ports.UserRepository
+		UserInputPortFactory  UserInputPortFactory
+		UserOutputPortFactory UserOutputPortFactory
+		UserRepository        ports.UserRepository
 	}
 )
 
 // NewUserDependency ...
 func NewUserDependency(userInputPortFactory UserInputPortFactory, userOutputPortFactory UserOutputPortFactory, userRepository ports.UserRepository) *UserDependency {
 	return &UserDependency{
-		UserInputPort:  userInputPortFactory,
-		UserOutputPort: userOutputPortFactory,
-		UserRepository: userRepository,
+		UserInputPortFactory:  userInputPortFactory,
+		UserOutputPortFactory: userOutputPortFactory,
+		UserRepository:        userRepository,
 	}
 }
 

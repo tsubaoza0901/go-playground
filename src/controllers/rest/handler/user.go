@@ -20,6 +20,6 @@ func (u *UserHandler) GetUsers(ud *injector.UserDependency) func(echo.Context) e
 	}
 }
 
-func (u *UserHandler) newInputPort(c echo.Context, ud *injector.UserDependency) ports.UserInportPort {
-	return ud.UserInputPort(ud.UserOutputPort(c))
+func (u *UserHandler) newInputPort(c echo.Context, dependency *injector.UserDependency) ports.UserInportPort {
+	return dependency.UserInputPortFactory(dependency.UserOutputPortFactory(c))
 }
