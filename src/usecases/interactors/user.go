@@ -2,6 +2,8 @@ package interactors
 
 import (
 	"context"
+	"go-playground/m/v1/entities"
+	"go-playground/m/v1/usecases/data/input"
 	"go-playground/m/v1/usecases/data/output"
 	"go-playground/m/v1/usecases/ports"
 )
@@ -20,9 +22,27 @@ func NewUserInteractor(outputPort ports.UserOutputPort, repository ports.UserRep
 	}
 }
 
+// AddUser ...
+func (u *UserInteractor) AddUser(ctx context.Context, in *input.User) error {
+	user := &entities.User{
+		Name: in.Name,
+		Age:  in.Age,
+	}
+	result, err := u.Repository.RegisterUser(ctx, user)
+	if err != nil {
+		return err
+	}
+
+	out := &output.User{
+		Name: result.Name,
+		Age:  result.Age,
+	}
+	return u.OutputPort.OutputUser(out)
+}
+
 // FetchUsers ...
 func (u *UserInteractor) FetchUsers(ctx context.Context) error {
-	users, err := u.Repository.GetUsers(ctx)
+	users, err := u.Repository.RetrieveUsers(ctx)
 	if err != nil {
 		return u.OutputPort.OutputError(err)
 	}

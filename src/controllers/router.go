@@ -19,5 +19,6 @@ func NewAppControllers() *AppControllers {
 
 // InitRouting ...
 func InitRouting(e *echo.Echo, appControllers *AppControllers, d *injector.AppDependency) {
+	e.POST("/user", appControllers.CreateUser(d.InitUserDI()))
 	e.GET("/users", appControllers.GetUsers(d.InitUserDI()))
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"go-playground/m/v1/entities"
+	"go-playground/m/v1/infrastructure/rdb/model"
 	"log"
 )
 
@@ -17,9 +18,22 @@ func NewUserGateway(dbConn string) *UserGateway {
 	return &UserGateway{dbConn}
 }
 
-// GetUsers ...
-func (g *UserGateway) GetUsers(ctx context.Context) ([]*entities.User, error) {
+// RegisterUser ...
+func (g *UserGateway) RegisterUser(ctx context.Context, user *entities.User) (*entities.User, error) {
+	rdbModel := model.User{
+		ID:   1,
+		Name: user.Name,
+		Age:  user.Age,
+	}
+	entities := &entities.User{
+		Name: rdbModel.Name,
+		Age:  rdbModel.Age,
+	}
+	return entities, nil
+}
 
+// RetrieveUsers ...
+func (g *UserGateway) RetrieveUsers(ctx context.Context) ([]*entities.User, error) {
 	if g.dbConn == "" {
 		return nil, errors.New("dbConnが空")
 	}
