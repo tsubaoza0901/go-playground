@@ -1,10 +1,10 @@
 package injector
 
 import (
-	"go-playground/m/v1/src/gateways"
-	"go-playground/m/v1/src/presenters"
-	"go-playground/m/v1/src/usecases/interactors"
-	"go-playground/m/v1/src/usecases/ports"
+	"go-playground/m/v1/gateways"
+	"go-playground/m/v1/presenters"
+	"go-playground/m/v1/usecases/interactors"
+	"go-playground/m/v1/usecases/ports"
 
 	"github.com/labstack/echo/v4"
 )

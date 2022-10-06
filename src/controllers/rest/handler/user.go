@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"go-playground/m/v1/src/injector"
-	"go-playground/m/v1/src/usecases/ports"
+	"go-playground/m/v1/injector"
+	"go-playground/m/v1/usecases/ports"
 
 	"github.com/labstack/echo/v4"
 )

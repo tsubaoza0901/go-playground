@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"go-playground/m/v1/src/controllers/rest"
-	"go-playground/m/v1/src/injector"
+	"go-playground/m/v1/controllers/rest"
+	"go-playground/m/v1/injector"
 
 	"github.com/labstack/echo/v4"
 )

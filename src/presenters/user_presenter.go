@@ -1,7 +1,7 @@
 package presenters
 
 import (
-	"go-playground/m/v1/src/usecases/data/output"
+	"go-playground/m/v1/usecases/data/output"
 	"net/http"
 
 	"github.com/labstack/echo/v4"

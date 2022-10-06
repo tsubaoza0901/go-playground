@@ -2,8 +2,8 @@ package ports
 
 import (
 	"context"
-	"go-playground/m/v1/src/entities"
-	"go-playground/m/v1/src/usecases/data/output"
+	"go-playground/m/v1/entities"
+	"go-playground/m/v1/usecases/data/output"
 )
 
 // UserInportPort ...

@@ -1,11 +1,10 @@
 package main
 
 import (
+	"go-playground/m/v1/controllers"
+	"go-playground/m/v1/controllers/rest/middleware"
+	"go-playground/m/v1/injector"
 	"log"
-
-	"go-playground/m/v1/src/controllers"
-	"go-playground/m/v1/src/controllers/rest/middleware"
-	"go-playground/m/v1/src/injector"
 
 	"github.com/labstack/echo/v4"
 )

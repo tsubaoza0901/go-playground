@@ -2,8 +2,8 @@ package interactors
 
 import (
 	"context"
-	"go-playground/m/v1/src/usecases/data/output"
-	"go-playground/m/v1/src/usecases/ports"
+	"go-playground/m/v1/usecases/data/output"
+	"go-playground/m/v1/usecases/ports"
 )
 
 // UserInteractor ...

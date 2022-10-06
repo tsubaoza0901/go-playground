@@ -3,7 +3,7 @@ package gateways
 import (
 	"context"
 	"errors"
-	"go-playground/m/v1/src/entities"
+	"go-playground/m/v1/entities"
 	"log"
 )
 

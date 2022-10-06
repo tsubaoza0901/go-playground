@@ -1,6 +1,6 @@
 package rest
 
-import "go-playground/m/v1/src/controllers/rest/handler"
+import "go-playground/m/v1/controllers/rest/handler"
 
 // AppHandlers ...
 type AppHandlers struct {
