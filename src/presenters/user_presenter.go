@@ -17,11 +17,6 @@ func NewUserPresenter(c echo.Context) *UserPresenter {
 	return &UserPresenter{c}
 }
 
-// SetEchoContext ...
-func (u *UserPresenter) SetEchoContext(c echo.Context) {
-	u.c = c
-}
-
 // OutputUsers ...
 func (u *UserPresenter) OutputUsers(users []*output.User) error {
 	return u.c.JSON(http.StatusOK, users)
