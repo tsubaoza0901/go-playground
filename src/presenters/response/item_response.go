@@ -2,5 +2,5 @@ package response
 
 // Item ...
 type Item struct {
-	Name string
+	Name string `json:"name"`
 }

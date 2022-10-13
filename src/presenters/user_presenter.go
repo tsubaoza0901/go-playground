@@ -29,7 +29,7 @@ func (p *User) UserWithItem(user *output.UserWithItem) {
 				Name: v.Name,
 			}
 		}
-		body.Item = items
+		body.ItemList = items
 	}
 
 	p.AppResponse = &response.AppResponse{

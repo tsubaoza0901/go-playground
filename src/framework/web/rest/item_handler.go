@@ -1,4 +1,4 @@
-package handler
+package rest
 
 import (
 	"go-playground/m/v1/controllers"
@@ -9,19 +9,19 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// Item ...
-type Item struct {
+// ItemHandler ...
+type ItemHandler struct {
 	itemController *controllers.Item
 	*presenters.Item
 }
 
-// NewItem ...
-func NewItem(ic *controllers.Item, ip *presenters.Item) *Item {
-	return &Item{ic, ip}
+// NewItemHandler ...
+func NewItemHandler(ic *controllers.Item, ip *presenters.Item) *ItemHandler {
+	return &ItemHandler{ic, ip}
 }
 
 // CreateItem ...
-func (h *Item) CreateItem(c echo.Context) error {
+func (h *ItemHandler) CreateItem(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	req := new(request.Item)
@@ -29,20 +29,14 @@ func (h *Item) CreateItem(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	if err := h.itemController.CreateItem(ctx, req); err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
-	}
-
+	h.itemController.CreateItem(ctx, req)
 	return c.JSON(h.AppResponse.Status, h.AppResponse.Body)
 }
 
 // GetItems ...
-func (h *Item) GetItems(c echo.Context) error {
+func (h *ItemHandler) GetItems(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	if err := h.itemController.GetItems(ctx); err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
-	}
-
+	h.itemController.GetItems(ctx)
 	return c.JSON(h.AppResponse.Status, h.AppResponse.Body)
 }

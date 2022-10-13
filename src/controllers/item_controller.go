@@ -18,16 +18,14 @@ func NewItem(itemInportPort ports.ItemInportPort) *Item {
 }
 
 // CreateItem ...
-func (u *Item) CreateItem(ctx context.Context, req *request.Item) error {
+func (u *Item) CreateItem(ctx context.Context, req *request.Item) {
 	item := &input.Item{
 		Name: req.Name,
 	}
 	u.itemInportPort.AddItem(ctx, item)
-	return nil
 }
 
 // GetItems ...
-func (u *Item) GetItems(ctx context.Context) error {
+func (u *Item) GetItems(ctx context.Context) {
 	u.itemInportPort.FetchItems(ctx)
-	return nil
 }

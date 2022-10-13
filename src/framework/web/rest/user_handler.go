@@ -1,4 +1,4 @@
-package handler
+package rest
 
 import (
 	"go-playground/m/v1/controllers"
@@ -9,19 +9,19 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// User ...
-type User struct {
+// UserHandler ...
+type UserHandler struct {
 	userController *controllers.User
 	*presenters.User
 }
 
-// NewUser ...
-func NewUser(uc *controllers.User, up *presenters.User) *User {
-	return &User{uc, up}
+// NewUserHandler ...
+func NewUserHandler(uc *controllers.User, up *presenters.User) *UserHandler {
+	return &UserHandler{uc, up}
 }
 
 // CreateUser ...
-func (h *User) CreateUser(c echo.Context) error {
+func (h *UserHandler) CreateUser(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	req := new(request.User)
@@ -29,15 +29,12 @@ func (h *User) CreateUser(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	if err := h.userController.CreateUser(ctx, req); err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
-	}
-
+	h.userController.CreateUser(ctx, req)
 	return c.JSON(h.AppResponse.Status, h.AppResponse.Body)
 }
 
 // GetUserByID ...
-func (h *User) GetUserByID(c echo.Context) error {
+func (h *UserHandler) GetUserByID(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	req := new(request.GetUserByID)
@@ -45,20 +42,14 @@ func (h *User) GetUserByID(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	if err := h.userController.GetUserByID(ctx, req.ID); err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
-	}
-
+	h.userController.GetUserByID(ctx, req.ID)
 	return c.JSON(h.AppResponse.Status, h.AppResponse.Body)
 }
 
 // GetUsers ...
-func (h *User) GetUsers(c echo.Context) error {
+func (h *UserHandler) GetUsers(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	if err := h.userController.GetUsers(ctx); err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
-	}
-
+	h.userController.GetUsers(ctx)
 	return c.JSON(h.AppResponse.Status, h.AppResponse.Body)
 }

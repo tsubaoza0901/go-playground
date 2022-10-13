@@ -12,7 +12,7 @@ type App struct {
 
 // NewApp ...
 func NewApp() *App {
-	dbConn := "*gorm.DB"
+	dbConn := "*gorm.DB" // DB接続は実装していないため、仮で文字列を設定
 	di := injector.NewAppDependency(dbConn)
 
 	return &App{

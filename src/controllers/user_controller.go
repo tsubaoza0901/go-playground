@@ -18,24 +18,21 @@ func NewUser(userInportPort ports.UserInportPort) *User {
 }
 
 // CreateUser ...
-func (c *User) CreateUser(ctx context.Context, req *request.User) error {
+func (c *User) CreateUser(ctx context.Context, req *request.User) {
 	user := &input.User{
 		Name: req.Name,
 		Age:  req.Age,
 	}
 
 	c.userInportPort.AddUser(ctx, user)
-	return nil
 }
 
 // GetUserByID ...
-func (c *User) GetUserByID(ctx context.Context, id uint) error {
+func (c *User) GetUserByID(ctx context.Context, id uint) {
 	c.userInportPort.FetchUserByID(ctx, id)
-	return nil
 }
 
 // GetUsers ...
-func (c *User) GetUsers(ctx context.Context) error {
+func (c *User) GetUsers(ctx context.Context) {
 	c.userInportPort.FetchUsers(ctx)
-	return nil
 }

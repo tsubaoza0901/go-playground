@@ -1,7 +1,7 @@
 package web
 
 import (
-	"go-playground/m/v1/framework/web/rest/handler"
+	"go-playground/m/v1/framework/web/rest"
 	"log"
 
 	"github.com/labstack/echo/v4"
@@ -10,12 +10,12 @@ import (
 // API ...
 type API struct {
 	*echoFW
-	*handler.User
-	*handler.Item
+	*rest.UserHandler
+	*rest.ItemHandler
 }
 
 // NewAPI ...
-func NewAPI(e *echo.Echo, u *handler.User, i *handler.Item) *API {
+func NewAPI(e *echo.Echo, u *rest.UserHandler, i *rest.ItemHandler) *API {
 	return &API{&echoFW{e}, u, i}
 }
 

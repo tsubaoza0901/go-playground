@@ -3,7 +3,7 @@ package injector
 import (
 	"go-playground/m/v1/controllers"
 	"go-playground/m/v1/framework/web"
-	"go-playground/m/v1/framework/web/rest/handler"
+	"go-playground/m/v1/framework/web/rest"
 	"go-playground/m/v1/gateways"
 	"go-playground/m/v1/presenters"
 	"go-playground/m/v1/usecases/interactors"
@@ -44,19 +44,19 @@ func (d *AppDependency) InitWebAPI() *web.API {
 }
 
 // InitUserHandler ...
-func (d *AppDependency) InitUserHandler() *handler.User {
+func (d *AppDependency) InitUserHandler() *rest.UserHandler {
 	userPresenter := d.InitUserPresenter()
 	userController := d.InitUserController(userPresenter)
 
-	return handler.NewUser(userController, userPresenter)
+	return rest.NewUserHandler(userController, userPresenter)
 }
 
 // InitItemHandler ...
-func (d *AppDependency) InitItemHandler() *handler.Item {
+func (d *AppDependency) InitItemHandler() *rest.ItemHandler {
 	itemPresenter := d.InitItemPresenter()
 	itemController := d.InitItemController(itemPresenter)
 
-	return handler.NewItem(itemController, itemPresenter)
+	return rest.NewItemHandler(itemController, itemPresenter)
 }
 
 // InitUserController ...
