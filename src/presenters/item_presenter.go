@@ -1,33 +1,52 @@
 package presenters
 
 import (
+	"go-playground/m/v1/presenters/response"
 	"go-playground/m/v1/usecases/data/output"
 	"net/http"
-
-	"github.com/labstack/echo/v4"
 )
 
-// ItemPresenter ...
-type ItemPresenter struct {
-	c echo.Context
+// Item ...
+type Item struct {
+	*response.AppResponse
 }
 
-// NewItemPresenter ...
-func NewItemPresenter(c echo.Context) *ItemPresenter {
-	return &ItemPresenter{c}
+// NewItem ...
+func NewItem() *Item {
+	return &Item{}
 }
 
-// OutputItems ...
-func (u *ItemPresenter) OutputItems(items []*output.Item) error {
-	return u.c.JSON(http.StatusOK, items)
+// ItemList ...
+func (p *Item) ItemList(items []*output.Item) {
+	body := make([]*response.Item, len(items))
+	for i, v := range items {
+		body[i] = &response.Item{
+			Name: v.Name,
+		}
+	}
+
+	p.AppResponse = &response.AppResponse{
+		Status: http.StatusOK,
+		Body:   body,
+	}
 }
 
-// OutputItem ...
-func (u *ItemPresenter) OutputItem(item *output.Item) error {
-	return u.c.JSON(http.StatusOK, item)
+// Item ...
+func (p *Item) Item(item *output.Item) {
+	body := response.Item{
+		Name: item.Name,
+	}
+
+	p.AppResponse = &response.AppResponse{
+		Status: http.StatusOK,
+		Body:   body,
+	}
 }
 
-// OutputError ...
-func (u *ItemPresenter) OutputError(err error) error {
-	return u.c.JSON(http.StatusInternalServerError, err)
+// Error ...
+func (p *Item) Error(err error) {
+	p.AppResponse = &response.AppResponse{
+		Status: http.StatusOK,
+		Body:   err.Error(),
+	}
 }

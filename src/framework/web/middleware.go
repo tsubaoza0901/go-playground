@@ -1,4 +1,4 @@
-package middleware
+package web
 
 import (
 	"net/http"
@@ -7,7 +7,11 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func InitMiddleware(e *echo.Echo) {
+type echoFW struct {
+	*echo.Echo
+}
+
+func (e *echoFW) middleware() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{

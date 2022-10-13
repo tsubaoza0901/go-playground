@@ -9,17 +9,17 @@ import (
 
 // UserInportPort ...
 type UserInportPort interface {
-	AddUser(ctx context.Context, user *input.User) error
-	FetchUserByID(ctx context.Context, id uint) error
-	FetchUsers(ctx context.Context) error
+	AddUser(ctx context.Context, user *input.User)
+	FetchUserByID(ctx context.Context, id uint)
+	FetchUsers(ctx context.Context)
 }
 
 // UserOutputPort ...
 type UserOutputPort interface {
-	OutputUsers([]*output.User) error
-	OutputUser(*output.User) error
-	OutputUserWithItem(*output.UserWithItem) error
-	OutputError(error) error
+	User(*output.User)
+	UserWithItem(*output.UserWithItem)
+	UserList([]*output.User)
+	Error(error)
 }
 
 // UserRepository ...

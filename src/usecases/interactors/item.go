@@ -8,41 +8,40 @@ import (
 	"go-playground/m/v1/usecases/ports"
 )
 
-// ItemInteractor ...
-type ItemInteractor struct {
-	OutputPort ports.ItemOutputPort
-	Repository ports.ItemRepository
+// Item ...
+type Item struct {
+	outputPort ports.ItemOutputPort
+	repository ports.ItemRepository
 }
 
-// NewItemInteractor ...
-func NewItemInteractor(outputPort ports.ItemOutputPort, repository ports.ItemRepository) *ItemInteractor {
-	return &ItemInteractor{
-		OutputPort: outputPort,
-		Repository: repository,
-	}
+// NewItem ...
+func NewItem(iop ports.ItemOutputPort, ir ports.ItemRepository) *Item {
+	return &Item{iop, ir}
 }
 
 // AddItem ...
-func (u *ItemInteractor) AddItem(ctx context.Context, in *input.Item) error {
+func (u *Item) AddItem(ctx context.Context, in *input.Item) {
 	item := &entities.Item{
 		Name: in.Name,
 	}
-	result, err := u.Repository.RegisterItem(ctx, item)
+	result, err := u.repository.RegisterItem(ctx, item)
 	if err != nil {
-		return err
+		u.outputPort.Error(err)
+		return
 	}
 
 	out := &output.Item{
 		Name: result.Name,
 	}
-	return u.OutputPort.OutputItem(out)
+	u.outputPort.Item(out)
 }
 
 // FetchItems ...
-func (u *ItemInteractor) FetchItems(ctx context.Context) error {
-	items, err := u.Repository.RetrieveItems(ctx)
+func (u *Item) FetchItems(ctx context.Context) {
+	items, err := u.repository.RetrieveItems(ctx)
 	if err != nil {
-		return u.OutputPort.OutputError(err)
+		u.outputPort.Error(err)
+		return
 	}
 	outputs := make([]*output.Item, len(items))
 	for i, v := range items {
@@ -50,5 +49,5 @@ func (u *ItemInteractor) FetchItems(ctx context.Context) error {
 			Name: v.Name,
 		}
 	}
-	return u.OutputPort.OutputItems(outputs)
+	u.outputPort.ItemList(outputs)
 }

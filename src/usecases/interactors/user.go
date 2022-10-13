@@ -8,44 +8,44 @@ import (
 	"go-playground/m/v1/usecases/ports"
 )
 
-// UserInteractor ...
-type UserInteractor struct {
-	OutputPort ports.UserOutputPort
-	Repository ports.UserRepository
+// User ...
+type User struct {
+	outputPort ports.UserOutputPort
+	repository ports.UserRepository
 }
 
-// NewUserInteractor ...
-func NewUserInteractor(outputPort ports.UserOutputPort, repository ports.UserRepository) *UserInteractor {
-	return &UserInteractor{
-		OutputPort: outputPort,
-		Repository: repository,
-	}
+// NewUser ...
+func NewUser(uop ports.UserOutputPort, ur ports.UserRepository) *User {
+	return &User{uop, ur}
 }
 
 // AddUser ...
-func (u *UserInteractor) AddUser(ctx context.Context, in *input.User) error {
+func (u *User) AddUser(ctx context.Context, in *input.User) {
 	user := &entities.User{
 		Name: in.Name,
 		Age:  in.Age,
 	}
-	result, err := u.Repository.RegisterUser(ctx, user)
+	result, err := u.repository.RegisterUser(ctx, user)
 	if err != nil {
-		return err
+		u.outputPort.Error(err)
+		return
 	}
 
 	out := &output.User{
 		Name: result.Name,
 		Age:  result.Age,
 	}
-	return u.OutputPort.OutputUser(out)
+	u.outputPort.User(out)
 }
 
 // FetchUserByID ...
-func (u *UserInteractor) FetchUserByID(ctx context.Context, id uint) error {
-	user, err := u.Repository.RetrieveUserWithItem(ctx, id)
+func (u *User) FetchUserByID(ctx context.Context, id uint) {
+	user, err := u.repository.RetrieveUserWithItem(ctx, id)
 	if err != nil {
-		return err
+		u.outputPort.Error(err)
+		return
 	}
+
 	outputUser := &output.UserWithItem{
 		Name: user.Name,
 		Age:  user.Age,
@@ -59,14 +59,15 @@ func (u *UserInteractor) FetchUserByID(ctx context.Context, id uint) error {
 		}
 		outputUser.Items = outputItems
 	}
-	return u.OutputPort.OutputUserWithItem(outputUser)
+	u.outputPort.UserWithItem(outputUser)
 }
 
 // FetchUsers ...
-func (u *UserInteractor) FetchUsers(ctx context.Context) error {
-	users, err := u.Repository.RetrieveUsers(ctx)
+func (u *User) FetchUsers(ctx context.Context) {
+	users, err := u.repository.RetrieveUsers(ctx)
 	if err != nil {
-		return u.OutputPort.OutputError(err)
+		u.outputPort.Error(err)
+		return
 	}
 	outputs := make([]*output.User, len(users))
 	for i, v := range users {
@@ -75,5 +76,5 @@ func (u *UserInteractor) FetchUsers(ctx context.Context) error {
 			Age:  v.Age,
 		}
 	}
-	return u.OutputPort.OutputUsers(outputs)
+	u.outputPort.UserList(outputs)
 }

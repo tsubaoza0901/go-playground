@@ -1,38 +1,75 @@
 package presenters
 
 import (
+	"go-playground/m/v1/presenters/response"
 	"go-playground/m/v1/usecases/data/output"
 	"net/http"
-
-	"github.com/labstack/echo/v4"
 )
 
-// UserPresenter ...
-type UserPresenter struct {
-	c echo.Context
+// User ...
+type User struct {
+	*response.AppResponse
 }
 
-// NewUserPresenter ...
-func NewUserPresenter(c echo.Context) *UserPresenter {
-	return &UserPresenter{c}
+// NewUser ...
+func NewUser() *User {
+	return &User{}
 }
 
-// OutputUsers ...
-func (u *UserPresenter) OutputUsers(users []*output.User) error {
-	return u.c.JSON(http.StatusOK, users)
+// UserWithItem ...
+func (p *User) UserWithItem(user *output.UserWithItem) {
+	body := response.User{
+		Name: user.Name,
+		Age:  user.Age,
+	}
+	if user.Items != nil {
+		items := make([]*response.Item, len(user.Items))
+		for i, v := range user.Items {
+			items[i] = &response.Item{
+				Name: v.Name,
+			}
+		}
+		body.Item = items
+	}
+
+	p.AppResponse = &response.AppResponse{
+		Status: http.StatusOK,
+		Body:   body,
+	}
 }
 
-// OutputUser ...
-func (u *UserPresenter) OutputUser(user *output.User) error {
-	return u.c.JSON(http.StatusOK, user)
+// UserList ...
+func (p *User) UserList(users []*output.User) {
+	body := make([]*response.User, len(users))
+	for i, v := range users {
+		body[i] = &response.User{
+			Name: v.Name,
+			Age:  v.Age,
+		}
+	}
+
+	p.AppResponse = &response.AppResponse{
+		Status: http.StatusOK,
+		Body:   body,
+	}
 }
 
-// OutputUserWithItem ...
-func (u *UserPresenter) OutputUserWithItem(user *output.UserWithItem) error {
-	return u.c.JSON(http.StatusOK, user)
+// User ...
+func (p *User) User(user *output.User) {
+	body := response.User{
+		Name: user.Name,
+		Age:  user.Age,
+	}
+	p.AppResponse = &response.AppResponse{
+		Status: http.StatusOK,
+		Body:   body,
+	}
 }
 
-// OutputError ...
-func (u *UserPresenter) OutputError(err error) error {
-	return u.c.JSON(http.StatusInternalServerError, err)
+// Error ...
+func (p *User) Error(err error) {
+	p.AppResponse = &response.AppResponse{
+		Status: http.StatusOK,
+		Body:   err.Error(),
+	}
 }

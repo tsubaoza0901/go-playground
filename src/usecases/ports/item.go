@@ -9,15 +9,15 @@ import (
 
 // ItemInportPort ...
 type ItemInportPort interface {
-	AddItem(ctx context.Context, item *input.Item) error
-	FetchItems(ctx context.Context) error
+	AddItem(ctx context.Context, item *input.Item)
+	FetchItems(ctx context.Context)
 }
 
 // ItemOutputPort ...
 type ItemOutputPort interface {
-	OutputItems([]*output.Item) error
-	OutputItem(*output.Item) error
-	OutputError(error) error
+	Item(*output.Item)
+	ItemList([]*output.Item)
+	Error(error)
 }
 
 // ItemRepository ...

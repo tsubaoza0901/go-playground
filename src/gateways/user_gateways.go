@@ -8,18 +8,18 @@ import (
 	"log"
 )
 
-// UserGateway ...
-type UserGateway struct {
+// User ...
+type User struct {
 	dbConn string // NOTE: 実際の型は *gorm.DB など
 }
 
-// NewUserGateway ...
-func NewUserGateway(dbConn string) *UserGateway {
-	return &UserGateway{dbConn}
+// NewUser ...
+func NewUser(dbConn string) *User {
+	return &User{dbConn}
 }
 
 // RegisterUser ...
-func (g *UserGateway) RegisterUser(ctx context.Context, user *entities.User) (*entities.User, error) {
+func (g *User) RegisterUser(ctx context.Context, user *entities.User) (*entities.User, error) {
 	if g.dbConn == "" {
 		return nil, errors.New("dbConnが空")
 	}
@@ -39,7 +39,7 @@ func (g *UserGateway) RegisterUser(ctx context.Context, user *entities.User) (*e
 }
 
 // RetrieveUserWithItem ...
-func (g *UserGateway) RetrieveUserWithItem(ctx context.Context, id uint) (*entities.User, error) {
+func (g *User) RetrieveUserWithItem(ctx context.Context, id uint) (*entities.User, error) {
 	if g.dbConn == "" {
 		return nil, errors.New("dbConnが空")
 	}
@@ -78,7 +78,7 @@ func (g *UserGateway) RetrieveUserWithItem(ctx context.Context, id uint) (*entit
 }
 
 // RetrieveUsers ...
-func (g *UserGateway) RetrieveUsers(ctx context.Context) ([]*entities.User, error) {
+func (g *User) RetrieveUsers(ctx context.Context) ([]*entities.User, error) {
 	if g.dbConn == "" {
 		return nil, errors.New("dbConnが空")
 	}

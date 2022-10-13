@@ -1,6 +1,9 @@
 package injector
 
 import (
+	"go-playground/m/v1/controllers"
+	"go-playground/m/v1/framework/web"
+	"go-playground/m/v1/framework/web/rest/handler"
 	"go-playground/m/v1/gateways"
 	"go-playground/m/v1/presenters"
 	"go-playground/m/v1/usecases/interactors"
@@ -9,52 +12,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type (
-	// UserInputPortFactory ...
-	UserInputPortFactory func(ports.UserOutputPort) *interactors.UserInteractor
-
-	// UserOutputPortFactory ...
-	UserOutputPortFactory func(e echo.Context) *presenters.UserPresenter
-
-	// UserDependency ...
-	UserDependency struct {
-		UserInputPortFactory  UserInputPortFactory
-		UserOutputPortFactory UserOutputPortFactory
-		UserRepository        ports.UserRepository
-	}
-)
-
-// NewUserDependency ...
-func NewUserDependency(userInputPortFactory UserInputPortFactory, userOutputPortFactory UserOutputPortFactory, userRepository ports.UserRepository) *UserDependency {
-	return &UserDependency{
-		UserInputPortFactory:  userInputPortFactory,
-		UserOutputPortFactory: userOutputPortFactory,
-		UserRepository:        userRepository,
-	}
-}
-
-type (
-	// ItemInputPortFactory ...
-	ItemInputPortFactory func(ports.ItemOutputPort) *interactors.ItemInteractor
-
-	// ItemOutputPortFactory ...
-	ItemOutputPortFactory func(e echo.Context) *presenters.ItemPresenter
-
-	// ItemDependency ...
-	ItemDependency struct {
-		ItemInputPortFactory  ItemInputPortFactory
-		ItemOutputPortFactory ItemOutputPortFactory
-		ItemRepository        ports.ItemRepository
-	}
-)
-
-// NewItemDependency ...
-func NewItemDependency(itemInputPortFactory ItemInputPortFactory, itemOutputPortFactory ItemOutputPortFactory, itemRepository ports.ItemRepository) *ItemDependency {
-	return &ItemDependency{
-		ItemInputPortFactory:  itemInputPortFactory,
-		ItemOutputPortFactory: itemOutputPortFactory,
-		ItemRepository:        itemRepository,
-	}
+type echoFW struct {
+	*echo.Echo
 }
 
 type db struct {
@@ -63,56 +22,79 @@ type db struct {
 
 // AppDependency ...
 type AppDependency struct {
+	echoFW
 	db
 }
 
 // NewAppDependency ...
 func NewAppDependency(conn string) *AppDependency {
 	return &AppDependency{
-		db: db{conn},
+		echoFW: echoFW{echo.New()},
+		db:     db{conn},
 	}
 }
 
-// InitUserDI ...
-func (d *AppDependency) InitUserDI() *UserDependency {
-	return NewUserDependency(
-		d.InitUserInteractor,
-		presenters.NewUserPresenter,
-		d.InitUserGateway(),
+// InitWebAPI ...
+func (d *AppDependency) InitWebAPI() *web.API {
+	return web.NewAPI(
+		d.Echo,
+		d.InitUserHandler(),
+		d.InitItemHandler(),
 	)
 }
 
-// InitUserInteractor ...
-func (d *AppDependency) InitUserInteractor(userOutputPort ports.UserOutputPort) *interactors.UserInteractor {
-	return interactors.NewUserInteractor(
-		userOutputPort,
-		d.InitUserGateway(),
+// InitUserHandler ...
+func (d *AppDependency) InitUserHandler() *handler.User {
+	userPresenter := d.InitUserPresenter()
+	userController := d.InitUserController(userPresenter)
+
+	return handler.NewUser(userController, userPresenter)
+}
+
+// InitItemHandler ...
+func (d *AppDependency) InitItemHandler() *handler.Item {
+	itemPresenter := d.InitItemPresenter()
+	itemController := d.InitItemController(itemPresenter)
+
+	return handler.NewItem(itemController, itemPresenter)
+}
+
+// InitUserController ...
+func (d *AppDependency) InitUserController(userOutputPort ports.UserOutputPort) *controllers.User {
+	return controllers.NewUser(
+		interactors.NewUser(
+			userOutputPort,
+			d.InitUserGateway(),
+		),
 	)
 }
 
-// InitItemDI ...
-func (d *AppDependency) InitItemDI() *ItemDependency {
-	return NewItemDependency(
-		d.InitItemInteractor,
-		presenters.NewItemPresenter,
-		d.InitItemGateway(),
-	)
-}
-
-// InitItemInteractor ...
-func (d *AppDependency) InitItemInteractor(itemOutputPort ports.ItemOutputPort) *interactors.ItemInteractor {
-	return interactors.NewItemInteractor(
-		itemOutputPort,
-		d.InitItemGateway(),
+// InitItemController ...
+func (d *AppDependency) InitItemController(itemOutputPort ports.ItemOutputPort) *controllers.Item {
+	return controllers.NewItem(
+		interactors.NewItem(
+			itemOutputPort,
+			d.InitItemGateway(),
+		),
 	)
 }
 
 // InitUserGateway ...
-func (d *db) InitUserGateway() *gateways.UserGateway {
-	return gateways.NewUserGateway(d.conn)
+func (d *db) InitUserGateway() *gateways.User {
+	return gateways.NewUser(d.conn)
 }
 
 // InitItemGateway ...
-func (d *db) InitItemGateway() *gateways.ItemGateway {
-	return gateways.NewItemGateway(d.conn)
+func (d *db) InitItemGateway() *gateways.Item {
+	return gateways.NewItem(d.conn)
+}
+
+// InitUserPresenter ...
+func (d *AppDependency) InitUserPresenter() *presenters.User {
+	return presenters.NewUser()
+}
+
+// InitItemPresenter ...
+func (d *AppDependency) InitItemPresenter() *presenters.Item {
+	return presenters.NewItem()
 }
