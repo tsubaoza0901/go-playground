@@ -2,26 +2,21 @@ package repository
 
 import (
 	"context"
-	dbModel "go-playground/m/v1/infrastructure/rdb/model"
-	"go-playground/m/v1/repository/rdb"
+	"go-playground/m/v1/repository/persistence"
 	"go-playground/m/v1/usecase/dto"
 )
 
-// GradeRepository ...
-type GradeRepository struct {
-	rdb.IManageDBConn
+// Grade ...
+type Grade struct {
+	gradeDataAccess persistence.GradeDataAccess
 }
 
-// NewGradeRepository ...
-func NewGradeRepository(mdc rdb.IManageDBConn) GradeRepository {
-	return GradeRepository{mdc}
+// NewGrade ...
+func NewGrade(gda persistence.GradeDataAccess) Grade {
+	return Grade{gda}
 }
 
 // FetchGradeList ...
-func (r GradeRepository) FetchGradeList(ctx context.Context) (*dto.FetchGradeListResult, error) {
-	grades := new(dbModel.Grades)
-	if err := r.GetConnection(ctx).Find(&grades).Error; err != nil {
-		return nil, err
-	}
-	return dbModel.MakeFetchGradeListResultDTO(*grades), nil
+func (r Grade) FetchGradeList(ctx context.Context) (*dto.FetchGradeListResult, error) {
+	return r.gradeDataAccess.FetchGradeList(ctx)
 }

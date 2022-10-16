@@ -2,20 +2,20 @@ package repository
 
 import (
 	"context"
-	"go-playground/m/v1/repository/rdb"
+	"go-playground/m/v1/repository/persistence"
 )
 
-// TransactionManagementRepository ...
-type TransactionManagementRepository struct {
-	rdb.IManageDBConn
+// TransactionManagement ...
+type TransactionManagement struct {
+	transactionManagementDataAccess persistence.TransactionManagementDataAccess
 }
 
-// NewTransactionManagementRepository ...
-func NewTransactionManagementRepository(mdc rdb.IManageDBConn) TransactionManagementRepository {
-	return TransactionManagementRepository{mdc}
+// NewTransactionManagement ...
+func NewTransactionManagement(tmda persistence.TransactionManagementDataAccess) TransactionManagement {
+	return TransactionManagement{tmda}
 }
 
 // Transaction ...
-func (r TransactionManagementRepository) Transaction(ctx context.Context, fc func(context.Context) error) (err error) {
-	return r.StartTransaction(ctx, fc)
+func (r TransactionManagement) Transaction(ctx context.Context, fc func(context.Context) error) error {
+	return r.transactionManagementDataAccess.Transaction(ctx, fc)
 }
