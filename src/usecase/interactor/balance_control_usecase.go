@@ -7,31 +7,36 @@ import (
 	"go-playground/m/v1/domain/model/user"
 	"go-playground/m/v1/usecase/data/input"
 	"go-playground/m/v1/usecase/data/output"
-	"go-playground/m/v1/usecase/repository"
-	"go-playground/m/v1/usecase/repository/dto"
+	"go-playground/m/v1/usecase/dto"
+	"go-playground/m/v1/usecase/interactor/port"
+	"go-playground/m/v1/usecase/rule"
+	"log"
 )
 
 // BalanceControlUsecase ...
 type BalanceControlUsecase struct {
-	repository.IBalanceRepository
-	repository.IDealHistoryRepository
-	repository.ITransactionManagementRepository
+	port.IBalanceRepository
+	port.IDealHistoryRepository
+	port.ITransactionManagementRepository
+	balanceOutputPort port.BalanceOutput
 }
 
 // NewBalanceControlUsecase ...
-func NewBalanceControlUsecase(br repository.IBalanceRepository, th repository.IDealHistoryRepository, tmr repository.ITransactionManagementRepository) BalanceControlUsecase {
-	return BalanceControlUsecase{br, th, tmr}
+func NewBalanceControlUsecase(br port.IBalanceRepository, th port.IDealHistoryRepository, tmr port.ITransactionManagementRepository, bop port.BalanceOutput) BalanceControlUsecase {
+	return BalanceControlUsecase{br, th, tmr, bop}
 }
 
 // PutMoney 電子マネーのチャージ
-func (u BalanceControlUsecase) PutMoney(ctx context.Context, userID uint, inputPuttingMoney input.PuttingMoney) error {
+func (u BalanceControlUsecase) PutMoney(ctx context.Context, userID uint, inputPuttingMoney input.PuttingMoney) {
 	// 残高取得
 	currentBalance, err := u.fetchBalanceByUserID(ctx, userID)
 	if err != nil {
-		return err
+		u.balanceOutputPort.AppError(rule.InternalServerError)
+		return
 	}
 	if err := currentBalance.Exist(true); err != nil {
-		return err
+		u.balanceOutputPort.AppError(rule.NotFound)
+		return
 	}
 
 	topUpAmount := balance.TopUpAmount(inputPuttingMoney.Amount)
@@ -39,7 +44,8 @@ func (u BalanceControlUsecase) PutMoney(ctx context.Context, userID uint, inputP
 	// チャージ結果計算
 	calculatedBalance, err := currentBalance.AddUp(topUpAmount)
 	if err != nil {
-		return err
+		u.balanceOutputPort.AppError(rule.InternalServerError)
+		return
 	}
 
 	// 同一トランザクション内処理開始
@@ -57,21 +63,22 @@ func (u BalanceControlUsecase) PutMoney(ctx context.Context, userID uint, inputP
 		}
 		return
 	}); err != nil {
-		return err
+		u.balanceOutputPort.AppError(rule.InternalServerError)
+		return
 	}
-
-	return nil
 }
 
 // PayMoney ...
-func (u BalanceControlUsecase) PayMoney(ctx context.Context, userID uint, inputPayment input.Payment) error {
+func (u BalanceControlUsecase) PayMoney(ctx context.Context, userID uint, inputPayment input.Payment) {
 	// 残高取得
 	currentBalance, err := u.fetchBalanceByUserID(ctx, userID)
 	if err != nil {
-		return err
+		u.balanceOutputPort.AppError(rule.InternalServerError)
+		return
 	}
 	if err := currentBalance.Exist(true); err != nil {
-		return err
+		u.balanceOutputPort.AppError(rule.InternalServerError)
+		return
 	}
 
 	paymentAmount := balance.PaymentAmount(inputPayment.Amount)
@@ -79,7 +86,9 @@ func (u BalanceControlUsecase) PayMoney(ctx context.Context, userID uint, inputP
 	// 支払結果計算
 	calculatedBalance, err := currentBalance.Subtract(paymentAmount)
 	if err != nil {
-		return err
+		log.Println(calculatedBalance)
+		u.balanceOutputPort.AppError(rule.ShortBalance)
+		return
 	}
 
 	// 同一トランザクション内処理開始
@@ -97,22 +106,26 @@ func (u BalanceControlUsecase) PayMoney(ctx context.Context, userID uint, inputP
 		}
 		return
 	}); err != nil {
-		return err
+		u.balanceOutputPort.AppError(rule.InternalServerError)
+		return
 	}
-
-	return nil
 }
 
 // RetrieveRemainingBalanceByUserID 電子マネーの残高確認
-func (u BalanceControlUsecase) RetrieveRemainingBalanceByUserID(ctx context.Context, userID uint) (output.Balance, error) {
+func (u BalanceControlUsecase) RetrieveRemainingBalanceByUserID(ctx context.Context, userID uint) {
 	tragetBalance, err := u.fetchBalanceByUserID(ctx, userID)
 	if err != nil {
-		return output.Balance{}, err
+		u.balanceOutputPort.AppError(rule.InternalServerError)
+		return
 	}
 	if err := tragetBalance.Exist(true); err != nil {
-		return output.Balance{}, err
+		u.balanceOutputPort.AppError(rule.InternalServerError)
+		return
 	}
-	return output.MakeBalance(tragetBalance.RemainingAmount()), nil
+	out := &output.Balance{
+		Amount: output.Amount(tragetBalance.RemainingAmount()),
+	}
+	u.balanceOutputPort.Balance(out)
 }
 
 func (u BalanceControlUsecase) fetchBalanceByUserID(ctx context.Context, userID uint) (balance.Entity, error) {

@@ -4,29 +4,39 @@ import (
 	"context"
 	"go-playground/m/v1/domain/model/grade"
 	"go-playground/m/v1/usecase/data/output"
-	"go-playground/m/v1/usecase/repository"
+	"go-playground/m/v1/usecase/interactor/port"
+	"go-playground/m/v1/usecase/rule"
 )
 
 // GradeUsecase ...
 type GradeUsecase struct {
-	repository.IGradeRepository
+	port.IGradeRepository
+	gradeOutputPort port.GradeOutput
 }
 
 // NewGradeUsecase ...
-func NewGradeUsecase(r repository.IGradeRepository) GradeUsecase {
-	return GradeUsecase{r}
+func NewGradeUsecase(gr port.IGradeRepository, gop port.GradeOutput) *GradeUsecase {
+	return &GradeUsecase{gr, gop}
 }
 
 // RetrieveGrades ...
-func (u GradeUsecase) RetrieveGrades(ctx context.Context) (*output.Grades, error) {
+func (u *GradeUsecase) RetrieveGrades(ctx context.Context) {
 	targetGradeList, err := u.fetchGradeList(ctx)
 	if err != nil {
-		return nil, err
+		u.gradeOutputPort.AppError(rule.InternalServerError)
+		return
 	}
-	return output.MakeGrades(targetGradeList), nil
+	outputList := make([]*output.Grade, len(targetGradeList))
+	for i, v := range targetGradeList {
+		outputList[i] = &output.Grade{
+			ID:   uint(v.ID()),
+			Name: v.Name(),
+		}
+	}
+	u.gradeOutputPort.GradeList(outputList)
 }
 
-func (u GradeUsecase) fetchGradeList(ctx context.Context) (grade.Entities, error) {
+func (u *GradeUsecase) fetchGradeList(ctx context.Context) (grade.Entities, error) {
 	fetchResult, err := u.FetchGradeList(ctx)
 	if err != nil {
 		return nil, err

@@ -8,38 +8,43 @@ import (
 	"go-playground/m/v1/domain/model/user"
 	"go-playground/m/v1/usecase/data/input"
 	"go-playground/m/v1/usecase/data/output"
-	"go-playground/m/v1/usecase/repository"
-	"go-playground/m/v1/usecase/repository/dto"
+	"go-playground/m/v1/usecase/dto"
+	"go-playground/m/v1/usecase/interactor/port"
+	"go-playground/m/v1/usecase/rule"
 )
 
 // UserManagementUsecase ...
 type UserManagementUsecase struct {
-	repository.IUserManagementRepository
-	repository.IBalanceRepository
-	repository.IDealHistoryRepository
-	repository.ITransactionManagementRepository
+	port.IUserManagementRepository
+	port.IBalanceRepository
+	port.IDealHistoryRepository
+	port.ITransactionManagementRepository
+	userOutputPort port.UserOutput
 }
 
 // NewUserManagementUsecase ...
 func NewUserManagementUsecase(
-	umr repository.IUserManagementRepository,
-	br repository.IBalanceRepository,
-	thr repository.IDealHistoryRepository,
-	tmr repository.ITransactionManagementRepository,
-) UserManagementUsecase {
-	return UserManagementUsecase{umr, br, thr, tmr}
+	umr port.IUserManagementRepository,
+	br port.IBalanceRepository,
+	thr port.IDealHistoryRepository,
+	tmr port.ITransactionManagementRepository,
+	uop port.UserOutput,
+) *UserManagementUsecase {
+	return &UserManagementUsecase{umr, br, thr, tmr, uop}
 }
 
 // CreateUser ...
-func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate input.UserCreate, inputTopUpAmount uint) error {
+func (u *UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate input.UserCreate, inputTopUpAmount uint) {
 	// ユーザー重複確認
 	if err := u.verifyThatNoUserHasSameEmail(ctx, inputUserCreate.EmailAddress); err != nil {
-		return err
+		u.userOutputPort.AppError(rule.InternalServerError)
+		return
 	}
 
 	initialUser, err := user.InitGeneral(inputUserCreate.FirstName, inputUserCreate.LastName, inputUserCreate.Age, inputUserCreate.EmailAddress)
 	if err != nil {
-		return err
+		u.userOutputPort.AppError(rule.InternalServerError)
+		return
 	}
 
 	// 同一トランザクション内処理開始
@@ -72,62 +77,87 @@ func (u UserManagementUsecase) CreateUser(ctx context.Context, inputUserCreate i
 		}
 		return
 	}); err != nil {
-		return err
+		u.userOutputPort.AppError(rule.InternalServerError)
+		return
 	}
-
-	return nil
+	// u.userOutputPort.User()
 }
 
 // EditUser ...
-func (u UserManagementUsecase) EditUser(ctx context.Context, inputUserUpdate input.UserUpdate) error {
+func (u *UserManagementUsecase) EditUser(ctx context.Context, inputUserUpdate input.UserUpdate) {
 	userID := user.ID(inputUserUpdate.ID)
 
 	// ユーザー存在確認
 	if err := u.verifyThatUserExist(ctx, userID); err != nil {
-		return err
+		u.userOutputPort.AppError(rule.InternalServerError)
+		return
 	}
 
 	// ユーザー重複確認
 	if err := u.verifyThatNoUserHasSameEmail(ctx, inputUserUpdate.EmailAddress); err != nil {
-		return err
+		u.userOutputPort.AppError(rule.InternalServerError)
+		return
 	}
 
 	updateUser, err := user.UpdateGeneral(userID, inputUserUpdate.LastName, inputUserUpdate.EmailAddress, grade.ID(inputUserUpdate.GradeID))
 	if err != nil {
-		return err
+		u.userOutputPort.AppError(rule.InternalServerError)
+		return
 	}
 
 	// ユーザー情報更新
 	_, err = u.editUser(ctx, updateUser)
 	if err != nil {
-		return err
+		u.userOutputPort.AppError(rule.InternalServerError)
+		return
 	}
-
-	return nil
+	// u.userOutputPort.User()
 }
 
 // RetrieveUserByCondition ...
-func (u UserManagementUsecase) RetrieveUserByCondition(ctx context.Context, id uint) (output.User, error) {
+func (u *UserManagementUsecase) RetrieveUserByCondition(ctx context.Context, id uint) {
 	targetUser, err := u.fetchUserbyID(ctx, id)
 	if err != nil {
-		return output.User{}, err
+		u.userOutputPort.AppError(rule.InternalServerError)
+		return
 	}
 	if err := targetUser.Exist(true); err != nil {
-		return output.User{}, err
+		u.userOutputPort.AppError(rule.InternalServerError)
+		return
 	}
-	return output.MakeUser(*targetUser), nil
+	out := &output.User{
+		ID:           uint(targetUser.ID()),
+		FirstName:    targetUser.FirstName(),
+		LastName:     targetUser.LastName(),
+		Age:          targetUser.Age(),
+		EmailAddress: targetUser.EmailAddress(),
+		GradeName:    targetUser.GradeName(),
+	}
+	u.userOutputPort.User(out)
 }
 
 // RetrieveUsers ...
-func (u UserManagementUsecase) RetrieveUsers(ctx context.Context) (output.Users, error) {
+func (u *UserManagementUsecase) RetrieveUsers(ctx context.Context) {
 	targetUserList, err := u.fetchUserList(ctx)
 	if err != nil {
-		return nil, err
+		u.userOutputPort.AppError(rule.InternalServerError)
+		return
 	}
-	return output.MakeUsers(targetUserList), nil
+	outputList := make([]*output.User, len(targetUserList))
+	for i, v := range targetUserList {
+		outputList[i] = &output.User{
+			ID:           uint(v.ID()),
+			FirstName:    v.FirstName(),
+			LastName:     v.LastName(),
+			Age:          v.Age(),
+			EmailAddress: v.EmailAddress(),
+			GradeName:    v.GradeName(),
+		}
+	}
+	u.userOutputPort.UserList(outputList)
 }
 
-func (u UserManagementUsecase) verifyThatNoUserHasSameEmail(ctx context.Context, email string) error {
+func (u *UserManagementUsecase) verifyThatNoUserHasSameEmail(ctx context.Context, email string) error {
 	targetUser, err := u.fetchUserbyEmail(ctx, email)
 	if err != nil {
 		return err
@@ -138,7 +168,7 @@ func (u UserManagementUsecase) verifyThatNoUserHasSameEmail(ctx context.Context,
 	return nil
 }
 
-func (u UserManagementUsecase) verifyThatUserExist(ctx context.Context, id user.ID) error {
+func (u *UserManagementUsecase) verifyThatUserExist(ctx context.Context, id user.ID) error {
 	targetUser, err := u.fetchUserbyID(ctx, uint(id))
 	if err != nil {
 		return err
@@ -149,7 +179,7 @@ func (u UserManagementUsecase) verifyThatUserExist(ctx context.Context, id user.
 	return nil
 }
 
-func (u UserManagementUsecase) registerUser(ctx context.Context, generalUser *user.General) (*user.General, error) {
+func (u *UserManagementUsecase) registerUser(ctx context.Context, generalUser *user.General) (*user.General, error) {
 	fetchResult, err := u.RegisterUser(ctx, dto.NewRegisterUser(*generalUser))
 	if err != nil {
 		return nil, err
@@ -162,7 +192,7 @@ func (u UserManagementUsecase) registerUser(ctx context.Context, generalUser *us
 	return generalUser, nil
 }
 
-func (u UserManagementUsecase) editUser(ctx context.Context, generalUser *user.General) (*user.General, error) {
+func (u *UserManagementUsecase) editUser(ctx context.Context, generalUser *user.General) (*user.General, error) {
 	fetchResult, err := u.UpdateUser(ctx, uint(generalUser.ID()), dto.NewUpdateUser(*generalUser))
 	if err != nil {
 		return nil, err
@@ -175,7 +205,7 @@ func (u UserManagementUsecase) editUser(ctx context.Context, generalUser *user.G
 	return generalUser, nil
 }
 
-func (u UserManagementUsecase) fetchUserbyID(ctx context.Context, id uint) (*user.General, error) {
+func (u *UserManagementUsecase) fetchUserbyID(ctx context.Context, id uint) (*user.General, error) {
 	fetchResult, err := u.FetchUserByID(ctx, id)
 	if err != nil {
 		return nil, err
@@ -187,7 +217,7 @@ func (u UserManagementUsecase) fetchUserbyID(ctx context.Context, id uint) (*use
 	return generalUser, nil
 }
 
-func (u UserManagementUsecase) fetchUserbyEmail(ctx context.Context, email string) (*user.General, error) {
+func (u *UserManagementUsecase) fetchUserbyEmail(ctx context.Context, email string) (*user.General, error) {
 	fetchResult, err := u.FetchUserByEmail(ctx, email)
 	if err != nil {
 		return nil, err
@@ -199,7 +229,7 @@ func (u UserManagementUsecase) fetchUserbyEmail(ctx context.Context, email strin
 	return generalUser, nil
 }
 
-func (u UserManagementUsecase) fetchUserList(ctx context.Context) (user.Generals, error) {
+func (u *UserManagementUsecase) fetchUserList(ctx context.Context) (user.Generals, error) {
 	fetchResult, err := u.FetchUserList(ctx)
 	if err != nil {
 		return nil, err

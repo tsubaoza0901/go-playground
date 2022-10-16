@@ -5,54 +5,11 @@ import (
 	"log"
 	"time"
 
-	"go-playground/m/v1/adapters/controllers/rest/middleware"
-	"go-playground/m/v1/dependency"
+	backend "go-playground/m/v1/framework"
 	"go-playground/m/v1/infrastructure/driver"
 
-	"github.com/labstack/echo/v4"
 	"github.com/pressly/goose/v3"
-
-	"github.com/99designs/gqlgen/graphql/playground"
 )
-
-func initRouter(e *echo.Echo, appCtr dependency.AppController) {
-	{
-		// User Handler
-		e.POST("/user", appCtr.UserHandler.CreateNewUser)
-		e.PUT("/user/:id", appCtr.UserHandler.UpdateUser)
-		e.GET("/user/:id", appCtr.UserHandler.GetUser)
-		e.GET("/users", appCtr.UserHandler.GetUserList)
-	}
-
-	{
-		// Grade Handler
-		e.GET("/grades", appCtr.GradeHandler.GetGradeList)
-	}
-
-	{
-		// DealHistory Handler
-		e.GET("/dealHistories/:userId", appCtr.DealHistoryHandler.GetDealHistoryList)
-	}
-
-	{
-		// BalanceControl Handler
-		e.PUT("/pay/:userId", appCtr.BalanceControlHandler.Pay)
-		e.PUT("/topup/:userId", appCtr.BalanceControlHandler.TopUp)
-		e.GET("/remainingBalance/:userId", appCtr.BalanceControlHandler.GetRemainingBalance)
-	}
-
-	{
-		// GraphQL Handler
-		e.GET("/graphql-playground", func(c echo.Context) error { // GUIからのGraphQL実行用（http://localhost:8444/graphql-playground）
-			playground.Handler("GraphQL playground", "/query").ServeHTTP(c.Response(), c.Request())
-			return nil
-		})
-		e.POST("/query", func(c echo.Context) error {
-			appCtr.Server.ServeHTTP(c.Response(), c.Request())
-			return nil
-		})
-	}
-}
 
 const location = "Asia/Tokyo"
 
@@ -78,16 +35,7 @@ func main() {
 	}
 	defer sqlDB.Close()
 
-	e := echo.New()
-	middleware.InitMiddleware(e)
-
-	di := dependency.NewInjection(db)
-
 	goose.SetBaseFS(embedMigrations)
 
-	initRouter(e, di.InitAppController())
-
-	if err := e.Start(":8444"); err != nil {
-		log.Fatal(err)
-	}
+	backend.NewApp(db).Start()
 }

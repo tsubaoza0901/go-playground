@@ -7,7 +7,6 @@ package mock
 import (
 	context "context"
 	input "go-playground/m/v1/usecase/data/input"
-	output "go-playground/m/v1/usecase/data/output"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -37,11 +36,9 @@ func (m *MockIBalanceControlUsecase) EXPECT() *MockIBalanceControlUsecaseMockRec
 }
 
 // PayMoney mocks base method.
-func (m *MockIBalanceControlUsecase) PayMoney(ctx context.Context, userID uint, payment input.Payment) error {
+func (m *MockIBalanceControlUsecase) PayMoney(ctx context.Context, userID uint, payment input.Payment) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PayMoney", ctx, userID, payment)
-	ret0, _ := ret[0].(error)
-	return ret0
+	m.ctrl.Call(m, "PayMoney", ctx, userID, payment)
 }
 
 // PayMoney indicates an expected call of PayMoney.
@@ -51,11 +48,9 @@ func (mr *MockIBalanceControlUsecaseMockRecorder) PayMoney(ctx, userID, payment 
 }
 
 // PutMoney mocks base method.
-func (m *MockIBalanceControlUsecase) PutMoney(ctx context.Context, userID uint, topUpAmount input.PuttingMoney) error {
+func (m *MockIBalanceControlUsecase) PutMoney(ctx context.Context, userID uint, topUpAmount input.PuttingMoney) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PutMoney", ctx, userID, topUpAmount)
-	ret0, _ := ret[0].(error)
-	return ret0
+	m.ctrl.Call(m, "PutMoney", ctx, userID, topUpAmount)
 }
 
 // PutMoney indicates an expected call of PutMoney.
@@ -65,12 +60,9 @@ func (mr *MockIBalanceControlUsecaseMockRecorder) PutMoney(ctx, userID, topUpAmo
 }
 
 // RetrieveRemainingBalanceByUserID mocks base method.
-func (m *MockIBalanceControlUsecase) RetrieveRemainingBalanceByUserID(ctx context.Context, userID uint) (output.Balance, error) {
+func (m *MockIBalanceControlUsecase) RetrieveRemainingBalanceByUserID(ctx context.Context, userID uint) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RetrieveRemainingBalanceByUserID", ctx, userID)
-	ret0, _ := ret[0].(output.Balance)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	m.ctrl.Call(m, "RetrieveRemainingBalanceByUserID", ctx, userID)
 }
 
 // RetrieveRemainingBalanceByUserID indicates an expected call of RetrieveRemainingBalanceByUserID.
@@ -103,12 +95,9 @@ func (m *MockIDealUsecase) EXPECT() *MockIDealUsecaseMockRecorder {
 }
 
 // RetrieveDealHistoriesByUserID mocks base method.
-func (m *MockIDealUsecase) RetrieveDealHistoriesByUserID(ctx context.Context, userID uint) (output.DealHistories, error) {
+func (m *MockIDealUsecase) RetrieveDealHistoriesByUserID(ctx context.Context, userID uint) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RetrieveDealHistoriesByUserID", ctx, userID)
-	ret0, _ := ret[0].(output.DealHistories)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	m.ctrl.Call(m, "RetrieveDealHistoriesByUserID", ctx, userID)
 }
 
 // RetrieveDealHistoriesByUserID indicates an expected call of RetrieveDealHistoriesByUserID.
@@ -141,12 +130,9 @@ func (m *MockIGradeUsecase) EXPECT() *MockIGradeUsecaseMockRecorder {
 }
 
 // RetrieveGrades mocks base method.
-func (m *MockIGradeUsecase) RetrieveGrades(ctx context.Context) (*output.Grades, error) {
+func (m *MockIGradeUsecase) RetrieveGrades(ctx context.Context) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RetrieveGrades", ctx)
-	ret0, _ := ret[0].(*output.Grades)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	m.ctrl.Call(m, "RetrieveGrades", ctx)
 }
 
 // RetrieveGrades indicates an expected call of RetrieveGrades.
@@ -179,11 +165,9 @@ func (m *MockIUserManagementUsecase) EXPECT() *MockIUserManagementUsecaseMockRec
 }
 
 // CreateUser mocks base method.
-func (m *MockIUserManagementUsecase) CreateUser(ctx context.Context, input input.UserCreate, topUpAmount uint) error {
+func (m *MockIUserManagementUsecase) CreateUser(ctx context.Context, input input.UserCreate, topUpAmount uint) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateUser", ctx, input, topUpAmount)
-	ret0, _ := ret[0].(error)
-	return ret0
+	m.ctrl.Call(m, "CreateUser", ctx, input, topUpAmount)
 }
 
 // CreateUser indicates an expected call of CreateUser.
@@ -193,11 +177,9 @@ func (mr *MockIUserManagementUsecaseMockRecorder) CreateUser(ctx, input, topUpAm
 }
 
 // EditUser mocks base method.
-func (m *MockIUserManagementUsecase) EditUser(ctx context.Context, input input.UserUpdate) error {
+func (m *MockIUserManagementUsecase) EditUser(ctx context.Context, input input.UserUpdate) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "EditUser", ctx, input)
-	ret0, _ := ret[0].(error)
-	return ret0
+	m.ctrl.Call(m, "EditUser", ctx, input)
 }
 
 // EditUser indicates an expected call of EditUser.
@@ -207,12 +189,9 @@ func (mr *MockIUserManagementUsecaseMockRecorder) EditUser(ctx, input interface{
 }
 
 // RetrieveUserByCondition mocks base method.
-func (m *MockIUserManagementUsecase) RetrieveUserByCondition(ctx context.Context, id uint) (output.User, error) {
+func (m *MockIUserManagementUsecase) RetrieveUserByCondition(ctx context.Context, id uint) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RetrieveUserByCondition", ctx, id)
-	ret0, _ := ret[0].(output.User)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	m.ctrl.Call(m, "RetrieveUserByCondition", ctx, id)
 }
 
 // RetrieveUserByCondition indicates an expected call of RetrieveUserByCondition.
@@ -222,12 +201,9 @@ func (mr *MockIUserManagementUsecaseMockRecorder) RetrieveUserByCondition(ctx, i
 }
 
 // RetrieveUsers mocks base method.
-func (m *MockIUserManagementUsecase) RetrieveUsers(ctx context.Context) (output.Users, error) {
+func (m *MockIUserManagementUsecase) RetrieveUsers(ctx context.Context) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RetrieveUsers", ctx)
-	ret0, _ := ret[0].(output.Users)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	m.ctrl.Call(m, "RetrieveUsers", ctx)
 }
 
 // RetrieveUsers indicates an expected call of RetrieveUsers.
